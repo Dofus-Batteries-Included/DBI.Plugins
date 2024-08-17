@@ -1,0 +1,2979 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<doc>
+  <members>
+    <assembly>
+      <name>UnityEngine.PropertiesModule</name>
+    </assembly>
+    <member name="T:Unity.Properties.ArrayPropertyBag`1">
+      <summary>
+        <para>
+ An IPropertyBag_1 implementation for a built in array of &lt;typeparamref name="TElement" /&gt;.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.AttributesScope">
+      <summary>
+        <para>
+ Scope for using a given set of attributes.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.AttributesScope.#ctor(Unity.Properties.IProperty,Unity.Properties.IProperty)">
+      <summary>
+        <para>
+ Initializes a new instance of the AttributesScope struct assigns the given attributes to the specified target.
+ </para>
+      </summary>
+      <param name="target">The target to set the attributes for.</param>
+      <param name="source">The source to copy attributes from.</param>
+    </member>
+    <member name="M:Unity.Properties.AttributesScope.Dispose">
+      <summary>
+        <para>
+ Re-assigns the original attributes to the target.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.ConcreteTypeVisitor">
+      <summary>
+        <para>
+ Base class to implement a visitor responsible for getting an object's concrete type as a generic.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ConcreteTypeVisitor.VisitContainer(TContainer&amp;)">
+      <summary>
+        <para>
+ Implement this method to receive the strongly typed callback for a given container.
+ </para>
+      </summary>
+      <param name="container">The reference to the container.</param>
+    </member>
+    <member name="T:Unity.Properties.ContainerPropertyBag`1">
+      <summary>
+        <para>
+ Base class for implementing a static property bag for a specified container type. This is an abstract class.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ContainerPropertyBag_1.AddProperty(Unity.Properties.Property`2&lt;TContainer,TValue&gt;)">
+      <summary>
+        <para>
+ Adds a Property_2 to the property bag.
+ </para>
+      </summary>
+      <param name="property">The &lt;see cref="Property{TContainer, TValue}" /&gt; to add.</param>
+    </member>
+    <member name="M:Unity.Properties.ContainerPropertyBag_1.TryGetProperty(TContainer&amp;,System.String,Unity.Properties.IProperty`1&lt;TContainer&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified name.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="name">The name of the property to get.</param>
+      <param name="property">When this method returns, contains the property associated with the specified name, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the INamedProperties_1 contains a property with the specified name; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.CreatePropertyAttribute">
+      <summary>
+        <para>
+ Use this attribute to have a property generated for the member.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.DelegateProperty`2">
+      <summary>
+        <para>
+ Represents a value property.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.DelegateProperty_2.#ctor(System.String,Unity.Properties.PropertyGetter`2&lt;TContainer,TValue&gt;,Unity.Properties.PropertySetter`2&lt;TContainer,TValue&gt;)">
+      <summary>
+        <para>
+ Initializes a new instance of the DelegateProperty_2 class.
+ </para>
+      </summary>
+      <param name="name">The property name.</param>
+      <param name="getter">The delegate to use when accessing the property value.</param>
+      <param name="setter">The delegate to use when setting the property value.</param>
+    </member>
+    <member name="T:Unity.Properties.DictionaryPropertyBag`2">
+      <summary>
+        <para>
+ An IPropertyBag_1 implementation for a Dictionary_2 type.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.DontCreatePropertyAttribute">
+      <summary>
+        <para>
+ Use this attribute to prevent have a property from being automatically generated on a public field.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.ExcludeContext`1">
+      <summary>
+        <para>
+ Context object used during visitation to determine if a property should be visited or not.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.ExcludeContext_1.Property">
+      <summary>
+        <para>
+ The property being visited.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.ExcludeContext`2">
+      <summary>
+        <para>
+ Context object used during visitation to determine if a property should be visited or not.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.ExcludeContext_2.Property">
+      <summary>
+        <para>
+ The property being visited.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.GeneratePropertyBagAttribute">
+      <summary>
+        <para>
+ Use this attribute to have the source generator generate property bags for a given type.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.GeneratePropertyBagsForAssemblyAttribute">
+      <summary>
+        <para>
+ Use this attribute to enable the source generator to run on this assembly.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.GeneratePropertyBagsForTypeAttribute">
+      <summary>
+        <para>
+ Use this attribute to have the source generator generate a property bag for a given type.
+ This attribute works for the specified type ONLY, it does NOT include derived types.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.GeneratePropertyBagsForTypeAttribute.#ctor(System.Type)">
+      <summary>
+        <para>
+ Initializes a new instance of the GeneratePropertyBagsForTypeAttribute attribute.
+ </para>
+      </summary>
+      <param name="type">The type to generate a property bag for.</param>
+    </member>
+    <member name="P:Unity.Properties.GeneratePropertyBagsForTypeAttribute.Type">
+      <summary>
+        <para>
+ The type to generate a property bag for.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.GeneratePropertyBagsForTypesQualifiedWithAttribute">
+      <summary>
+        <para>
+ Use this attribute to have the properties source generator generate property bags for types implementing the specified interface.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.GeneratePropertyBagsForTypesQualifiedWithAttribute.#ctor(System.Type,Unity.Properties.TypeGenerationOptions)">
+      <summary>
+        <para>
+ Initializes a new instance of the GeneratePropertyBagsForTypesQualifiedWithAttribute attribute.
+ </para>
+      </summary>
+      <param name="type">The interface type to generate property bags for.</param>
+      <param name="options">Additional type filtering options.</param>
+    </member>
+    <member name="P:Unity.Properties.GeneratePropertyBagsForTypesQualifiedWithAttribute.Options">
+      <summary>
+        <para>
+ Options used for additional filtering.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.GeneratePropertyBagsForTypesQualifiedWithAttribute.Type">
+      <summary>
+        <para>
+ The interface type to generate property bags for.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.HashSetPropertyBag`1">
+      <summary>
+        <para>
+ An IPropertyBag_1 implementation for a HashSet_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ICollectionElementProperty">
+      <summary>
+        <para>
+ Base interface for working with a collection element property.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ICollectionPropertyAccept_1">
+      <summary>
+        <para>
+ Interface for accepting collection property visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ICollectionPropertyAccept_1.Accept(Unity.Properties.ICollectionPropertyVisitor,Unity.Properties.Property`2&lt;TContainer,TCollection&gt;,TContainer&amp;,TCollection&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke ICollectionPropertyVisitor.Visit{TContainer, TCollection, TElement}.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="collection">The collection value</param>
+    </member>
+    <member name="?:Unity.Properties.ICollectionPropertyBag_2">
+      <summary>
+        <para>
+ Base untyped interface for implementing collection based property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ICollectionPropertyBagAccept_1">
+      <summary>
+        <para>
+ Interface for accepting collection property bags visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ICollectionPropertyBagAccept_1.Accept(Unity.Properties.ICollectionPropertyBagVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke ICollectionPropertyBagVisitor.Visit_2 with the strongly typed container.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.ICollectionPropertyBagVisitor">
+      <summary>
+        <para>
+ Interface for visiting property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ICollectionPropertyBagVisitor.Visit(Unity.Properties.ICollectionPropertyBag`2&lt;TCollection,TElement&gt;,TCollection&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a collection of properties.
+ </para>
+      </summary>
+      <param name="properties">The properties of the container.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.ICollectionPropertyVisitor">
+      <summary>
+        <para>
+ Interface for receiving strongly typed property callbacks for collections.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ICollectionPropertyVisitor.Visit(Unity.Properties.Property`2&lt;TContainer,TCollection&gt;,TContainer&amp;,TCollection&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a specialized collection property.
+ </para>
+      </summary>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="collection">The collection value.</param>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryElementProperty">
+      <summary>
+        <para>
+ Interface over a property representing a untyped dictionary element.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.IDictionaryElementProperty.ObjectKey">
+      <summary>
+        <para>
+ The key of this property in the dictionary.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryElementProperty_1">
+      <summary>
+        <para>
+ Interface over a property representing a typed dictionary element.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.IDictionaryElementProperty_1.Key">
+      <summary>
+        <para>
+ The key of this property in the dictionary.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryPropertyAccept_1">
+      <summary>
+        <para>
+ Interface for accepting dictionary property visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IDictionaryPropertyAccept_1.Accept(Unity.Properties.IDictionaryPropertyVisitor,Unity.Properties.Property`2&lt;TContainer,TDictionary&gt;,TContainer&amp;,TDictionary&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IDictionaryPropertyVisitor.Visit{TContainer, TDictionary, TKey, TValue}.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="dictionary">The dictionary value.</param>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryPropertyBag_3">
+      <summary>
+        <para>
+ Base typed interface for implementing dictionary based property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryPropertyBagAccept_1">
+      <summary>
+        <para>
+ Interface for accepting list property bags visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IDictionaryPropertyBagAccept_1.Accept(Unity.Properties.IDictionaryPropertyBagVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IDictionaryPropertyBagVisitor.Visit{TDictionary, TKey, TValue} with the strongly typed container.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryPropertyBagVisitor">
+      <summary>
+        <para>
+ Interface for visiting property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IDictionaryPropertyBagVisitor.Visit(Unity.Properties.IDictionaryPropertyBag`3&lt;TDictionary,TKey,TValue&gt;,TDictionary&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a collection of properties.
+ </para>
+      </summary>
+      <param name="properties">The properties of the container.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IDictionaryPropertyVisitor">
+      <summary>
+        <para>
+ Interface for receiving strongly typed property callbacks for dictionaries.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IDictionaryPropertyVisitor.Visit(Unity.Properties.Property`2&lt;TContainer,TDictionary&gt;,TContainer&amp;,TDictionary&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a specialized dictionary property.
+ </para>
+      </summary>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="dictionary">The dictionary value.</param>
+    </member>
+    <member name="?:Unity.Properties.IExcludeContravariantPropertyAdapter_1">
+      <summary>
+        <para>
+ Implement this interface to filter visitation for a specific TValue type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IExcludeContravariantPropertyAdapter_1.IsExcluded(Unity.Properties.ExcludeContext`1&lt;TContainer&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters any property.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if visitation should be skipped, &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IExcludeContravariantPropertyAdapter_2">
+      <summary>
+        <para>
+ Implement this interface to filter visitation for a specific TContainer and TValue pair.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IExcludeContravariantPropertyAdapter_2.IsExcluded(Unity.Properties.ExcludeContext`1&lt;TContainer&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific a TContainer and TValue pair.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if visitation should be skipped, &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IExcludePropertyAdapter">
+      <summary>
+        <para>
+ Implement this interface to filter visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IExcludePropertyAdapter.IsExcluded(Unity.Properties.ExcludeContext`2&lt;TContainer,TValue&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters any property.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if visitation should be skipped, &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IExcludePropertyAdapter_1">
+      <summary>
+        <para>
+ Implement this interface to filter visitation for a specific TValue type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IExcludePropertyAdapter_1.IsExcluded(Unity.Properties.ExcludeContext`2&lt;TContainer,TValue&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific a TValue.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if visitation should be skipped, &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IExcludePropertyAdapter_2">
+      <summary>
+        <para>
+ Implement this interface to filter visitation for a specific TContainer and TValue pair.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IExcludePropertyAdapter_2.IsExcluded(Unity.Properties.ExcludeContext`2&lt;TContainer,TValue&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific a TContainer and TValue pair.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if visitation should be skipped, &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IIndexedProperties_1">
+      <summary>
+        <para>
+ This interface provides access to an IProperty_1 of a IPropertyBag_1 by index.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IIndexedProperties_1.TryGetProperty(TContainer&amp;,System.Int32,Unity.Properties.IProperty`1&lt;TContainer&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified index.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="index">The index of the property to get.</param>
+      <param name="property">When this method returns, contains the property associated with the specified index, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the IIndexedProperties_1 contains a property for the specified index; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IKeyedProperties_2">
+      <summary>
+        <para>
+ This interface provides access to an IProperty_1 of a IPropertyBag_1 by a key.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IKeyedProperties_2.TryGetProperty(TContainer&amp;,TKey,Unity.Properties.IProperty`1&lt;TContainer&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified name.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="key">The key to lookup.</param>
+      <param name="property">When this method returns, contains the property associated with the specified name, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the INamedProperties_1 contains a property with the specified name; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IListElementProperty">
+      <summary>
+        <para>
+ Interface over a property representing a list element.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.IListElementProperty.Index">
+      <summary>
+        <para>
+ The index of this property in the list.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IListPropertyAccept_1">
+      <summary>
+        <para>
+ Interface for accepting list property visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IListPropertyAccept_1.Accept(Unity.Properties.IListPropertyVisitor,Unity.Properties.Property`2&lt;TContainer,TList&gt;,TContainer&amp;,TList&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IListPropertyVisitor.Visit{TContainer, TList, TElement}.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="list">The list value.</param>
+    </member>
+    <member name="?:Unity.Properties.IListPropertyBag_2">
+      <summary>
+        <para>
+ Base typed interface for implementing list based property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IListPropertyBagAccept_1">
+      <summary>
+        <para>
+ Interface for accepting list property bags visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IListPropertyBagAccept_1.Accept(Unity.Properties.IListPropertyBagVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IListPropertyBagVisitor.Visit_2 with the strongly typed container.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IListPropertyBagVisitor">
+      <summary>
+        <para>
+ Interface for visiting property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IListPropertyBagVisitor.Visit(Unity.Properties.IListPropertyBag`2&lt;TList,TElement&gt;,TList&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a collection of properties.
+ </para>
+      </summary>
+      <param name="properties">The properties of the container.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IListPropertyVisitor">
+      <summary>
+        <para>
+ Interface for receiving strongly typed property callbacks for lists.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IListPropertyVisitor.Visit(Unity.Properties.Property`2&lt;TContainer,TList&gt;,TContainer&amp;,TList&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a specialized list property.
+ </para>
+      </summary>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="list">The list value.</param>
+    </member>
+    <member name="?:Unity.Properties.INamedProperties_1">
+      <summary>
+        <para>
+ This interface provides access to an IProperty_1 of a IPropertyBag_1 by name.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.INamedProperties_1.TryGetProperty(TContainer&amp;,System.String,Unity.Properties.IProperty`1&lt;TContainer&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified name.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="name">The name of the property to get.</param>
+      <param name="property">When this method returns, contains the property associated with the specified name, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the INamedProperties_1 contains a property with the specified name; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.IndexedCollectionPropertyBag`2">
+      <summary>
+        <para>
+ An IPropertyBag_1 implementation for a generic collection of elements which can be accessed by index. This is based on the IList_1 interface.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IndexedCollectionPropertyBag_2.InstantiateWithCount(System.Int32)">
+      <summary>
+        <para>
+ Implement this method to provide custom type instantiation with a count value for the container type.
+ </para>
+      </summary>
+      <param name="count"></param>
+    </member>
+    <member name="M:Unity.Properties.IndexedCollectionPropertyBag_2.TryGetProperty(TList&amp;,System.Int32,Unity.Properties.IProperty`1&lt;TList&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified index.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="index">The index of the property to get.</param>
+      <param name="property">When this method returns, contains the property associated with the specified index, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the IIndexedProperties_1 contains a property for the specified index; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.InstantiationKind">
+      <summary>
+        <para>
+ Describes how a new instance is created.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.InstantiationKind.Activator">
+      <summary>
+        <para>
+ The type instantiation will be done using Activator.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.InstantiationKind.NotInstantiatable">
+      <summary>
+        <para>
+ Not type instantiation should be performed for this type.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.InstantiationKind.PropertyBagOverride">
+      <summary>
+        <para>
+ The type instantiation will be done via a method override in PropertyBag_1
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.InvalidContainerTypeException">
+      <summary>
+        <para>
+ The exception that is thrown when trying to visit an invalid container type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.InvalidContainerTypeException.#ctor(System.Type)">
+      <summary>
+        <para>
+ Initializes a new instance of the MissingPropertyBagException class with a specified type.
+ </para>
+      </summary>
+      <param name="type">The invalid container type.</param>
+    </member>
+    <member name="M:Unity.Properties.InvalidContainerTypeException.#ctor(System.Type,System.Exception)">
+      <summary>
+        <para>
+ Initializes a new instance of the MissingPropertyBagException class with a specified type and a reference to the inner exception that is the cause of this exception.
+ </para>
+      </summary>
+      <param name="type">The invalid container type.</param>
+      <param name="inner">The inner exception reference.</param>
+    </member>
+    <member name="P:Unity.Properties.InvalidContainerTypeException.Type">
+      <summary>
+        <para>
+ The type which triggered the exception.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.InvalidPathException">
+      <summary>
+        <para>
+ The exception that is thrown when trying to resolve an invalid path.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.InvalidPathException.#ctor(System.String)">
+      <summary>
+        <para>
+ Initializes a new instance of the InvalidPathException class with a specified path.
+ </para>
+      </summary>
+      <param name="message">The exception message.</param>
+    </member>
+    <member name="M:Unity.Properties.InvalidPathException.#ctor(System.String,System.Exception)">
+      <summary>
+        <para>
+ Initializes a new instance of the InvalidPathException class with a specified type and a reference to the inner exception that is the cause of this exception.
+ </para>
+      </summary>
+      <param name="message">The exception message.</param>
+      <param name="inner">The inner exception reference.</param>
+    </member>
+    <member name="?:Unity.Properties.IProperty">
+      <summary>
+        <para>
+ Base interface for working with properties.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IProperty.DeclaredValueType">
+      <summary>
+        <para>
+ Returns the declared value type of the property.
+ </para>
+      </summary>
+      <returns>
+        <para>The declared value type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IProperty.GetAttribute">
+      <summary>
+        <para>
+ Returns the first attribute of the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>The attribute of the given type for this property.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IProperty.GetAttributes">
+      <summary>
+        <para>
+ Returns all attribute of the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>An IEnumerable_1 for all attributes of the given type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IProperty.HasAttribute">
+      <summary>
+        <para>
+ Returns true if the property has any attributes of the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the property has the given attribute type; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="P:Unity.Properties.IProperty.IsReadOnly">
+      <summary>
+        <para>
+ Gets a value indicating whether the property is read-only or not.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.IProperty.Name">
+      <summary>
+        <para>
+ Gets the name of the property.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IProperty_1">
+      <summary>
+        <para>
+ Base interface for working with properties.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IProperty_1.GetValue(TContainer&amp;)">
+      <summary>
+        <para>
+ Returns the property value of a specified container.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <returns>
+        <para>The property value of the given container.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IProperty_1.SetValue(TContainer&amp;,System.Object)">
+      <summary>
+        <para>
+ Sets the property value of a specified container.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be set.</param>
+      <param name="value">The new property value.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value was set; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IPropertyAccept_1">
+      <summary>
+        <para>
+ Interface for accepting property visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IPropertyAccept_1.Accept(Unity.Properties.IPropertyVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IPropertyVisitor.Visit_2 with the strongly typed container and value.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IPropertyBag">
+      <summary>
+        <para>
+ Base untyped interface for implementing property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag.Accept(Unity.Properties.ITypeVisitor)">
+      <summary>
+        <para>
+ Call this method to invoke ITypeVisitor.Visit_1 with the strongly typed container type.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag.Accept(Unity.Properties.IPropertyBagVisitor,System.Object&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IPropertyBagVisitor.Visit_1 with the strongly typed container for the given container object.
+ </para>
+      </summary>
+      <param name="visitor">The visitor to invoke the visit callback on.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IPropertyBag_1">
+      <summary>
+        <para>
+ Base typed interface for implementing property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag_1.Accept(Unity.Properties.IPropertyBagVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IPropertyBagVisitor.Visit_1 with the strongly typed container.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag_1.CreateInstance">
+      <summary>
+        <para>
+ Creates and returns a new instance of TContainer.
+ </para>
+      </summary>
+      <returns>
+        <para>A new instance of TContainer.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag_1.GetProperties">
+      <summary>
+        <para>
+ Returns an enumerator that iterates through all static properties for the type.
+ </para>
+      </summary>
+      <returns>
+        <para>A IEnumerator_1 structure for all properties.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag_1.GetProperties(TContainer&amp;)">
+      <summary>
+        <para>
+ Returns an enumerator that iterates through all static and dynamic properties for the given container.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <returns>
+        <para>A IEnumerator_1 structure for all properties.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBag_1.TryCreateInstance(TContainer&amp;)">
+      <summary>
+        <para>
+ Tries to create a new instance of TContainer.
+ </para>
+      </summary>
+      <param name="instance">When this method returns, contains the created instance, if type construction succeeded; otherwise, the default value for &lt;typeparamref name="TContainer" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if a new instance of type TContainer was created; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="?:Unity.Properties.IPropertyBagVisitor">
+      <summary>
+        <para>
+ Interface used to receive a visitation callbacks for property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IPropertyBagVisitor.Visit(Unity.Properties.IPropertyBag`1&lt;TContainer&gt;,TContainer&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a property bag and container.
+ </para>
+      </summary>
+      <param name="properties">The properties of the container.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IPropertyVisitor">
+      <summary>
+        <para>
+ Interface for receiving strongly typed property callbacks.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IPropertyVisitor.Visit(Unity.Properties.Property`2&lt;TContainer,TValue&gt;,TContainer&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a specific property.
+ </para>
+      </summary>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IPropertyVisitorAdapter">
+      <summary>
+        <para>
+ The base interface representing an adapter.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ISetElementProperty">
+      <summary>
+        <para>
+ Interface over a property representing a set element.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.ISetElementProperty.ObjectKey">
+      <summary>
+        <para>
+ The key of this property in the set.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ISetElementProperty_1">
+      <summary>
+        <para>
+ Interface over a property representing a set element.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.ISetElementProperty_1.Key">
+      <summary>
+        <para>
+ The key of this property in the set.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ISetPropertyAccept_1">
+      <summary>
+        <para>
+ Interface for accepting hash set property visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ISetPropertyAccept_1.Accept(Unity.Properties.ISetPropertyVisitor,Unity.Properties.Property`2&lt;TContainer,TSet&gt;,TContainer&amp;,TSet&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke ISetPropertyVisitor.Visit{TContainer, TSet, TValue}.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="set">The set value.</param>
+    </member>
+    <member name="?:Unity.Properties.ISetPropertyBag_2">
+      <summary>
+        <para>
+ Base typed interface for implementing set based property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.ISetPropertyBagAccept_1">
+      <summary>
+        <para>
+ Interface for accepting list property bags visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ISetPropertyBagAccept_1.Accept(Unity.Properties.ISetPropertyBagVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke ISetPropertyBagVisitor.Visit_2 with the strongly typed container.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.ISetPropertyBagVisitor">
+      <summary>
+        <para>
+ Interface for visiting property bags.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ISetPropertyBagVisitor.Visit(Unity.Properties.ISetPropertyBag`2&lt;TSet,TValue&gt;,TSet&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a collection of properties.
+ </para>
+      </summary>
+      <param name="properties">The properties of the container.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.ISetPropertyVisitor">
+      <summary>
+        <para>
+ Interface for receiving strongly typed property callbacks for sets.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ISetPropertyVisitor.Visit(Unity.Properties.Property`2&lt;TContainer,TSet&gt;,TContainer&amp;,TSet&amp;)">
+      <summary>
+        <para>
+ Implement this method to accept visitation for a specialized set property.
+ </para>
+      </summary>
+      <param name="property">The property being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="set">The hash set value.</param>
+    </member>
+    <member name="?:Unity.Properties.ITypeVisitor">
+      <summary>
+        <para>
+ Interface used to receive a visitation callbacks for a specific type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ITypeVisitor.Visit">
+      <summary>
+        <para>
+ Implement this method to accept visitation for container type.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IVisitContravariantPropertyAdapter_1">
+      <summary>
+        <para>
+ Implement this interface to intercept the visitation for a specific TValue type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IVisitContravariantPropertyAdapter_1.Visit(Unity.Properties.VisitContext`1&lt;TContainer&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific TValue type with any container.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IVisitContravariantPropertyAdapter_2">
+      <summary>
+        <para>
+ Implement this interface to intercept the visitation for a specific TContainer and TValue pair.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IVisitContravariantPropertyAdapter_2.Visit(Unity.Properties.VisitContext`1&lt;TContainer&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific a TContainer and TValue pair.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IVisitPrimitivesPropertyAdapter">
+      <summary>
+        <para>
+ Implement this interface to intercept the visitation of any primitive type.
+ </para>
+      </summary>
+    </member>
+    <member name="?:Unity.Properties.IVisitPropertyAdapter">
+      <summary>
+        <para>
+ Implement this interface to handle visitation for all properties.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IVisitPropertyAdapter.Visit(Unity.Properties.VisitContext`2&lt;TContainer,TValue&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters any property.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IVisitPropertyAdapter_1">
+      <summary>
+        <para>
+ Implement this interface to intercept the visitation for a specific TValue type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IVisitPropertyAdapter_1.Visit(Unity.Properties.VisitContext`2&lt;TContainer,TValue&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific TValue type with any container.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="?:Unity.Properties.IVisitPropertyAdapter_2">
+      <summary>
+        <para>
+ Implement this interface to intercept the visitation for a specific TContainer and TValue pair.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.IVisitPropertyAdapter_2.Visit(Unity.Properties.VisitContext`2&lt;TContainer,TValue&gt;&amp; modreq(System.Runtime.InteropServices.InAttribute),TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Invoked when the visitor encounters specific a TContainer and TValue pair.
+ </para>
+      </summary>
+      <param name="context">The context being visited.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="T:Unity.Properties.KeyValueCollectionPropertyBag`3">
+      <summary>
+        <para>
+ An IPropertyBag_1 implementation for a generic collection of key/value pairs using the IDictionary_2 interface.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.KeyValuePairPropertyBag`2">
+      <summary>
+        <para>
+ A IPropertyBag_1 implementation for a generic key/value pair.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.KeyValuePairPropertyBag_2.TryGetProperty(System.Collections.Generic.KeyValuePair`2&lt;TKey,TValue&gt;&amp;,System.String,Unity.Properties.IProperty`1&lt;System.Collections.Generic.KeyValuePair`2&lt;TKey,TValue&gt;&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified name.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="name">The name of the property to get.</param>
+      <param name="property">When this method returns, contains the property associated with the specified name, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the INamedProperties_1 contains a property with the specified name; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.ListPropertyBag`1">
+      <summary>
+        <para>
+ A IPropertyBag_1 implementation for a List_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.MissingPropertyBagException">
+      <summary>
+        <para>
+ The exception that is thrown when trying to visit a container with no property bag.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.MissingPropertyBagException.#ctor(System.Type)">
+      <summary>
+        <para>
+ Initializes a new instance of the MissingPropertyBagException class with a specified type.
+ </para>
+      </summary>
+      <param name="type">The type for which no property bag was found.</param>
+    </member>
+    <member name="M:Unity.Properties.MissingPropertyBagException.#ctor(System.Type,System.Exception)">
+      <summary>
+        <para>
+ Initializes a new instance of the MissingPropertyBagException class with a specified type and a reference to the inner exception that is the cause of this exception.
+ </para>
+      </summary>
+      <param name="type">The type for which no property bag was found.</param>
+      <param name="inner">The inner exception reference.</param>
+    </member>
+    <member name="P:Unity.Properties.MissingPropertyBagException.Type">
+      <summary>
+        <para>
+ The type which triggered the exception.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.PathVisitor">
+      <summary>
+        <para>
+ Helper visitor to visit a single property using a specified PropertyPath.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PathVisitor.Path">
+      <summary>
+        <para>
+ The path to visit.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PathVisitor.ReadonlyVisit">
+      <summary>
+        <para>
+ Returns whether or not the visitor will write back values along the path.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PathVisitor.Reset">
+      <summary>
+        <para>
+ Resets the state of the visitor.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PathVisitor.ReturnCode">
+      <summary>
+        <para>
+ Returns the error code encountered while visiting the provided path.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PathVisitor.VisitPath(Unity.Properties.Property`2&lt;TContainer,TValue&gt;,TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Method called when the visitor has successfully visited the provided path.
+ </para>
+      </summary>
+      <param name="property"></param>
+      <param name="container"></param>
+      <param name="value"></param>
+    </member>
+    <member name="T:Unity.Properties.Property`2">
+      <summary>
+        <para>
+ Base class for implementing properties. This is an abstract class.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.Property_2.Accept(Unity.Properties.IPropertyVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Call this method to invoke IPropertyVisitor.Visit_2 with the strongly typed container and value.
+ </para>
+      </summary>
+      <param name="visitor">The visitor being run.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.Property_2.AddAttribute(System.Attribute)">
+      <summary>
+        <para>
+ Adds an attribute to the property.
+ </para>
+      </summary>
+      <param name="attribute">The attribute to add.</param>
+    </member>
+    <member name="M:Unity.Properties.Property_2.AddAttributes(System.Collections.Generic.IEnumerable`1&lt;System.Attribute&gt;)">
+      <summary>
+        <para>
+ Adds a set of attributes to the property.
+ </para>
+      </summary>
+      <param name="attributes">The attributes to add.</param>
+    </member>
+    <member name="M:Unity.Properties.Property_2.DeclaredValueType">
+      <summary>
+        <para>
+ Returns the declared value type of the property.
+ </para>
+      </summary>
+      <returns>
+        <para>The declared value type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.Property_2.GetAttribute">
+      <summary>
+        <para>
+ Returns the first attribute of the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>The attribute of the given type for this property.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.Property_2.GetAttributes">
+      <summary>
+        <para>
+ Returns all attribute of the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>An IEnumerable_1 for all attributes of the given type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.Property_2.GetValue(TContainer&amp;)">
+      <summary>
+        <para>
+ Returns the property value of a specified container.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <returns>
+        <para>The property value of the given container.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.Property_2.HasAttribute">
+      <summary>
+        <para>
+ Returns true if the property has any attributes of the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the property has the given attribute type; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="P:Unity.Properties.Property_2.IsReadOnly">
+      <summary>
+        <para>
+ Gets a value indicating whether the property is read-only or not.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.Property_2.Name">
+      <summary>
+        <para>
+ Gets the name of the property.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.Property_2.SetValue(TContainer&amp;,TValue)">
+      <summary>
+        <para>
+ Sets the property value of a specified container.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be set.</param>
+      <param name="value">The new property value.</param>
+    </member>
+    <member name="T:Unity.Properties.PropertyBag">
+      <summary>
+        <para>
+ The PropertyBag class provides access to registered property bag instances.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.AcceptWithSpecializedVisitor(Unity.Properties.IPropertyBag`1&lt;TContainer&gt;,Unity.Properties.IPropertyBagVisitor,TContainer&amp;)">
+      <summary>
+        <para>
+ Accepts visitation for the given property bag and tries to invoke the most specialized visitor first.
+ </para>
+      </summary>
+      <param name="properties">The property bag to visit.</param>
+      <param name="visitor">The visitor or specialized visitor to invoke.</param>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.Exists">
+      <summary>
+        <para>
+ Returns true if a property bag exists for the given type.
+ </para>
+      </summary>
+      <returns>
+        <para>&lt;see langword="true" &gt; if there is a property bag for the given type; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.Exists(System.Type)">
+      <summary>
+        <para>
+ Returns true if a property bag exists for the given type.
+ </para>
+      </summary>
+      <param name="type">The type to check for a property bag</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if there is a property bag for the given type; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.GetAllTypesWithAPropertyBag">
+      <summary>
+        <para>
+ Returns all the System.Type that have a registered property bag.
+ </para>
+      </summary>
+      <returns>
+        <para>A list of types with a registered property bag.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.GetPropertyBag(System.Type)">
+      <summary>
+        <para>
+ Gets an interface to the PropertyBag_1 for the given type.
+ </para>
+      </summary>
+      <param name="type">The container type to resolve the property bag for.</param>
+      <returns>
+        <para>The resolved property bag.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.GetPropertyBag">
+      <summary>
+        <para>
+ Gets the strongly typed PropertyBag_1 for the given &lt;typeparamref name="TContainer" /&gt;.
+ </para>
+      </summary>
+      <returns>
+        <para>The resolved property bag, strongly typed.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.Register(Unity.Properties.PropertyBag`1&lt;TContainer&gt;)">
+      <summary>
+        <para>
+ Registers a strongly typed PropertyBag_1 for a type.
+ </para>
+      </summary>
+      <param name="propertyBag">The &lt;see cref="PropertyBag{TContainer}" /&gt; to register.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterArray">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for a built in array type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterDictionary">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for a Dictionary_2 type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterHashSet">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for a HashSet_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterIDictionary">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for the specified IDictionary_2 type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterIList">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for the specified IList_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterISet">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for the specified ISet_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.RegisterList">
+      <summary>
+        <para>
+ Creates and registers a IPropertyBag_1 for a List_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag.TryGetPropertyBagForValue(TValue&amp;,Unity.Properties.IPropertyBag&amp;)">
+      <summary>
+        <para>
+ Gets a property bag for the concrete type of the given value.
+ </para>
+      </summary>
+      <param name="value">The value type to retrieve a property bag for.</param>
+      <param name="propertyBag">When this method returns, contains the property bag associated with the specified value, if the bag is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the property bag was found for the specified value; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.PropertyBag`1">
+      <summary>
+        <para>
+ Base class for implementing a property bag for a specified container type. This is an abstract class.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag_1.Accept(Unity.Properties.ITypeVisitor)">
+      <summary>
+        <para>
+ Accepts visitation from a specified ITypeVisitor.
+ </para>
+      </summary>
+      <param name="visitor">The visitor handling visitation.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag_1.CreateInstance">
+      <summary>
+        <para>
+ Creates and returns a new instance of TContainer.
+ </para>
+      </summary>
+      <returns>
+        <para>A new instance of TContainer.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag_1.GetProperties">
+      <summary>
+        <para>
+ Implement this method to return a PropertyCollection_1 that can enumerate through all properties for the &lt;typeparamref name="TContainer" /&gt;.
+ </para>
+      </summary>
+      <returns>
+        <para>A PropertyCollection_1 structure which can enumerate each property.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag_1.GetProperties(TContainer&amp;)">
+      <summary>
+        <para>
+ Implement this method to return a PropertyCollection_1 that can enumerate through all properties for the &lt;typeparamref name="TContainer" /&gt;.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <returns>
+        <para>A PropertyCollection_1 structure which can enumerate each property.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag_1.Instantiate">
+      <summary>
+        <para>
+ Implement this method to provide custom type instantiation for the container type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyBag_1.InstantiationKind">
+      <summary>
+        <para>
+ Implement this property and return true to provide custom type instantiation for the container type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyBag_1.TryCreateInstance(TContainer&amp;)">
+      <summary>
+        <para>
+ Tries to create a new instance of TContainer.
+ </para>
+      </summary>
+      <param name="instance">When this method returns, contains the created instance, if type instantiation succeeded; otherwise, the default value for &lt;typeparamref name="TContainer" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if a new instance of type TContainer was created; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.PropertyCollection`1">
+      <summary>
+        <para>
+ The PropertyCollection_1 struct provides enumerable access to all IProperty_1 for a given PropertyBag_1.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyCollection_1.#ctor(System.Collections.Generic.IEnumerable`1&lt;Unity.Properties.IProperty`1&lt;TContainer&gt;&gt;)">
+      <summary>
+        <para>
+ Initializes a new instance of the PropertyCollection_1 struct which wraps the given enumerable.
+ </para>
+      </summary>
+      <param name="enumerable">An &lt;see cref="IEnumerable" /&gt; of properties to wrap.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyCollection_1.#ctor(System.Collections.Generic.List`1&lt;Unity.Properties.IProperty`1&lt;TContainer&gt;&gt;)">
+      <summary>
+        <para>
+ Initializes a new instance of the PropertyCollection_1 struct which wraps the given properties list.
+ </para>
+      </summary>
+      <param name="properties">A list of properties to wrap.</param>
+    </member>
+    <member name="P:Unity.Properties.PropertyCollection_1.Empty">
+      <summary>
+        <para>
+ Returns an empty collection of properties.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.PropertyCollection`1.Enumerator">
+      <summary>
+        <para>
+ An enumerator struct to enumerate all properties for the given TContainer.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyCollection_1.Enumerator.Current">
+      <summary>
+        <para>
+ Gets the element in the collection at the current position of the enumerator.
+ </para>
+      </summary>
+      <returns>
+        <para>The element in the collection at the current position of the enumerator.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyCollection_1.Enumerator.Dispose">
+      <summary>
+        <para>
+ Disposes of the underlying enumerator.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyCollection_1.Enumerator.MoveNext">
+      <summary>
+        <para>
+ Advances the enumerator to the next element of the collection.
+ </para>
+      </summary>
+      <returns>
+        <para>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyCollection_1.Enumerator.Reset">
+      <summary>
+        <para>
+ Sets the enumerator to its initial position, which is before the first element in the collection.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyCollection_1.GetEnumerator">
+      <summary>
+        <para>
+ Returns an enumerator that iterates through the collection.
+ </para>
+      </summary>
+      <returns>
+        <para>An enumerator that can be used to iterate through the collection.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.PropertyContainer">
+      <summary>
+        <para>
+ The PropertyContainer class is used as the entry point to operate on data containers using properties.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.Accept(Unity.Properties.IPropertyBagVisitor,TContainer,Unity.Properties.VisitParameters)">
+      <summary>
+        <para>
+ Visit the specified &lt;paramref name="container" &gt; using the specified &lt;paramref name="visitor" &gt;.
+ </para>
+      </summary>
+      <param name="visitor">The visitor.</param>
+      <param name="container">The container to visit.</param>
+      <param name="parameters">The visit parameters to use.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.Accept(Unity.Properties.IPropertyVisitor,TContainer&amp;,Unity.Properties.PropertyPath&amp;,Unity.Properties.VisitParameters)">
+      <summary>
+        <para>
+ Visit the specified &lt;paramref name="container" &gt; using the specified &lt;paramref name="visitor" &gt; at the given PropertyPath.
+ </para>
+      </summary>
+      <param name="visitor">The visitor.</param>
+      <param name="container">The container to visit.</param>
+      <param name="path">The property path to visit.</param>
+      <param name="parameters">The visit parameters to use.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.GetProperty(TContainer,Unity.Properties.PropertyPath&amp;)">
+      <summary>
+        <para>
+ Gets an IProperty on the specified container for the given PropertyPath.
+ </para>
+      </summary>
+      <param name="container">The container tree to search.</param>
+      <param name="path">The property path to resolve.</param>
+      <returns>
+        <para>The IProperty for the given path.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.GetValue(TContainer,System.String)">
+      <summary>
+        <para>
+ Gets the value of a property by name.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <param name="name">The name of the property to get.</param>
+      <returns>
+        <para>The value for the specified name.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.GetValue(TContainer,Unity.Properties.PropertyPath&amp;)">
+      <summary>
+        <para>
+ Gets the value of a property by path.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <param name="path">The path of the property to get.</param>
+      <returns>
+        <para>The value at the specified path.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.IsPathValid(TContainer,System.String)">
+      <summary>
+        <para>
+ Returns &lt;see langword="true" /&gt; if a property exists at the specified PropertyPath.
+ </para>
+      </summary>
+      <param name="container">The container tree to search.</param>
+      <param name="path">The property path to resolve.</param>
+      <returns>
+        <para>&lt;see langword="true" /&gt; if a property can be found at path.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.IsPathValid(TContainer,Unity.Properties.PropertyPath&amp;)">
+      <summary>
+        <para>
+ Returns &lt;see langword="true" /&gt; if a property exists at the specified PropertyPath.
+ </para>
+      </summary>
+      <param name="container">The container tree to search.</param>
+      <param name="path">The property path to resolve.</param>
+      <returns>
+        <para>&lt;see langword="true" /&gt; if a property can be found at path.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.SetValue(TContainer,System.String,TValue)">
+      <summary>
+        <para>
+ Sets the value of a property by name to the given value.
+ </para>
+      </summary>
+      <param name="container">The container whose property will be set.</param>
+      <param name="name">The name of the property to set.</param>
+      <param name="value">The value to assign to the property.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.SetValue(TContainer,Unity.Properties.PropertyPath&amp;,TValue)">
+      <summary>
+        <para>
+ Sets the value of a property at the given path to the given value.
+ </para>
+      </summary>
+      <param name="container">The container whose property will be set.</param>
+      <param name="path">The path of the property to set.</param>
+      <param name="value">The value to assign to the property.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryAccept(Unity.Properties.IPropertyBagVisitor,TContainer&amp;,Unity.Properties.VisitParameters)">
+      <summary>
+        <para>
+ Tries to visit the specified &lt;paramref name="container" &gt; by ref using the specified &lt;paramref name="visitor" &gt;.
+ </para>
+      </summary>
+      <param name="visitor">The visitor.</param>
+      <param name="container">The container to visit.</param>
+      <param name="parameters">The visit parameters to use.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the visitation succeeded; &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryAccept(Unity.Properties.IPropertyBagVisitor,TContainer&amp;,Unity.Properties.VisitReturnCode&amp;,Unity.Properties.VisitParameters)">
+      <summary>
+        <para>
+ Tries to visit the specified &lt;paramref name="container" &gt; by ref using the specified &lt;paramref name="visitor" &gt;.
+ </para>
+      </summary>
+      <param name="visitor">The visitor.</param>
+      <param name="container">The container to visit.</param>
+      <param name="parameters">The visit parameters to use.</param>
+      <param name="returnCode">When this method returns, contains the return code.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the visitation succeeded; &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryAccept(Unity.Properties.IPropertyVisitor,TContainer&amp;,Unity.Properties.PropertyPath&amp;,Unity.Properties.VisitReturnCode&amp;,Unity.Properties.VisitParameters)">
+      <summary>
+        <para>
+ Visit the specified &lt;paramref name="container" &gt; using the specified &lt;paramref name="visitor" &gt; at the given PropertyPath.
+ </para>
+      </summary>
+      <param name="visitor">The visitor.</param>
+      <param name="container">The container to visit.</param>
+      <param name="path">The property path to visit.</param>
+      <param name="returnCode">When this method returns, contains the return code.</param>
+      <param name="parameters">The visit parameters to use.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryGetProperty(TContainer,Unity.Properties.PropertyPath&amp;,Unity.Properties.IProperty&amp;)">
+      <summary>
+        <para>
+ Gets an IProperty on the specified container for the given PropertyPath.
+ </para>
+      </summary>
+      <param name="container">The container tree to search.</param>
+      <param name="path">The property path to resolve.</param>
+      <param name="property">When this method returns, contains the property associated with the specified path, if the property is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the property was found at the specified path; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryGetProperty(TContainer&amp;,Unity.Properties.PropertyPath&amp;,Unity.Properties.IProperty&amp;,Unity.Properties.VisitReturnCode&amp;)">
+      <summary>
+        <para>
+ Gets an IProperty on the specified container for the given PropertyPath.
+ </para>
+      </summary>
+      <param name="container">The container tree to search.</param>
+      <param name="path">The property path to resolve.</param>
+      <param name="property">When this method returns, contains the property associated with the specified path, if the property is found; otherwise, null.</param>
+      <param name="returnCode">When this method returns, contains the return code.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the property was found at the specified path; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryGetValue(TContainer,System.String,TValue&amp;)">
+      <summary>
+        <para>
+ Gets the value of a property by name.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <param name="name">The name of the property to get.</param>
+      <param name="value">When this method returns, contains the value associated with the specified name, if the property is found. otherwise the default value for the &lt;typeparamref name="TValue" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value exists for the specified name; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryGetValue(TContainer,Unity.Properties.PropertyPath&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Gets the value of a property by path.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <param name="path">The path of the property to get.</param>
+      <param name="value">When this method returns, contains the value associated with the specified path, if the property is found. otherwise the default value for the &lt;typeparamref name="TValue" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value exists at the specified path; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TryGetValue(TContainer&amp;,Unity.Properties.PropertyPath&amp;,TValue&amp;,Unity.Properties.VisitReturnCode&amp;)">
+      <summary>
+        <para>
+ Gets the value of a property by path.
+ </para>
+      </summary>
+      <param name="container">The container whose property value will be returned.</param>
+      <param name="path">The path of the property to get.</param>
+      <param name="value">When this method returns, contains the value associated with the specified path, if the property is found. otherwise the default value for the &lt;typeparamref name="TValue" /&gt;.</param>
+      <param name="returnCode">When this method returns, contains the return code.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value exists at the specified path; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TrySetValue(TContainer,System.String,TValue)">
+      <summary>
+        <para>
+ Tries to set the value of a property at the given path to the given value.
+ </para>
+      </summary>
+      <param name="container">The container whose property will be set.</param>
+      <param name="name">The name of the property to set.</param>
+      <param name="value">The value to assign to the property.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value was set correctly; &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TrySetValue(TContainer,Unity.Properties.PropertyPath&amp;,TValue)">
+      <summary>
+        <para>
+ Tries to set the value of a property at the given path to the given value.
+ </para>
+      </summary>
+      <param name="container">The container whose property will be set.</param>
+      <param name="path">The path of the property to set.</param>
+      <param name="value">The value to assign to the property.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value was set correctly; &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyContainer.TrySetValue(TContainer&amp;,Unity.Properties.PropertyPath&amp;,TValue,Unity.Properties.VisitReturnCode&amp;)">
+      <summary>
+        <para>
+ Tries to set the value of a property at the given path to the given value.
+ </para>
+      </summary>
+      <param name="container">The container whose property will be set.</param>
+      <param name="path">The path of the property to set.</param>
+      <param name="value">The value to assign to the property.</param>
+      <param name="returnCode">When this method returns, contains the return code.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the value was set correctly; &lt;see langword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.PropertyGetter_2">
+      <summary>
+        <para>
+ Represents the method that will handle getting a &lt;typeparamref name="TValue" &gt; type for a specified &lt;paramref name="container" &gt;.
+ </para>
+      </summary>
+      <param name="container">The container which holds the data.</param>
+    </member>
+    <member name="T:Unity.Properties.PropertyPath">
+      <summary>
+        <para>
+ A PropertyPath is used to store a reference to a single property within a tree.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.AppendIndex(Unity.Properties.PropertyPath&amp;,System.Int32)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the given PropertyPath and an index-type
+ PropertyPathPart.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="index">The index to add.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.AppendKey(Unity.Properties.PropertyPath&amp;,System.Object)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the given PropertyPath and an key-type
+ PropertyPathPart.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="key">The key to add.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.AppendName(Unity.Properties.PropertyPath&amp;,System.String)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the given PropertyPath and an name-type
+ PropertyPathPart.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="name">The part name to add.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.AppendPart(Unity.Properties.PropertyPath&amp;,Unity.Properties.PropertyPathPart&amp;)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the given PropertyPath and PropertyPathPart.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="part">The part to add.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.AppendProperty(Unity.Properties.PropertyPath&amp;,Unity.Properties.IProperty)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the given PropertyPath and a PropertyPathPart
+ whose type will be based on the property interfaces.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="property">The property to add.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.Combine(Unity.Properties.PropertyPath&amp;,Unity.Properties.PropertyPath&amp;)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the parts of the two given PropertyPath.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="pathToAppend">The &lt;see cref="PropertyPath" /&gt; to append.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.Combine(Unity.Properties.PropertyPath&amp;,System.String)">
+      <summary>
+        <para>
+ Returns a new PropertyPath combining the parts of the two given PropertyPath.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="pathToAppend">The string path to append.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.#ctor(System.String)">
+      <summary>
+        <para>
+ Initializes a new instance of the PropertyPath based on the given property string.
+ </para>
+      </summary>
+      <param name="path">The string path to initialize this instance with.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.Equals(Unity.Properties.PropertyPath)">
+      <summary>
+        <para>
+ Indicates whether this instance and a specified object are equal.
+ </para>
+      </summary>
+      <param name="other">The object to compare with the current instance.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if obj and this instance are the same type and represent the same value; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.FromIndex(System.Int32)">
+      <summary>
+        <para>
+ Returns a new PropertyPath from the provided index.
+ </para>
+      </summary>
+      <param name="index">The index of the &lt;see cref="PropertyPathPart" /&gt;.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.FromKey(System.Object)">
+      <summary>
+        <para>
+ Returns a new PropertyPath from the provided key.
+ </para>
+      </summary>
+      <param name="key">The key of the &lt;see cref="PropertyPathPart" /&gt;.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.FromName(System.String)">
+      <summary>
+        <para>
+ Returns a new PropertyPath from the provided name.
+ </para>
+      </summary>
+      <param name="name">The name of the &lt;see cref="PropertyPathPart" /&gt;.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.FromPart(Unity.Properties.PropertyPathPart&amp;)">
+      <summary>
+        <para>
+ Returns a new PropertyPath from the provided PropertyPathPart.
+ </para>
+      </summary>
+      <param name="part">The &lt;see cref="PropertyPathPart" /&gt;</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="P:Unity.Properties.PropertyPath.IsEmpty">
+      <summary>
+        <para>
+ Gets if there is any part contained in the PropertyPath.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPath.Length">
+      <summary>
+        <para>
+ Gets the number of parts contained in the PropertyPath.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.Pop(Unity.Properties.PropertyPath&amp;)">
+      <summary>
+        <para>
+ Returns a new PropertyPath that will not include the last PropertyPathPart.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.SubPath(Unity.Properties.PropertyPath&amp;,System.Int32)">
+      <summary>
+        <para>
+ Returns a new PropertyPath containing the PropertyPathPart starting at the given
+ start index.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="startIndex">The zero-based index where the sub path should start.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyPath.SubPath(Unity.Properties.PropertyPath&amp;,System.Int32,System.Int32)">
+      <summary>
+        <para>
+ Returns a new PropertyPath containing the given number of PropertyPathPart
+ starting at the given start index.
+ </para>
+      </summary>
+      <param name="path">The &lt;see cref="PropertyPath" /&gt;</param>
+      <param name="startIndex">The zero-based index where the sub path should start.</param>
+      <param name="length">The number of parts to include.</param>
+      <returns>
+        <para>A new PropertyPath</para>
+      </returns>
+    </member>
+    <member name="P:Unity.Properties.PropertyPath.this">
+      <summary>
+        <para>
+ Gets the PropertyPathPart at the given index.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.PropertyPathPart">
+      <summary>
+        <para>
+ A PropertyPathPart represents a single element of the path.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyPathPart.#ctor(System.String)">
+      <summary>
+        <para>
+ Initializes a new PropertyPathPart with the specified name.
+ </para>
+      </summary>
+      <param name="name">The name of the part.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyPathPart.#ctor(System.Int32)">
+      <summary>
+        <para>
+ Initializes a new PropertyPathPart with the specified index.
+ </para>
+      </summary>
+      <param name="index">The index of the part.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyPathPart.#ctor(System.Object)">
+      <summary>
+        <para>
+ Initializes a new PropertyPathPart with the specified key.
+ </para>
+      </summary>
+      <param name="key">The key of the part.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyPathPart.Equals(Unity.Properties.PropertyPathPart)">
+      <summary>
+        <para>
+ Indicates whether this instance and a specified object are equal.
+ </para>
+      </summary>
+      <param name="other">The object to compare with the current instance.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if obj and this instance are the same type and represent the same value; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.Index">
+      <summary>
+        <para>
+ The Index of the part. This will only be set when using PropertyPathPartKind.Index
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.IsIndex">
+      <summary>
+        <para>
+ Returns true if the part is PropertyPathPartKind.Index.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.IsKey">
+      <summary>
+        <para>
+ Returns true if the part is PropertyPathPartKind.Key.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.IsName">
+      <summary>
+        <para>
+ Returns true if the part is PropertyPathPartKind.Name.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.Key">
+      <summary>
+        <para>
+ The Key of the part. This will only be set when using PropertyPathPartKind.Key
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.Kind">
+      <summary>
+        <para>
+ The PropertyPathPartKind for this path. This determines how algorithms will resolve the path.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.PropertyPathPart.Name">
+      <summary>
+        <para>
+ The Name of the part. This will only be set when using PropertyPathPartKind.Name
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.PropertyPathPartKind">
+      <summary>
+        <para>
+ A PropertyPathPartKind specifies a type for a PropertyPathPart.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.PropertyPathPartKind.Index">
+      <summary>
+        <para>
+ Represents an indexed part of the path.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.PropertyPathPartKind.Key">
+      <summary>
+        <para>
+ Represents a keyed part of the path.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.PropertyPathPartKind.Name">
+      <summary>
+        <para>
+ Represents a named part of the path.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.PropertySetter_2">
+      <summary>
+        <para>
+ Represents the method that will handle setting a specified &lt;paramref name="value" &gt; for a specified &lt;paramref name="container" &gt;.
+ </para>
+      </summary>
+      <param name="container">The container on which to set the data.</param>
+      <param name="value">The value to set.</param>
+    </member>
+    <member name="T:Unity.Properties.PropertyVisitor">
+      <summary>
+        <para>
+ Base class for implementing algorithms using properties. This is an abstract class.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.AddAdapter(Unity.Properties.IPropertyVisitorAdapter)">
+      <summary>
+        <para>
+ Adds an adapter to the visitor.
+ </para>
+      </summary>
+      <param name="adapter">The adapter to add.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.IsExcluded(Unity.Properties.Property`2&lt;TContainer,TValue&gt;,TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Called before visiting each property to determine if the property should be visited.
+ </para>
+      </summary>
+      <param name="property">The property providing access to the data.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the property should be skipped; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.RemoveAdapter(Unity.Properties.IPropertyVisitorAdapter)">
+      <summary>
+        <para>
+ Removes an adapter from the visitor.
+ </para>
+      </summary>
+      <param name="adapter">The adapter to remove.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.VisitCollection(Unity.Properties.Property`2&lt;TContainer,TCollection&gt;,TContainer&amp;,TCollection&amp;)">
+      <summary>
+        <para>
+ Called when visiting any non-specialized collection property.
+ </para>
+      </summary>
+      <param name="property">The property providing access to the collection.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The collection being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.VisitDictionary(Unity.Properties.Property`2&lt;TContainer,TDictionary&gt;,TContainer&amp;,TDictionary&amp;)">
+      <summary>
+        <para>
+ Called when visiting a specialized dictionary property.
+ </para>
+      </summary>
+      <param name="property">The property providing access to the dictionary.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The dictionary being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.VisitList(Unity.Properties.Property`2&lt;TContainer,TList&gt;,TContainer&amp;,TList&amp;)">
+      <summary>
+        <para>
+ Called when visiting a specialized list property.
+ </para>
+      </summary>
+      <param name="property">The property providing access to the list.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The list being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.VisitProperty(Unity.Properties.Property`2&lt;TContainer,TValue&gt;,TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Called when visiting any leaf property with no specialized handling.
+ </para>
+      </summary>
+      <param name="property">The property providing access to the value.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.PropertyVisitor.VisitSet(Unity.Properties.Property`2&lt;TContainer,TSet&gt;,TContainer&amp;,TSet&amp;)">
+      <summary>
+        <para>
+ Called when visiting a specialized set property.
+ </para>
+      </summary>
+      <param name="property">The property providing access to the list.</param>
+      <param name="container">The container being visited.</param>
+      <param name="value">The list being visited.</param>
+    </member>
+    <member name="T:Unity.Properties.ReflectedMemberProperty`2">
+      <summary>
+        <para>
+ A ReflectedMemberProperty_2 provides strongly typed access to an underlying FieldInfo or PropertyInfo object.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.ReflectedMemberProperty_2.#ctor(System.Reflection.FieldInfo,System.String)">
+      <summary>
+        <para>
+ Initializes a new ReflectedMemberProperty_2 instance for the specified FieldInfo.
+ </para>
+      </summary>
+      <param name="info">The system reflection field info.</param>
+      <param name="name">Use this name property--this might override the MemberInfo name</param>
+    </member>
+    <member name="M:Unity.Properties.ReflectedMemberProperty_2.#ctor(System.Reflection.PropertyInfo,System.String)">
+      <summary>
+        <para>
+ Initializes a new ReflectedMemberProperty_2 instance for the specified PropertyInfo.
+ </para>
+      </summary>
+      <param name="info">The system reflection property info.</param>
+      <param name="name">Use this name property--this might override the MemberInfo name</param>
+    </member>
+    <member name="T:Unity.Properties.SetPropertyBagBase`2">
+      <summary>
+        <para>
+ A IPropertyBag_1 implementation for a generic set of elements using the ISet_1 interface.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.SetPropertyBagBase_2.TryGetProperty(TSet&amp;,System.Object,Unity.Properties.IProperty`1&lt;TSet&gt;&amp;)">
+      <summary>
+        <para>
+ Gets the property associated with the specified name.
+ </para>
+      </summary>
+      <param name="container">The container hosting the data.</param>
+      <param name="key">The key to lookup.</param>
+      <param name="property">When this method returns, contains the property associated with the specified name, if the name is found; otherwise, null.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the INamedProperties_1 contains a property with the specified name; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.TypeConversion">
+      <summary>
+        <para>
+ Helper class to handle type conversion during properties API calls.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.TypeConversion.Convert(TSource&amp;)">
+      <summary>
+        <para>
+ Converts the specified value from &lt;typeparamref name="TSource" &gt; to &lt;typeparamref name="TDestination" &gt;.
+ </para>
+      </summary>
+      <param name="value">The source value to convert.</param>
+      <returns>
+        <para>The value converted to the &lt;typeparamref name="TDestination" /&gt; type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeConversion.Register(Unity.Properties.TypeConverter`2&lt;TSource,TDestination&gt;)">
+      <summary>
+        <para>
+ Registers a new converter from &lt;typeparamref name="TSource" &gt; to &lt;typeparamref name="TDestination" &gt;.
+ </para>
+      </summary>
+      <param name="converter">Conversion delegate</param>
+    </member>
+    <member name="M:Unity.Properties.TypeConversion.TryConvert(TSource&amp;,TDestination&amp;)">
+      <summary>
+        <para>
+ Converts the specified value from &lt;typeparamref name="TSource" &gt; to &lt;typeparamref name="TDestination" &gt;.
+ </para>
+      </summary>
+      <param name="source">The source value to convert.</param>
+      <param name="destination">When this method returns, contains the converted destination value if the conversion succeeded; otherwise, default.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the conversion succeeded; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.TypeConverter_2">
+      <summary>
+        <para>
+ Represents the method that will handle converting an object of type &lt;typeparamref name="TSource" &gt; to an object of type &lt;typeparamref name="TDestination" &gt;.
+ </para>
+      </summary>
+      <param name="value">The source value to be converted.</param>
+    </member>
+    <member name="T:Unity.Properties.TypeGenerationOptions">
+      <summary>
+        <para>
+ A set of options to customize the behaviour of the code generator.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.TypeGenerationOptions.Default">
+      <summary>
+        <para>
+ The default set of type options. This includes both ValueType and ReferenceType.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.TypeGenerationOptions.None">
+      <summary>
+        <para>
+ If this option is selected, no property bags will be generated.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.TypeGenerationOptions.ReferenceType">
+      <summary>
+        <para>
+ If this option is selected, any inherited reference types will have property bags generated.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.TypeGenerationOptions.ValueType">
+      <summary>
+        <para>
+ If this option is selected, any inherited value types will have property bags generated.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.TypeTraits">
+      <summary>
+        <para>
+ Helper class to avoid paying the cost of runtime type lookups.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.TypeTraits.IsContainer(System.Type)">
+      <summary>
+        <para>
+ Returns &lt;see lanword="true" /&gt; if the given type can be treated as a container. i.e. not primitive, pointer, enum or string.
+ </para>
+      </summary>
+      <param name="type">The type to test.</param>
+      <returns>
+        <para>&lt;see lanword="true" &gt; if the given type is a container type; &lt;see lanword="false" &gt; otherwise.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.TypeTraits`1">
+      <summary>
+        <para>
+ Helper class to avoid paying the cost of runtime type lookups.
+
+ This is also used to abstract underlying type info in the runtime (e.g. RuntimeTypeHandle vs StaticTypeReg)
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.CanBeNull">
+      <summary>
+        <para>
+ Gets a value indicating whether T can be null. i.e. The type is an object or nullable.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsAbstract">
+      <summary>
+        <para>
+ Gets a value indicating whether T is an abstract type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsAbstractOrInterface">
+      <summary>
+        <para>
+ Gets a value indicating whether T is an abstract or interface type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsArray">
+      <summary>
+        <para>
+ Gets a value indicating whether T is an array type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsContainer">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a property container type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsEnum">
+      <summary>
+        <para>
+ Gets a value indicating whether T is an enum type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsEnumFlags">
+      <summary>
+        <para>
+ Gets a value indicating whether T is an flags enum type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsInterface">
+      <summary>
+        <para>
+ Gets a value indicating whether T is an interface type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsLazyLoadReference">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a UnityEngine.LazyLoadReference_1 type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsMultidimensionalArray">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a multidimensional array type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsNullable">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a nullable type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsObject">
+      <summary>
+        <para>
+ Gets a value indicating whether T is Object type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsPrimitive">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a primitive type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsPrimitiveOrString">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a primitive or string  type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsString">
+      <summary>
+        <para>
+ Gets a value indicating whether T is string  type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsUnityObject">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a UnityEngine.Object type.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.TypeTraits_1.IsValueType">
+      <summary>
+        <para>
+ Gets a value indicating whether T is a value type.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.TypeUtility">
+      <summary>
+        <para>
+ Utility class around System.Type.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.CanBeInstantiated(System.Type)">
+      <summary>
+        <para>
+ Returns &lt;see langword="true" /&gt; if the specified type is instantiatable.
+ </para>
+      </summary>
+      <param name="type">The type to query.</param>
+      <returns>
+        <para>&lt;see langword="true" /&gt; if the given type is instantiatable.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.CanBeInstantiated">
+      <summary>
+        <para>
+ Returns &lt;see langword="true" /&gt; if type T is instantiatable.
+ </para>
+      </summary>
+      <returns>
+        <para>&lt;see langword="true" /&gt; if type T is instantiatable.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.GetRootType(System.Type)">
+      <summary>
+        <para>
+ Utility method to return the base type.
+ </para>
+      </summary>
+      <param name="type">The &lt;see cref="System.Type" /&gt; for which we want the base type.</param>
+      <returns>
+        <para>The base type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.GetTypeDisplayName(System.Type)">
+      <summary>
+        <para>
+ Utility method to get the name of a type which includes the parent type(s).
+ </para>
+      </summary>
+      <param name="type">The &lt;see cref="System.Type" /&gt; we want the name of.</param>
+      <returns>
+        <para>The display name of the type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.Instantiate">
+      <summary>
+        <para>
+ Creates a new instance of the specified T.
+ </para>
+      </summary>
+      <returns>
+        <para>A new instance of the T.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.Instantiate(System.Type)">
+      <summary>
+        <para>
+ Creates a new instance of the given type type and returns it as T.
+ </para>
+      </summary>
+      <param name="derivedType">The type we want to create a new instance of.</param>
+      <returns>
+        <para>a new instance of the T type.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.InstantiateArray(System.Int32)">
+      <summary>
+        <para>
+ Creates a new instance of an array with the given count.
+ </para>
+      </summary>
+      <param name="count">The size of the array to instantiate.</param>
+      <returns>
+        <para>The array newly created array.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.InstantiateArray(System.Type,System.Int32)">
+      <summary>
+        <para>
+ Creates a new instance of an array with the given type and given count.
+ </para>
+      </summary>
+      <param name="derivedType">The type we want to create a new instance of.</param>
+      <param name="count">The size of the array to instantiate.</param>
+      <returns>
+        <para>The array newly created array.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.SetExplicitInstantiationMethod(System.Func`1&lt;T&gt;)">
+      <summary>
+        <para>
+ Sets an explicit instantiation method for the T type.
+ </para>
+      </summary>
+      <param name="constructor">The instantiation method.</param>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.TryInstantiate(T&amp;)">
+      <summary>
+        <para>
+ Creates a new instance of the specified T.
+ </para>
+      </summary>
+      <param name="instance">When this method returns, contains the created instance, if type instantiation succeeded; otherwise, the default value for &lt;typeparamref name="T" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if a new instance of type T was created; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.TryInstantiate(System.Type,T&amp;)">
+      <summary>
+        <para>
+ Tries to create a new instance of the given type type and returns it as T.
+ </para>
+      </summary>
+      <param name="derivedType">The type we want to create a new instance of.</param>
+      <param name="value">When this method returns, contains the created instance, if type instantiation succeeded; otherwise, the default value for &lt;typeparamref name="T" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" /&gt; if a new instance of the given type could be created.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Properties.TypeUtility.TryInstantiateArray(System.Int32,TArray&amp;)">
+      <summary>
+        <para>
+ Tries to create a new instance of an array with the given count.
+ </para>
+      </summary>
+      <param name="count">The count the array should have.</param>
+      <param name="instance">When this method returns, contains the created instance, if type instantiation succeeded; otherwise, the default value for &lt;typeparamref name="TArray" /&gt;.</param>
+      <returns>
+        <para>&lt;see langword="true" &gt; if the type was instantiated; otherwise, &lt;see langword="false" &gt;.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Properties.VisitContext`1">
+      <summary>
+        <para>
+ Context object used during visitation when a IProperty_1 is visited.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.VisitContext_1.ContinueVisitation(TContainer&amp;)">
+      <summary>
+        <para>
+ Continues visitation through the next visitation adapter.
+ </para>
+      </summary>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.VisitContext_1.ContinueVisitationWithoutAdapters(TContainer&amp;)">
+      <summary>
+        <para>
+ Continues visitation while skipping the next visitation adapters.
+ </para>
+      </summary>
+      <param name="container">The container being visited.</param>
+    </member>
+    <member name="P:Unity.Properties.VisitContext_1.Property">
+      <summary>
+        <para>
+ The property being visited.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.VisitContext`2">
+      <summary>
+        <para>
+ Context object used during visitation when a IProperty_1 is visited.
+ </para>
+      </summary>
+    </member>
+    <member name="M:Unity.Properties.VisitContext_2.ContinueVisitation(TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Continues visitation through the next visitation adapter.
+ </para>
+      </summary>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="M:Unity.Properties.VisitContext_2.ContinueVisitationWithoutAdapters(TContainer&amp;,TValue&amp;)">
+      <summary>
+        <para>
+ Continues visitation while skipping the next visitation adapters.
+ </para>
+      </summary>
+      <param name="container">The container being visited.</param>
+      <param name="value">The value being visited.</param>
+    </member>
+    <member name="P:Unity.Properties.VisitContext_2.Property">
+      <summary>
+        <para>
+ The property being visited.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.VisitExceptionKind">
+      <summary>
+        <para>
+ Flags used to specify a set of exceptions.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitExceptionKind.All">
+      <summary>
+        <para>
+ Use this flag to specify all exceptions.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitExceptionKind.Internal">
+      <summary>
+        <para>
+ Flag used to specify internal exceptions thrown by the core visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitExceptionKind.None">
+      <summary>
+        <para>
+ Flag used to specify no exception types.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitExceptionKind.Visitor">
+      <summary>
+        <para>
+ Use this flag to specify exceptions thrown from the visitor code itself.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.VisitParameters">
+      <summary>
+        <para>
+ Custom parameters to use for visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="P:Unity.Properties.VisitParameters.IgnoreExceptions">
+      <summary>
+        <para>
+ Use this options to ignore specific exceptions during visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="T:Unity.Properties.VisitReturnCode">
+      <summary>
+        <para>
+ Internal return code used during path visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.AccessViolation">
+      <summary>
+        <para>
+ Failed to set value at path because it is read-only.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.InvalidCast">
+      <summary>
+        <para>
+ Failed to reinterpret the target value as the requested type.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.InvalidContainerType">
+      <summary>
+        <para>
+ The given container type is not valid for visitation.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.InvalidPath">
+      <summary>
+        <para>
+ Failed to resolve some part of the path (e.g. Name, Index or Key).
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.MissingPropertyBag">
+      <summary>
+        <para>
+ No property bag was found for the given container type.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.NullContainer">
+      <summary>
+        <para>
+ The container being visited was null.
+ </para>
+      </summary>
+    </member>
+    <member name="F:Unity.Properties.VisitReturnCode.Ok">
+      <summary>
+        <para>
+ The visitation resolved successfully.
+ </para>
+      </summary>
+    </member>
+    <member name="A:UnityEngine.PropertiesModule">
+      <summary>
+        <para>Interfaces and utilities to describe and visit data containers.</para>
+      </summary>
+    </member>
+  </members>
+</doc>

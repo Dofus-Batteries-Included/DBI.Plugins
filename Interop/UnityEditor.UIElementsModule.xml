@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<doc>
+  <members>
+    <assembly>
+      <name>UnityEditor.UIElementsModule</name>
+    </assembly>
+    <member name="T:UnityEditor.UIElements.UxmlNamespacePrefixAttribute">
+      <summary>
+        <para>
+ Attribute that can be used on an assembly to define an XML namespace prefix for a namespace.
+ </para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.UIElements.UxmlNamespacePrefixAttribute.ns">
+      <summary>
+        <para>
+ The namespace name.
+ </para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.UIElements.UxmlNamespacePrefixAttribute.prefix">
+      <summary>
+        <para>
+ The namespace prefix.
+ </para>
+      </summary>
+    </member>
+    <member name="M:UnityEditor.UIElements.UxmlNamespacePrefixAttribute.#ctor(System.String,System.String)">
+      <summary>
+        <para>
+ Constructor.
+ </para>
+      </summary>
+      <param name="ns">The XML/C# namespace to which a prefix will be associated.</param>
+      <param name="prefix">The prefix to associate to the namespace.</param>
+    </member>
+  </members>
+</doc>

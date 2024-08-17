@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<doc>
+  <members>
+    <assembly>
+      <name>UnityEngine.ContentLoadModule</name>
+    </assembly>
+    <member name="T:Unity.Loading.ContentFile">
+      <summary>
+        <para>This struct acts like a handle for accessing a file loaded by Unity.Loading.ContentLoadInterface.LoadContentFileAsync. You can use it to access the status and results of the load operation.</para>
+      </summary>
+    </member>
+    <member name="M:Unity.Loading.ContentFile.GetObject(System.UInt64)">
+      <summary>
+        <para>Used to access objects within the Unity.Loading.ContentFile by local file identifier.</para>
+      </summary>
+      <param name="lfid">The local file identifier.</param>
+      <param name="localIdentifierInFile"></param>
+      <returns>
+        <para>The loaded Object from the Unity.Loading.ContentFile.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Loading.ContentFile.GetObjects">
+      <summary>
+        <para>This function can be used to access all the Objects loaded in the Unity.Loading.ContentFile.</para>
+      </summary>
+      <returns>
+        <para>All the Objects within the Unity.Loading.ContentFile.</para>
+      </returns>
+    </member>
+    <member name="P:Unity.Loading.ContentFile.GlobalTableDependency">
+      <summary>
+        <para>This ContentFile can be passed as a dependency to Unity.Loading.ContentLoadInterface.LoadContentFileAsync or Unity.Loading.ContentLoadInterface.LoadSceneAsync to indicate that the external file dependencies should be resolved through the global PersistentManager table. For example, this could be used when the ContentFile references a file loaded through the PersistentManager such as "unity default resources".</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentFile.IsValid">
+      <summary>
+        <para>Returns true if the Unity.Loading.ContentFile handle is valid.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentFile.LoadingStatus">
+      <summary>
+        <para>The loading status of the Unity.Loading.ContentFile.</para>
+      </summary>
+    </member>
+    <member name="M:Unity.Loading.ContentFile.UnloadAsync">
+      <summary>
+        <para>Begin an asynchronous unload of the Unity.Loading.ContentFile.</para>
+      </summary>
+      <returns>
+        <para>A handle that can be used to track the status of the unload operation.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Loading.ContentFile.WaitForCompletion(System.Int32)">
+      <summary>
+        <para>Blocks on the main thread until the load operation completes. This function can be slow and so should be used carefully to avoid frame rate stuttering.</para>
+      </summary>
+      <param name="timeoutMs">The maximum time in milliseconds this function will wait before returning. Pass 0 to block indefinitely until completion.</param>
+      <returns>
+        <para>Returns false if the timeout was reached before ContentFile completed loading.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Loading.ContentFileUnloadHandle">
+      <summary>
+        <para>A handle that can be used to track the progress of an unload operation. This is returned from Unity.Loading.ContentFile.UnloadAsync.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentFileUnloadHandle.IsCompleted">
+      <summary>
+        <para>Returns true if the unload operation has completed.</para>
+      </summary>
+    </member>
+    <member name="M:Unity.Loading.ContentFileUnloadHandle.WaitForCompletion(System.Int32)">
+      <summary>
+        <para>Blocks on the main thread until the unload operation completes. This function can be slow and so should be used carefully to avoid frame rate stuttering.</para>
+      </summary>
+      <param name="timeoutMs">The maximum time in milliseconds this function will wait before returning. Pass 0 to block indefinitely until completion.</param>
+      <returns>
+        <para>Returns false if the timeout was reached before ContentFile completed loading.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Loading.ContentLoadInterface">
+      <summary>
+        <para>API Interface for loading and unloading Content files.</para>
+      </summary>
+    </member>
+    <member name="M:Unity.Loading.ContentLoadInterface.GetContentFiles(Unity.Content.ContentNamespace)">
+      <summary>
+        <para>Returns all the Unity.Loading.ContentFile handles associated with the provided Unity.Content.ContentNamespace.</para>
+      </summary>
+      <param name="nameSpace">The ContentNamespace used to filter the results.</param>
+      <returns>
+        <para>Returns an array of all the Unity.Loading.ContentFiles belonging to the Unity.Content.ContentNamespace.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Loading.ContentLoadInterface.GetSceneFiles(Unity.Content.ContentNamespace)">
+      <summary>
+        <para>An array of all the Unity.Loading.ContentSceneFiles associated with the Unity.Content.ContentNamespace.</para>
+      </summary>
+      <param name="nameSpace">The Unity.Content.ContentNamespace used to filter the results.</param>
+      <returns>
+        <para>Returns an array of all the Unity.Loading.ContentSceneFiles belonging to the Unity.Content.ContentNamespace.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Loading.ContentLoadInterface.LoadContentFileAsync(Unity.Content.ContentNamespace,System.String,Unity.Collections.NativeArray`1&lt;Unity.Loading.ContentFile&gt;,Unity.Jobs.JobHandle)">
+      <summary>
+        <para>Loads a serialized file asynchronously from disk.</para>
+      </summary>
+      <param name="nameSpace">The Unity.Content.ContentNamespace used to filter the results.</param>
+      <param name="filename">Path of the file on disk.</param>
+      <param name="dependencies">List of the Unity.Loading.ContentFiles that will be referenced by the file being loaded. The ordering must match the ordering returned from the build process.
+Unity.Loading.ContentFile.GlobalTableDependency can be used to indicate that the PersistentManager should be used to resolve references. This allows references to files such as "unity default resources".</param>
+      <param name="dependentFence">The load will not begin until this Unity.Jobs.JobHandle completes. A default Unity.Jobs.JobHandle can be used if there is no dependency.</param>
+      <returns>
+        <para>Handle to access the results of the load process.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Loading.ContentLoadInterface.LoadSceneAsync(Unity.Content.ContentNamespace,System.String,System.String,Unity.Loading.ContentSceneParameters,Unity.Collections.NativeArray`1&lt;Unity.Loading.ContentFile&gt;,Unity.Jobs.JobHandle)">
+      <summary>
+        <para>Loads a scene serialized file asynchronously from disk.</para>
+      </summary>
+      <param name="dependencies">List of the ContentFiles that will be referenced by the file being loaded. The ordering must match the ordering returned from the build process.
+Unity.Loading.ContentFile.GlobalTableDependency can be used to indicate that the PersistentManager should be used to resolve references. This allows references to files such as "unity default resources".</param>
+      <param name="nameSpace">The ContentNamespace used to filter the results.</param>
+      <param name="filename">Path of the file on disk.</param>
+      <param name="sceneName">The name that will be applied to the scene.</param>
+      <param name="sceneParams">Struct that collects the various parameters into a single place.</param>
+      <param name="dependentFence">The load will not begin until this JobHandle completes.</param>
+      <returns>
+        <para>Handle to access the results of the load process.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Loading.ContentSceneFile">
+      <summary>
+        <para>The handle returned from Unity.Loading.ContentLoadInterface.LoadSceneAsync. You can use this handle to access the status and results of the load operation.</para>
+      </summary>
+    </member>
+    <member name="M:Unity.Loading.ContentSceneFile.IntegrateAtEndOfFrame">
+      <summary>
+        <para>Calling this will cause the scene to integrate at the end of the frame.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentSceneFile.IsValid">
+      <summary>
+        <para>Returns true if the Unity.Loading.ContentSceneFile handle is valid. A handle becomes invalid after the file is unloaded.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentSceneFile.Scene">
+      <summary>
+        <para>The Scene object being loaded. This is accessible both before and after the load operation completes.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentSceneFile.Status">
+      <summary>
+        <para>The loading status of the scene.</para>
+      </summary>
+    </member>
+    <member name="M:Unity.Loading.ContentSceneFile.UnloadAtEndOfFrame">
+      <summary>
+        <para>Will trigger the scene to unload at the end of the frame.</para>
+      </summary>
+      <returns>
+        <para>True if successful. False if the scene is not in a state that can be unloaded.</para>
+      </returns>
+    </member>
+    <member name="M:Unity.Loading.ContentSceneFile.WaitForLoadCompletion(System.Int32)">
+      <summary>
+        <para>Blocks on the main thread until the load operation completes. This function can be slow and so should be used carefully to avoid frame rate stuttering.</para>
+      </summary>
+      <param name="timeoutMs">The maximum time in milliseconds this function will wait before returning. Pass 0 to block indefinitely until completion.</param>
+      <returns>
+        <para>Returns false if the timeout was reached before ContentFile completed loading.</para>
+      </returns>
+    </member>
+    <member name="T:Unity.Loading.ContentSceneParameters">
+      <summary>
+        <para>This struct collects all the Unity.Loading.ContentLoadInterface.LoadSceneAsync parameters in to a single place.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentSceneParameters.autoIntegrate">
+      <summary>
+        <para>True if the scene should be automatically integrated after the load completes. If this is set to false, the user must call Unity.Loading.ContentSceneFile.IntegrateAtEndOfFrame when they are ready to integrate.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentSceneParameters.loadSceneMode">
+      <summary>
+        <para>See LoadSceneMode.</para>
+      </summary>
+    </member>
+    <member name="P:Unity.Loading.ContentSceneParameters.localPhysicsMode">
+      <summary>
+        <para>See LocalPhysicsMode.</para>
+      </summary>
+    </member>
+    <member name="T:Unity.Loading.LoadingStatus">
+      <summary>
+        <para>The loading status of a Unity.Loading.ContentFile.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.LoadingStatus.Completed">
+      <summary>
+        <para>The Unity.Loading.ContentFile has loaded successfully.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.LoadingStatus.Failed">
+      <summary>
+        <para>The Unity.Loading.ContentFile failed to load. Be sure to still call Unity.Loading.ContentFile.UnloadAsync to free internal resources.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.LoadingStatus.InProgress">
+      <summary>
+        <para>The Unity.Loading.ContentFile is actively loading.</para>
+      </summary>
+    </member>
+    <member name="T:Unity.Loading.SceneLoadingStatus">
+      <summary>
+        <para>The loading status of a Unity.Loading.ContentSceneFile. This is accessed by ContentSceneFile.Status.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.SceneLoadingStatus.Complete">
+      <summary>
+        <para>The scene has been loaded and integrated successfully.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.SceneLoadingStatus.Failed">
+      <summary>
+        <para>A failure occured in the scene loading process. See log for details.
+Be sure to still call Unity.Loading.ContentSceneFile.UnloadAtEndOfFrame to release internal resources.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.SceneLoadingStatus.InProgress">
+      <summary>
+        <para>The scene load is in progress.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.SceneLoadingStatus.WaitingForIntegrate">
+      <summary>
+        <para>The asynchronous part of the scene loading is complete. You can now safely call Unity.Loading.ContentSceneFile.IntegrateAtEndOfFrame when you are ready to activate the scene.</para>
+      </summary>
+    </member>
+    <member name="F:Unity.Loading.SceneLoadingStatus.WillIntegrateNextFrame">
+      <summary>
+        <para>The scene will integrate at the end of the current frame.</para>
+      </summary>
+    </member>
+    <member name="A:UnityEngine.ContentLoadModule">
+      <summary>
+        <para>The ContentLoad module implements the ContentLoadInterface class and related APIs to load data from ContentFiles.</para>
+      </summary>
+    </member>
+  </members>
+</doc>
