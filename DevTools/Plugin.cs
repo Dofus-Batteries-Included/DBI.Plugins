@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using DofusBatteriesIncluded.DevTools.Behaviours;
 
@@ -8,5 +9,12 @@ namespace DofusBatteriesIncluded.DevTools;
 [BepInProcess("Dofus.exe")]
 public class Plugin : BasePlugin
 {
-    public override void Load() => AddComponent<EnableQuantumConsole>();
+    public static new ManualLogSource Log { get; private set; }
+
+    public override void Load()
+    {
+        Log = base.Log;
+        AddComponent<EnableQuantumConsole>();
+        AddComponent<LogSceneChange>();
+    }
 }
