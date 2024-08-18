@@ -124,9 +124,23 @@ public class CoreWindow : DofusBatteriesIncludedWindow
 
     VisualElement CreateGeneralTab()
     {
-
         VisualElement visualElement = new();
         visualElement.style.display = DisplayStyle.None;
+
+        OptionCategory pluginsHeader = new();
+        pluginsHeader.Init(new CategoryData { name = "Plugins" }, false);
+        visualElement.Add(pluginsHeader);
+
+        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        {
+            OptionCategory category = new();
+            category.Init(
+                new CategoryData { name = $"{plugin.Name} v{plugin.Version}", canBeOpened = false, notResettable = true, noAccountNeeded = true, isSubCategory = true },
+                true
+            );
+            visualElement.Add(category);
+        }
+
         return visualElement;
     }
 
