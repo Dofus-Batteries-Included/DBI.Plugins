@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using DofusBatteriesIncluded.Core.Behaviours;
+using Il2CppInterop.Runtime.Injection;
 using Il2CppSystem.IO;
 
 namespace DofusBatteriesIncluded.Core;
@@ -27,9 +28,11 @@ class CorePlugin : BasePlugin
 
         AddComponent<DofusBatteriesIncludedCore>();
         AddComponent<DofusBatteriesIncludedCommands>();
+        ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();
+        CoreWindow window = AddComponent<CoreWindow>();
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
-        menu.AddButton("Dofus Batteries Included", evt => Log.LogInfo("CLICK!!"));
+        menu.AddButton("Dofus Batteries Included", evt => window.Toggle());
     }
 
     void BindConfiguration()
