@@ -22,7 +22,6 @@ class DevToolsPlugin : BasePlugin
             return;
         }
 
-        AddComponent<EnableQuantumConsole>();
         AddComponent<LogSceneLoaded>();
 
         DBI.Commands.Register("dump-all-gameobjects", KeyCode.F9, (Action)DumpAllGameObjects);

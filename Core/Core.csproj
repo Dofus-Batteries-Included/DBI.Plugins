@@ -27,8 +27,17 @@
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>..\Interop\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UIElementsModule">
+            <HintPath>..\Interop\UnityEngine.UIElementsModule.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.InputLegacyModule">
             <HintPath>..\Interop\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="Ankama.AddressableUtility.Runtime">
+            <HintPath>..\Interop\Ankama.AddressableUtility.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="Core">
+            <HintPath>..\Interop\Core.dll</HintPath>
         </Reference>
         <Reference Include="Il2Cppmscorlib">
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>

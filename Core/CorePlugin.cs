@@ -27,6 +27,9 @@ class CorePlugin : BasePlugin
 
         AddComponent<DofusBatteriesIncludedCore>();
         AddComponent<DofusBatteriesIncludedCommands>();
+        DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
+
+        menu.AddButton("Dofus Batteries Included", evt => Log.LogInfo("CLICK!!"));
     }
 
     void BindConfiguration()
