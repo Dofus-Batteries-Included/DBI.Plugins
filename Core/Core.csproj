@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <AssemblyName>DofusBatteriesIncluded.Core</AssemblyName>
+        <Product>DBI.Core</Product>
+        <Description>Base plugin necessary for all Dofus Batteries Included plugins.</Description>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <RestoreAdditionalProjectSources>
@@ -15,9 +17,16 @@
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
     </ItemGroup>
     
     <ItemGroup>
+        <Reference Include="UnityEngine">
+            <HintPath>..\Interop\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>..\Interop\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
         <Reference Include="Il2Cppmscorlib">
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
         </Reference>

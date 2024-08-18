@@ -7,7 +7,8 @@ namespace DofusBatteriesIncluded.DevTools;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Dofus.exe")]
-public class Plugin : BasePlugin
+[BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
+class DevToolsPlugin : BasePlugin
 {
     public static new ManualLogSource Log { get; private set; }
 
@@ -15,6 +16,6 @@ public class Plugin : BasePlugin
     {
         Log = base.Log;
         AddComponent<EnableQuantumConsole>();
-        AddComponent<LogSceneChange>();
+        AddComponent<LogSceneLoaded>();
     }
 }
