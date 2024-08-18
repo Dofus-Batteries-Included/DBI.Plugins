@@ -17,15 +17,16 @@ class CorePlugin : BasePlugin
     {
         BindConfiguration();
 
-        DofusBatteriesIncluded.Enabled = _enabled.Value;
+        DBI.Enabled = _enabled.Value;
 
-        if (!DofusBatteriesIncluded.Enabled)
+        if (!DBI.Enabled)
         {
             Log.LogInfo("Dofus Batteries Included is disabled.");
             return;
         }
 
         AddComponent<DofusBatteriesIncludedCore>();
+        AddComponent<DofusBatteriesIncludedCommands>();
     }
 
     void BindConfiguration()

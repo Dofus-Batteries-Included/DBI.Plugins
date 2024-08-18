@@ -5,12 +5,12 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace DofusBatteriesIncluded.Core.Logging;
 
-public class BepInExLogger : ILogger
+public class DofusBatteriesIncludedLogger : ILogger
 {
     readonly ManualLogSource _log;
     readonly string _name;
 
-    public BepInExLogger(ManualLogSource log, string name = null)
+    public DofusBatteriesIncludedLogger(ManualLogSource log, string name = null)
     {
         _log = log;
         _name = name;

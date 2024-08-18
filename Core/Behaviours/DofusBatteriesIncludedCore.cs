@@ -3,13 +3,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Logger = DofusBatteriesIncluded.Core.Logging.Logger;
 
 namespace DofusBatteriesIncluded.Core.Behaviours;
 
 public class DofusBatteriesIncludedCore : MonoBehaviour
 {
-    static readonly ILogger Log = Logger.Create<DofusBatteriesIncludedCore>();
+    static readonly ILogger Log = DBI.Logging.Create<DofusBatteriesIncludedCore>();
 
     void Awake() => SceneManager.add_sceneLoaded((UnityAction<Scene, LoadSceneMode>)OnSceneChanged);
 

@@ -27,8 +27,14 @@
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>..\Interop\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule">
+            <HintPath>..\Interop\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
         <Reference Include="Il2Cppmscorlib">
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
+        </Reference>
+        <Reference Include="QFSW.QC">
+            <HintPath>..\Interop\QFSW.QC.dll</HintPath>
         </Reference>
     </ItemGroup>
 </Project>
