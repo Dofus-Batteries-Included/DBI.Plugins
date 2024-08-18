@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using DofusBatteriesIncluded.DevTools.Behaviours;
 
@@ -10,11 +9,14 @@ namespace DofusBatteriesIncluded.DevTools;
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
 class DevToolsPlugin : BasePlugin
 {
-    public static new ManualLogSource Log { get; private set; }
-
     public override void Load()
     {
-        Log = base.Log;
+        if (!Core.DofusBatteriesIncluded.Enabled)
+        {
+            Log.LogInfo("Dofus Batteries Included is disabled.");
+            return;
+        }
+
         AddComponent<EnableQuantumConsole>();
         AddComponent<LogSceneLoaded>();
     }

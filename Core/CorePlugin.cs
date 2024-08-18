@@ -1,6 +1,8 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using DofusBatteriesIncluded.Core.Behaviours;
+using Il2CppSystem.IO;
 
 namespace DofusBatteriesIncluded.Core;
 
@@ -8,5 +10,27 @@ namespace DofusBatteriesIncluded.Core;
 [BepInProcess("Dofus.exe")]
 class CorePlugin : BasePlugin
 {
-    public override void Load() => AddComponent<DofusBatteriesIncludedCore>();
+    ConfigFile _configFile;
+    ConfigEntry<bool> _enabled;
+
+    public override void Load()
+    {
+        BindConfiguration();
+
+        DofusBatteriesIncluded.Enabled = _enabled.Value;
+
+        if (!DofusBatteriesIncluded.Enabled)
+        {
+            Log.LogInfo("Dofus Batteries Included is disabled.");
+            return;
+        }
+
+        AddComponent<DofusBatteriesIncludedCore>();
+    }
+
+    void BindConfiguration()
+    {
+        _configFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "DofusBatteriesIncluded.cfg"), true);
+        _enabled = _configFile.Bind("General", "Enabled", true, "Enable or disable all Dofus Batteries Included plugins.");
+    }
 }
