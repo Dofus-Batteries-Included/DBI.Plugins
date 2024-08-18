@@ -6,7 +6,7 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
-namespace DofusBatteriesIncluded.Interoperability;
+namespace DofusBatteriesIncluded.Common;
 
 public static class Helpers
 {

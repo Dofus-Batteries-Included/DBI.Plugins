@@ -1,6 +1,6 @@
 ﻿using QFSW.QC;
 using UnityEngine;
-using Helpers = DofusBatteriesIncluded.Interoperability.Helpers;
+using Helpers = DofusBatteriesIncluded.Common.Helpers;
 using Input = UnityEngine.Input;
 
 namespace DofusBatteriesIncluded.DevTools.Behaviours;

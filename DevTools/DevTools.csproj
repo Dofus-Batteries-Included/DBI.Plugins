@@ -58,7 +58,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Interoperability\Interoperability.csproj" />
+      <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
     
     <PropertyGroup>

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <AssemblyName>DofusBatteriesIncluded.Interoperability</AssemblyName>
+        <AssemblyName>DofusBatteriesIncluded.Core</AssemblyName>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <RestoreAdditionalProjectSources>
@@ -10,7 +10,7 @@
             https://nuget.bepinex.dev/v3/index.json;
             https://nuget.samboy.dev/v3/index.json
         </RestoreAdditionalProjectSources>
-        <RootNamespace>DofusBatteriesIncluded.Interoperability</RootNamespace>
+        <RootNamespace>DofusBatteriesIncluded.Core</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

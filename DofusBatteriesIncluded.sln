@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interoperability", "Interoperability\Interoperability.csproj", "{48FC3E9E-CEC8-4FAB-8675-580E8704BC01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{48FC3E9E-CEC8-4FAB-8675-580E8704BC01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools", "DevTools\DevTools.csproj", "{29DFC857-3C5C-4FB2-82C2-1057A622EDAF}"
 EndProject
