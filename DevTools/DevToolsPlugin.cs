@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using BepInEx.Unity.IL2CPP;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.DevTools.Behaviours;
 using Il2CppSystem;
@@ -12,16 +11,10 @@ namespace DofusBatteriesIncluded.DevTools;
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Dofus.exe")]
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
-class DevToolsPlugin : BasePlugin
+class DevToolsPlugin : DBIPlugin
 {
-    public override void Load()
+    protected override void Start()
     {
-        if (!DBI.Enabled)
-        {
-            Log.LogInfo("Dofus Batteries Included is disabled.");
-            return;
-        }
-
         AddComponent<LogSceneLoaded>();
 
         DBI.Commands.Register("dump-all-gameobjects", KeyCode.F9, (Action)DumpAllGameObjects);

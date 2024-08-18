@@ -8,10 +8,10 @@ namespace DofusBatteriesIncluded.Core;
 [BepInProcess("Dofus.exe")]
 class CorePlugin : DBIPlugin
 {
-    public override void Load()
-    {
-        base.Load();
+    public override bool CanBeDisabled => false;
 
+    protected override void Start()
+    {
         AddComponent<DofusBatteriesIncludedCore>();
         AddComponent<DofusBatteriesIncludedCommands>();
         ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();

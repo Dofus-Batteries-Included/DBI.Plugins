@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
+using DofusBatteriesIncluded.Core.Configuration;
 using Il2CppSystem.IO;
 
 namespace DofusBatteriesIncluded.Core;
@@ -18,18 +19,18 @@ public class DBIConfiguration
         _bepinexConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, fileName), true);
     }
 
-    public T Bind<T>(string category, string key, T defaultValue, string description) => Bind(category, key, defaultValue, new ConfigDescription(description));
+    public ConfigurationEntryBuilder<T> Configure<T>(string category, string key, T defaultValue) => new(category, key, defaultValue);
 
-    public T Bind<T>(string category, string key, T defaultValue, ConfigDescription description = null)
+    internal T Bind<T>(ConfigurationEntryBuilder<T> builder)
     {
-        Entry<T> entry = Get<T>(category, key);
+        Entry<T> entry = Get<T>(builder.Category, builder.Key);
         if (entry != null)
         {
             return entry.Value;
         }
 
-        ConfigEntry<T> bepinexEntry = _bepinexConfigFile.Bind(category, key, defaultValue, description);
-        entry = new Entry<T>(category, key, defaultValue, bepinexEntry);
+        ConfigEntry<T> bepinexEntry = _bepinexConfigFile.Bind(builder.Category, builder.Key, builder.DefaultValue, builder.Description);
+        entry = new Entry<T>(builder.Category, builder.Key, builder.DefaultValue, bepinexEntry) { Hidden = builder.Hidden };
         _entries.Add(entry);
 
         return entry.Value;
@@ -63,6 +64,7 @@ public class DBIConfiguration
         public string Key { get; }
         public Type Type { get; }
         public abstract ConfigDescription Description { get; }
+        public bool Hidden { get; set; }
     }
 
     public class Entry<T> : Entry

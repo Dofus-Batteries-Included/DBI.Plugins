@@ -4,8 +4,8 @@ using System.Linq;
 using Core.Engine.Options;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
-using Microsoft.Extensions.Logging;
 using UnityEngine.UIElements;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DofusBatteriesIncluded.Core.Behaviours;
 
@@ -82,9 +82,53 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         container.Add(rightScrollView);
     }
 
+    VisualElement CreateGeneralTab()
+    {
+        VisualElement visualElement = new();
+        visualElement.style.display = DisplayStyle.None;
+
+        OptionCategory pluginsHeader = new();
+        pluginsHeader.Init(new CategoryData { name = "Plugins" }, false);
+        visualElement.Add(pluginsHeader);
+
+        SectionHeader label = new();
+        label.style.width = new Length(100, Length.Unit.Percent);
+        label.title = "Enabling or disabling a plugin requires a restart of the game.";
+        label.isActivated = false;
+        label.isOpen = true;
+        label.isSelected = false;
+        label.canBeOpened = false;
+        label.noBorder = true;
+        visualElement.Add(label);
+
+        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        {
+            Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
+
+            DBIConfiguration.Entry<bool> enabledConfigurationEntry = DBI.Configuration.Get<bool>(plugin.Name, "Enabled");
+            if (enabledConfigurationEntry != null)
+            {
+                BoolOption data = CreateOptionData(enabledConfigurationEntry);
+                options.Add(new IOptionData(data.Pointer));
+            }
+
+            OptionCategory category = new();
+            category.Init(
+                new CategoryData
+                {
+                    name = $"{plugin.Name} v{plugin.Version}", options = options, canBeOpened = false, notResettable = options.Count == 0, noAccountNeeded = true
+                },
+                true
+            );
+            visualElement.Add(category);
+        }
+
+        return visualElement;
+    }
+
     VisualElement CreateSettingsTab()
     {
-        DBIConfiguration.Entry[] entries = DBI.Configuration.GetAll().ToArray();
+        DBIConfiguration.Entry[] entries = DBI.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
         IEnumerable<string> categories = entries.Select(e => e.Category).Distinct();
 
         VisualElement visualElement = new();
@@ -100,12 +144,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
                 switch (entry)
                 {
                     case DBIConfiguration.Entry<bool> boolEntry:
-                        BoolOption option = new(null, new Option<bool>(boolEntry.DefaultValue) { m_value = boolEntry.Value })
-                        {
-                            text = entry.Key,
-                            description = new DescriptionData { text = entry.Description.Description },
-                            valueChangedCallback = (Action<bool>)(newValue => DBI.Configuration.Set(entry.Category, entry.Key, newValue))
-                        };
+                        BoolOption option = CreateOptionData(boolEntry);
                         options.Add(new IOptionData(option.Pointer));
                         break;
                     default:
@@ -117,28 +156,6 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             c.Init(new CategoryData { name = category, options = options }, true);
 
             visualElement.Add(c);
-        }
-
-        return visualElement;
-    }
-
-    VisualElement CreateGeneralTab()
-    {
-        VisualElement visualElement = new();
-        visualElement.style.display = DisplayStyle.None;
-
-        OptionCategory pluginsHeader = new();
-        pluginsHeader.Init(new CategoryData { name = "Plugins" }, false);
-        visualElement.Add(pluginsHeader);
-
-        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
-        {
-            OptionCategory category = new();
-            category.Init(
-                new CategoryData { name = $"{plugin.Name} v{plugin.Version}", canBeOpened = false, notResettable = true, noAccountNeeded = true, isSubCategory = true },
-                true
-            );
-            visualElement.Add(category);
         }
 
         return visualElement;
@@ -201,6 +218,17 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             Category.Settings => _settingsTab,
             _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
         };
+
+    static BoolOption CreateOptionData(DBIConfiguration.Entry<bool> boolEntry)
+    {
+        BoolOption option = new(null, new Option<bool>(boolEntry.DefaultValue) { m_value = boolEntry.Value })
+        {
+            text = boolEntry.Key,
+            description = new DescriptionData { text = boolEntry.Description.Description },
+            valueChangedCallback = (Action<bool>)(newValue => DBI.Configuration.Set(boolEntry.Category, boolEntry.Key, newValue))
+        };
+        return option;
+    }
 
     public enum Category
     {

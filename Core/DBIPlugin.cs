@@ -2,12 +2,15 @@
 using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.Core;
 
 // ReSharper disable once InconsistentNaming
 public abstract class DBIPlugin : BasePlugin
 {
+    protected new ILogger Log { get; } = DBI.Logging.Create(typeof(DBIPlugin));
+
     public DBIPlugin()
     {
         BepInPlugin pluginAttribute = GetType().GetCustomAttribute<BepInPlugin>();
@@ -25,16 +28,31 @@ public abstract class DBIPlugin : BasePlugin
     public string Name { get; }
     public string Version { get; }
 
-    public override void Load()
-    {
-        DBI.Enabled = DBI.Configuration.Bind("General", "Master toggle", true, "Enable or disable all Dofus Batteries Included plugins.");
+    public virtual bool CanBeDisabled => true;
 
+    public override sealed void Load()
+    {
         if (!DBI.Enabled)
         {
-            Log.LogInfo("Dofus Batteries Included is disabled.");
+            Log.LogInformation("Dofus Batteries Included is disabled.");
             return;
         }
 
         DBI.Plugins.Register(this);
+
+        if (CanBeDisabled)
+        {
+            bool enabled = DBI.Configuration.Configure(Name, "Enabled", true).WithDescription($"Enable plugin {Name}").Hide().Bind();
+
+            if (!enabled)
+            {
+                Log.LogInformation("{Name} is disabled.", Name);
+                return;
+            }
+        }
+
+        Start();
     }
+
+    protected abstract void Start();
 }
