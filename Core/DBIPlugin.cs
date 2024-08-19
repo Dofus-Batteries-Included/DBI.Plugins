@@ -3,13 +3,14 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using Microsoft.Extensions.Logging;
+using Task = System.Threading.Tasks.Task;
 
 namespace DofusBatteriesIncluded.Core;
 
 // ReSharper disable once InconsistentNaming
 public abstract class DBIPlugin : BasePlugin
 {
-    protected new ILogger Log { get; } = DBI.Logging.Create(typeof(DBIPlugin));
+    protected new ILogger Log { get; } = DBI.Logging.Create(MethodBase.GetCurrentMethod()!.DeclaringType);
 
     public DBIPlugin()
     {
@@ -51,8 +52,15 @@ public abstract class DBIPlugin : BasePlugin
             }
         }
 
-        Start();
+        try
+        {
+            StartAsync().GetAwaiter().GetResult();
+        }
+        catch (Exception exn)
+        {
+            Log.LogError(exn, "Unexpected error while starting plugin {Name}. You should restart the game.", Name);
+        }
     }
 
-    protected abstract void Start();
+    protected abstract Task StartAsync();
 }

@@ -1,17 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DofusBatteriesIncluded.Core</AssemblyName>
-        <Product>DBI.Core</Product>
-        <Description>Base plugin necessary for all Dofus Batteries Included plugins.</Description>
-        <RootNamespace>DofusBatteriesIncluded.Core</RootNamespace>
+        <AssemblyName>DofusBatteriesIncluded.TreasureSolver</AssemblyName>
+        <Product>DBI.TreasureSolver</Product>
+        <Description>Display treasure hunt solutions on screen.</Description>
+        <RootNamespace>DofusBatteriesIncluded.TreasureSolver</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
     </ItemGroup>
-    
+
+    <ItemGroup>
+      <None Update="Resources\dofuspourlesnoobs_clues.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Core\Core.csproj" />
+    </ItemGroup>
+
     <ItemGroup>
         <Reference Include="UnityEngine">
             <HintPath>..\Interop\UnityEngine.dll</HintPath>
@@ -35,4 +45,5 @@
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
         </Reference>
     </ItemGroup>
+    
 </Project>

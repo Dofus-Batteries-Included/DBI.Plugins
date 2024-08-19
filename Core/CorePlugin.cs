@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Threading.Tasks;
+using BepInEx;
 using DofusBatteriesIncluded.Core.Behaviours;
 using Il2CppInterop.Runtime.Injection;
 
@@ -10,7 +11,7 @@ class CorePlugin : DBIPlugin
 {
     public override bool CanBeDisabled => false;
 
-    protected override void Start()
+    protected override Task StartAsync()
     {
         AddComponent<DofusBatteriesIncludedCore>();
         AddComponent<DofusBatteriesIncludedCommands>();
@@ -19,5 +20,7 @@ class CorePlugin : DBIPlugin
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
         menu.AddButton("Dofus Batteries Included", evt => window.Toggle());
+
+        return Task.CompletedTask;
     }
 }
