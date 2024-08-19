@@ -41,6 +41,9 @@
         <Reference Include="Core">
             <HintPath>..\Interop\Core.dll</HintPath>
         </Reference>
+        <Reference Include="Ankama.Dofus.Core.DataCenter">
+            <HintPath>..\Interop\Ankama.Dofus.Core.DataCenter.dll</HintPath>
+        </Reference>
         <Reference Include="Il2Cppmscorlib">
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
         </Reference>

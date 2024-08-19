@@ -10,7 +10,7 @@ namespace DofusBatteriesIncluded.Core;
 // ReSharper disable once InconsistentNaming
 public abstract class DBIPlugin : BasePlugin
 {
-    protected new ILogger Log { get; } = DBI.Logging.Create(MethodBase.GetCurrentMethod()!.DeclaringType);
+    protected new ILogger Log { get; }
 
     public DBIPlugin()
     {
@@ -20,6 +20,7 @@ public abstract class DBIPlugin : BasePlugin
             throw new InvalidOperationException("Expected plugin to have a [BepInPlugin] attrribute.");
         }
 
+        Log = DBI.Logging.Create(GetType());
         Id = pluginAttribute.GUID;
         Name = pluginAttribute.Name;
         Version = pluginAttribute.Version?.ToString();
@@ -58,9 +59,24 @@ public abstract class DBIPlugin : BasePlugin
         }
         catch (Exception exn)
         {
-            Log.LogError(exn, "Unexpected error while starting plugin {Name}. You should restart the game.", Name);
+            Log.LogError(exn, "Unexpected error while starting plugin {Name}: {Message}.\nYou should disable the plugin and restart the game.", Name, exn.Message);
         }
     }
 
-    protected abstract Task StartAsync();
+    public override sealed bool Unload()
+    {
+        try
+        {
+            StopAsync().GetAwaiter().GetResult();
+        }
+        catch (Exception exn)
+        {
+            Log.LogError(exn, "Unexpected error while stopping plugin {Name}: {Message}.\nYou should disable the plugin and restart the game.", Name, exn.Message);
+        }
+
+        return base.Unload();
+    }
+
+    protected virtual Task StartAsync() => Task.CompletedTask;
+    protected virtual Task StopAsync() => Task.CompletedTask;
 }

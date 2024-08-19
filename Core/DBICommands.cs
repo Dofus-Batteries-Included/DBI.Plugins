@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Il2CppSystem;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -15,7 +15,7 @@ public class DBICommands
 
     public void Register(string name, KeyCode key, Action action) => Register(name, null, key, action);
 
-    public void Register(string name, string description, KeyCode key, Action action)
+    public void Register(string name, string description, KeyCode key, Il2CppSystem.Action action)
     {
         Command command = new(name, description, key, action);
         if (!Commands.TryGetValue(key, out List<Command> commands))
@@ -34,7 +34,7 @@ public class DBICommands
 
     public struct Command
     {
-        public Command(string name, string description, KeyCode key, Action action)
+        public Command(string name, string description, KeyCode key, Il2CppSystem.Action action)
         {
             Name = name;
             Description = description;
@@ -45,7 +45,7 @@ public class DBICommands
         public string Name { get; }
         public string Description { get; }
         public KeyCode Key { get; }
-        public Action Action { get; }
+        public Il2CppSystem.Action Action { get; }
 
         public override string ToString() => $"{Name} ({Key.ToString()})";
     }

@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreasureSolver", "TreasureS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TreasureSolver", "TreasureSolver", "{62D6C858-7864-42F0-BBEB-1D488F8818C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.TreasureSolver", "Test.TreasureSolver\Test.TreasureSolver.csproj", "{FE295DA8-193D-456F-9BD0-403E89FAEC9A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,13 +20,8 @@ Global
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE295DA8-193D-456F-9BD0-403E89FAEC9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE295DA8-193D-456F-9BD0-403E89FAEC9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE295DA8-193D-456F-9BD0-403E89FAEC9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE295DA8-193D-456F-9BD0-403E89FAEC9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB} = {62D6C858-7864-42F0-BBEB-1D488F8818C6}
-		{FE295DA8-193D-456F-9BD0-403E89FAEC9A} = {62D6C858-7864-42F0-BBEB-1D488F8818C6}
 	EndGlobalSection
 EndGlobal

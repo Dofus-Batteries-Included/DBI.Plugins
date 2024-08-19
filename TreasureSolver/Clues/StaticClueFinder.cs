@@ -7,9 +7,9 @@ namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public class StaticClueFinder : IClueFinder
 {
-    public readonly Dictionary<Position, int[]> Clues;
+    public readonly Dictionary<Position, IReadOnlyCollection<int>> Clues;
 
-    public StaticClueFinder(Dictionary<Position, int[]> clues)
+    public StaticClueFinder(Dictionary<Position, IReadOnlyCollection<int>> clues)
     {
         Clues = clues;
     }
@@ -18,7 +18,7 @@ public class StaticClueFinder : IClueFinder
     {
         foreach (Position position in GetPositionsInDirection(start, direction, maxDistance))
         {
-            if (!Clues.TryGetValue(position, out int[] clues) || !clues.Contains(clueId))
+            if (!Clues.TryGetValue(position, out IReadOnlyCollection<int> clues) || !clues.Contains(clueId))
             {
                 continue;
             }
