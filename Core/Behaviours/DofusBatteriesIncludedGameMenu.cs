@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Components.Tooltips;
 using Core.UILogic.Components.Tooltips.Builder;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
+using CancellationToken = Il2CppSystem.Threading.CancellationToken;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DofusBatteriesIncluded.Core.Behaviours;
@@ -13,6 +17,30 @@ namespace DofusBatteriesIncluded.Core.Behaviours;
 public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 {
     static readonly ILogger Log = DBI.Logging.Create<DofusBatteriesIncludedGameMenu>();
+    readonly MethodInfo _tooltipRootUseBuilderMethod = typeof(TooltipRoot).GetProperty(nameof(TooltipRoot.m_tooltipService), BindingFlags.Instance | BindingFlags.Public)
+        ?.PropertyType.GetMethods()
+        .FirstOrDefault(
+            m =>
+            {
+                if (m.ReturnType != typeof(string))
+                {
+                    return false;
+                }
+
+                ParameterInfo[] parameters = m.GetParameters();
+                if (parameters.Length != 2)
+                {
+                    return false;
+                }
+
+                if (parameters[0].ParameterType != typeof(IBaseTooltipBuilder) || parameters[1].ParameterType != typeof(CancellationToken))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        );
 
     UIDocument _uiDocument;
     DofusVisualElement _gameMenuContainer;
@@ -22,6 +50,14 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
     readonly List<ButtonInstance> _buttons = [];
 
     public void AddButton(string buttonName, Action<MouseUpEvent> callback) => _toAdd.Add(new ButtonToAdd(buttonName, callback));
+
+    void Start()
+    {
+        if (_tooltipRootUseBuilderMethod == null)
+        {
+            Log.LogWarning("Could not find method to assign builder to Tooltip Root. Tooltips won't work.");
+        }
+    }
 
     void Update()
     {
@@ -123,17 +159,24 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
         button.SetGapValue(10);
         _gameMenuContainer.Insert(0, button);
 
-        TextTooltipBuilder tooltipBuilder = new(name, button);
+        if (_tooltipRootUseBuilderMethod != null)
+        {
+            button.RegisterCallback<MouseEnterEvent>(
+                (Action<MouseEnterEvent>)(evt =>
+                {
+                    if (_tooltipRoot?.m_tooltipService == null)
+                    {
+                        return;
+                    }
 
-        button.RegisterCallback<MouseEnterEvent>(
-            (Action<MouseEnterEvent>)(evt =>
-            {
-                IBaseTooltipBuilder builder = new(tooltipBuilder.Pointer);
-                _tooltipRoot?.m_tooltipService.bbxr(builder);
-                _tooltipRoot?.Show();
-            })
-        );
-        button.RegisterCallback<MouseOutEvent>((Action<MouseOutEvent>)(evt => _tooltipRoot?.Hide()));
+                    TextTooltipBuilder tooltipBuilder = new(name, button);
+                    IBaseTooltipBuilder builder = new(tooltipBuilder.Pointer);
+                    _tooltipRootUseBuilderMethod.Invoke(_tooltipRoot.m_tooltipService, [builder, CancellationToken.None]);
+                    _tooltipRoot?.Show();
+                })
+            );
+            button.RegisterCallback<MouseOutEvent>((Action<MouseOutEvent>)(evt => _tooltipRoot?.Hide()));
+        }
 
         Log.LogInformation("Button {Name} added to game menu.", name);
         return new ButtonInstance(name, action, button);
