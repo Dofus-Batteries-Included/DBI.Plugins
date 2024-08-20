@@ -2,6 +2,7 @@
 using Core.UILogic.Components.Figma;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Action = Il2CppSystem.Action;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -14,6 +15,7 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
 
     UIDocument _uiDocument;
     WindowFigma _window;
+    bool _mainSceneLoaded;
 
     public bool IsOpen { get; private set; }
     protected virtual string Name => "Window Header";
@@ -71,8 +73,28 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
     protected virtual void OnOpen() { }
     protected virtual void OnClose() { }
 
+    void Start()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        if (IsMainScene(scene))
+        {
+            _mainSceneLoaded = true;
+        }
+        else
+        {
+            _mainSceneLoaded = false;
+            SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)OnSceneLoaded);
+            Log.LogInformation("Window {Name} waiting for main scene to load...", Name);
+        }
+    }
+
     void Update()
     {
+        if (!_mainSceneLoaded)
+        {
+            return;
+        }
+
         TryLoadUiDocument();
         TryBuildWindow();
     }
@@ -122,4 +144,14 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
         _window.style.top = (_window.parent.rect.m_Height - _window.rect.m_Height) / 2;
         _window.parent.UnregisterCallback<GeometryChangedEvent>((Action<GeometryChangedEvent>)PositionWindow);
     }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode _)
+    {
+        if (IsMainScene(scene))
+        {
+            _mainSceneLoaded = true;
+        }
+    }
+
+    static bool IsMainScene(Scene scene) => scene.name == "DofusUnity";
 }
