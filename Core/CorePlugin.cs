@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core.Behaviours;
+using DofusBatteriesIncluded.Core.Protocol;
+using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 
 namespace DofusBatteriesIncluded.Core;
@@ -20,6 +22,8 @@ class CorePlugin : DBIPlugin
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
         menu.AddButton("Dofus Batteries Included", evt => window.Toggle());
+
+        Harmony.CreateAndPatchAll(typeof(Messaging));
 
         return Task.CompletedTask;
     }

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using BepInEx;
+using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using DofusBatteriesIncluded.Core;
+using DofusBatteriesIncluded.Core.Protocol;
 using DofusBatteriesIncluded.TreasureSolver.Behaviours;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
@@ -24,6 +26,15 @@ class TreasureHuntSolverPlugin : DBIPlugin
         string basePath = directory == null ? "" : Path.GetFullPath(directory);
         string path = Path.Combine(basePath, "Resources", "dofuspourlesnoobs_clues.json");
         ClueFinders.RegisterFinder("Dofus pour les noobs (offline)", async () => await LoadDplbClueFinder(path));
+
+        MessageListener<TreasureHuntEvent> listener = DBI.Messaging.GetListener<TreasureHuntEvent>();
+        listener.MessageReceived += (_, message) => Log.LogInformation(
+            "Treasure hunt: checkpoint {Checkpoint}/{TotalCheckpoints}, step {Step}/{TotalSteps}",
+            message.CurrentCheckPoint,
+            message.TotalCheckPoint,
+            message.KnownSteps.Count,
+            message.TotalStepCount
+        );
     }
 
     async Task<DofusPourLesNoobsStaticClueFinder> LoadDplbClueFinder(string path)
