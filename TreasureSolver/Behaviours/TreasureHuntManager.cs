@@ -130,7 +130,19 @@ public class TreasureHuntManager : MonoBehaviour
     static bool TryMarkNextPosition(TreasureHuntEvent message, Position position)
     {
         Log.LogInformation("Found next clue at {Position}.", position);
-        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, $"[{position.X},{position.Y}]");
+
+        string stepMessage = $"[{position.X},{position.Y}]";
+
+        if (DBI.Player.State != null)
+        {
+            int distance = position.DistanceTo(DBI.Player.State.CurrentMapPosition);
+            if (distance > 0)
+            {
+                stepMessage += $" ({distance} maps)";
+            }
+        }
+
+        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, stepMessage);
     }
 
     static bool TryMarkUnknownPosition(TreasureHuntEvent message)

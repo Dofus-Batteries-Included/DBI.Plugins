@@ -14,4 +14,5 @@ public static class DBI
     public static DBILogging Logging { get; } = new();
     public static DBICommands Commands { get; } = new();
     public static DBIMessaging Messaging { get; } = new();
+    public static DBIPlayer Player { get; } = new();
 }

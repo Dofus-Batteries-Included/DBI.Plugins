@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core.Behaviours;
+using DofusBatteriesIncluded.Core.Player;
 using DofusBatteriesIncluded.Core.Protocol;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
@@ -24,6 +25,9 @@ class CorePlugin : DBIPlugin
         menu.AddButton("Dofus Batteries Included", evt => window.Toggle());
 
         Harmony.CreateAndPatchAll(typeof(Messaging));
+
+        DBI.Messaging.RegisterListener<UpdateCurrentPlayer>();
+        DBI.Messaging.RegisterListener<UpdateCurrentPlayerMap>();
 
         return Task.CompletedTask;
     }
