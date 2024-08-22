@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using DofusBatteriesIncluded.Core;
+using DofusBatteriesIncluded.Core.Extensions;
 using DofusBatteriesIncluded.Core.Maps;
 using Microsoft.Extensions.Logging;
 
@@ -29,10 +30,13 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
         Dictionary<int, int> dplbClueToGameClueMapping = new();
         foreach (PointOfInterest gameClue in gamePois)
         {
-            ClueNames dplbClue = parsedFile.Clues.FirstOrDefault(c => gameClue.name == c.HintFr || gameClue.name == c.HintEn || gameClue.name == c.HintEs);
+            string nameWithoutAccent = gameClue.name.RemoveAccents();
+            ClueNames dplbClue = parsedFile.Clues.FirstOrDefault(
+                c => nameWithoutAccent == c.HintFr.RemoveAccents() || nameWithoutAccent == c.HintEn.RemoveAccents() || nameWithoutAccent == c.HintEs.RemoveAccents()
+            );
             if (dplbClue is null)
             {
-                Log.LogWarning("Could not find clue {Name} ({Id}) in DPLB file.", gameClue.name, gameClue.id);
+                Log.LogWarning("Could not find clue {Name} ({Id}) in DPLB file.", nameWithoutAccent, gameClue.id);
                 continue;
             }
 
