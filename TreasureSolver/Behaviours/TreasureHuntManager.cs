@@ -52,6 +52,11 @@ public class TreasureHuntManager : MonoBehaviour
             // also clear it so that event handling only has to set fields properly
             if (TreasureHuntWindowAccessor.TryClear())
             {
+                if (lastEvent == null || lastEvent.CurrentCheckPoint == lastEvent.TotalCheckPoint || lastEvent.Flags.Count == lastEvent.TotalStepCount)
+                {
+                    yield break;
+                }
+
                 IReadOnlyList<Position> flags = GetKnownPoiPositions(lastEvent);
                 Position lastKnownCoord = flags.Count == 0 ? GetMapPosition(lastEvent.StartMapId) : flags[^1];
                 TreasureHuntEvent.Types.TreasureHuntStep nextStep = GetNextStep(lastEvent);
