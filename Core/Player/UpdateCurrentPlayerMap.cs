@@ -1,17 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
-using Core.DataCenter;
-using DofusBatteriesIncluded.Core.Maps;
 using DofusBatteriesIncluded.Core.Protocol;
-using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.Core.Player;
 
 public class UpdateCurrentPlayerMap : IMessageListener<MapCurrentEvent>, IMessageListener<MapMovementEvent>
 {
-    static readonly ILogger Log = DBI.Logging.Create<UpdateCurrentPlayerMap>();
-
     public Task HandleAsync(MapCurrentEvent message)
     {
         if (!IsMessageForCurrentPlayer(message))
@@ -19,10 +14,7 @@ public class UpdateCurrentPlayerMap : IMessageListener<MapCurrentEvent>, IMessag
             return Task.CompletedTask;
         }
 
-        DBI.Player.State.CurrentMapId = message.MapId;
-        DBI.Player.State.CurrentMapPosition = DataCenterModule.mapPositionsRoot.GetMapPositionById(message.MapId).GetPosition();
-
-        Log.LogDebug("Current player changed map: {Position}", DBI.Player.State.CurrentMapPosition);
+        DBI.Player.State.SetCurrentMap(message.MapId);
 
         return Task.CompletedTask;
     }
@@ -34,9 +26,7 @@ public class UpdateCurrentPlayerMap : IMessageListener<MapCurrentEvent>, IMessag
             return Task.CompletedTask;
         }
 
-        DBI.Player.State.CurrentCellId = message.Cells.array.Last(c => c != default);
-
-        Log.LogDebug("Current player moved, new cell: {Position}", DBI.Player.State.CurrentCellId);
+        DBI.Player.State.SetCurrentCellId(message.Cells.array.Last(c => c != default));
 
         return Task.CompletedTask;
     }

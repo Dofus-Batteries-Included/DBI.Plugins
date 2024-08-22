@@ -22,7 +22,9 @@ public class TreasureHuntManager : MonoBehaviour
     static readonly ILogger Log = DBI.Logging.Create<TreasureHuntManager>();
 
     static TreasureHuntManager _instance;
+    TreasureHuntEvent _lastEvent;
     Coroutine _coroutine;
+    bool _subscribedToMapChanged;
 
     public static void SetLastEvent(TreasureHuntEvent lastEvent)
     {
@@ -36,14 +38,29 @@ public class TreasureHuntManager : MonoBehaviour
             _instance.StopCoroutine(_instance._coroutine);
         }
 
-        _instance._coroutine = _instance.StartCoroutine(HandleEvent(lastEvent).WrapToIl2Cpp());
+        _instance._lastEvent = lastEvent;
+        _instance._coroutine = _instance.StartCoroutine(_instance.HandleEvent(lastEvent).WrapToIl2Cpp());
     }
 
     public static void Finish() => SetLastEvent(null);
 
-    void Awake() => _instance = this;
+    void Awake()
+    {
+        _instance = this;
 
-    static IEnumerator HandleEvent(TreasureHuntEvent lastEvent)
+        DBI.Player.PlayerChanged += (_, state) =>
+        {
+            state.MapChanged += (_, _) =>
+            {
+                if (_lastEvent != null)
+                {
+                    SetLastEvent(_lastEvent);
+                }
+            };
+        };
+    }
+
+    IEnumerator HandleEvent(TreasureHuntEvent lastEvent)
     {
         int tryCount = 0;
         while (tryCount < 100)
