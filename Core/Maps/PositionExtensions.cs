@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Models;
+namespace DofusBatteriesIncluded.Core.Maps;
 
-static class PositionExtensions
+public static class PositionExtensions
 {
     public static Position MoveInDirection(this Position start, Direction direction, int distance) =>
         direction switch

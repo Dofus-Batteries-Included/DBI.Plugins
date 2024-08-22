@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.TreasureSolver.Models;
+using DofusBatteriesIncluded.Core.Maps;
 using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;

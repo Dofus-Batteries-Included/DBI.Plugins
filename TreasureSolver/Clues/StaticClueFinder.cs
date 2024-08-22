@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DofusBatteriesIncluded.TreasureSolver.Models;
+using DofusBatteriesIncluded.Core.Maps;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
