@@ -38,15 +38,14 @@ public static class TreasureHuntWindowAccessor
 
         VisualElement step = steps._items[stepIndex];
 
-        VisualElement lastChild = step.m_Children._items.LastOrDefault(i => i != null);
-        if (lastChild != null)
-        {
-            lastChild.style.paddingBottom = 0;
-        }
-
         DofusVisualElement additionalTextContainer = step.Q<DofusVisualElement>(AdditionalTextContainerName);
         if (additionalTextContainer == null)
         {
+            VisualElement lastChild = step.m_Children._items.LastOrDefault(i => i != null);
+            if (lastChild != null)
+            {
+                lastChild.style.paddingBottom = 0;
+            }
 
             additionalTextContainer = CreateAdditionalTextContainer();
             step.Add(additionalTextContainer);
@@ -77,12 +76,6 @@ public static class TreasureHuntWindowAccessor
 
         foreach (VisualElement step in steps)
         {
-            VisualElement lastChild = step.m_Children._items.LastOrDefault(i => i != null);
-            if (lastChild != null)
-            {
-                lastChild.style.paddingBottom = 0;
-            }
-
             DofusVisualElement additionalTextContainer = step.Q<DofusVisualElement>(AdditionalTextContainerName);
             if (additionalTextContainer == null)
             {

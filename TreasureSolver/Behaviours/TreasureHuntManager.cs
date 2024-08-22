@@ -10,6 +10,7 @@ using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Coroutines;
 using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.Core.Maps.PathFinding;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
@@ -155,7 +156,11 @@ public class TreasureHuntManager : MonoBehaviour
             int distance = position.DistanceTo(DBI.Player.State.CurrentMapPosition);
             if (distance > 0)
             {
-                stepMessage += $" ({distance} maps)";
+                stepMessage += $" {distance} maps";
+            }
+            else
+            {
+                stepMessage += " reached destination";
             }
         }
 
