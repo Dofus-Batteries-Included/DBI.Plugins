@@ -31,7 +31,7 @@ public static class ClueFinders
             return null;
         }
 
-        return await entry.Factory.Invoke();
+        return await entry.GetInstance();
     }
 
     public static async Task<IClueFinder> GetDefaultFinder()
@@ -51,7 +51,7 @@ public static class ClueFinders
             return null;
         }
 
-        return await entry.Factory.Invoke();
+        return await entry.GetInstance();
     }
 
     public class Entry
@@ -64,5 +64,8 @@ public static class ClueFinders
 
         public string Name { get; }
         public Func<Task<IClueFinder>> Factory { get; }
+        public IClueFinder Instance { get; set; }
+
+        public async Task<IClueFinder> GetInstance() => Instance ??= await Factory.Invoke();
     }
 }

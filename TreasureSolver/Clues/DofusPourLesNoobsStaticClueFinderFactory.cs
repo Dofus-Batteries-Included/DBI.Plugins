@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.TreasureSolver.Models;
@@ -10,16 +11,18 @@ using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
-public class DofusPourLesNoobsStaticClueFinder : StaticClueFinder
+public static class DofusPourLesNoobsStaticClueFinderFactory
 {
-    static readonly ILogger Log = DBI.Logging.Create<DofusPourLesNoobsStaticClueFinder>();
+    static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsStaticClueFinderFactory));
 
-    DofusPourLesNoobsStaticClueFinder(Dictionary<Position, IReadOnlyCollection<int>> clues) : base(clues)
+    public static async Task<StaticClueFinder> Create(string dplbFilePath)
     {
-    }
+        List<PointOfInterest> gamePois = [];
+        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
+        {
+            gamePois.Add(poi);
+        }
 
-    public static async Task<DofusPourLesNoobsStaticClueFinder> Create(string dplbFilePath, IReadOnlyCollection<PointOfInterest> gamePois)
-    {
         await using FileStream stream = File.OpenRead(dplbFilePath);
         DPLBFile parsedFile = await JsonSerializer.DeserializeAsync<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -41,7 +44,7 @@ public class DofusPourLesNoobsStaticClueFinder : StaticClueFinder
             IReadOnlyCollection<int> (m) => m.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToHashSet()
         );
 
-        return new DofusPourLesNoobsStaticClueFinder(clues);
+        return new StaticClueFinder(clues);
     }
 
     // ReSharper disable once InconsistentNaming

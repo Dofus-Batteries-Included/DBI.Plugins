@@ -1,27 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace DofusBatteriesIncluded.Core.Protocol;
 
-public class MessageListener<T> : IDisposable
+public class MessageListener<T> : IMessageListener<T>
 {
     public event EventHandler<T> MessageReceived;
 
-    internal MessageListener()
+    public Task HandleAsync(T message)
     {
-        Messaging.MessageReceived += SendMessage;
-    }
-
-    public void Dispose()
-    {
-        Messaging.MessageReceived -= SendMessage;
-        GC.SuppressFinalize(this);
-    }
-
-    void SendMessage(object _, object message)
-    {
-        if (message is T value)
-        {
-            MessageReceived?.Invoke(this, value);
-        }
+        MessageReceived?.Invoke(this, message);
+        return Task.CompletedTask;
     }
 }

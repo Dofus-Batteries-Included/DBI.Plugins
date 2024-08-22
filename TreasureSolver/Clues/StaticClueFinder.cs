@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DofusBatteriesIncluded.TreasureSolver.Models;
 
@@ -33,14 +32,7 @@ public class StaticClueFinder : IClueFinder
     {
         for (int i = 1; i <= maxDistance; i++)
         {
-            yield return direction switch
-            {
-                Direction.Left => start with { X = start.X - i },
-                Direction.Right => start with { X = start.X + i },
-                Direction.Top => start with { Y = start.Y - i },
-                Direction.Bottom => start with { Y = start.Y + i },
-                _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
-            };
+            yield return start.MoveInDirection(direction, i);
         }
     }
 }

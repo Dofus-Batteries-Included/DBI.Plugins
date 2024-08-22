@@ -5,39 +5,35 @@ using Core.UILogic.Components.Figma;
 using Core.UILogic.UIConsts;
 using DofusBatteriesIncluded.Core;
 using Il2CppSystem.Collections.Generic;
-using UnityEngine;
+using Microsoft.Extensions.Logging;
 using UnityEngine.UIElements;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Behaviours;
+namespace DofusBatteriesIncluded.TreasureSolver;
 
-public class TreasureHuntWindowAccessor : MonoBehaviour
+public static class TreasureHuntWindowAccessor
 {
+    static readonly ILogger Log = DBI.Logging.Create(typeof(TreasureHuntWindowAccessor));
     const string AdditionalTextContainerName = "DBI_TreasureSolver_AdditionalText";
+    static VisualElement _treasureHuntWindow;
 
-    static TreasureHuntWindowAccessor _instance;
-    VisualElement _treasureHuntWindow;
+    public static bool TrySetStepAdditionalText(int stepIndex, string text) => SetStepAdditionalTextImpl(stepIndex, text);
+    public static bool TryHideStepAdditionalText(int stepIndex) => SetStepAdditionalTextImpl(stepIndex, null);
+    public static bool TryClear() => ClearImpl();
 
-    void Awake() => _instance = this;
-
-    public static void SetStepAdditionalText(int stepIndex, string text) => _instance.SetStepAdditionalTextImpl(stepIndex, text);
-    public static void HideStepAdditionalText(int stepIndex) => _instance.SetStepAdditionalTextImpl(stepIndex, null);
-
-    void SetStepAdditionalTextImpl(int stepIndex, string text)
+    static bool SetStepAdditionalTextImpl(int stepIndex, string text)
     {
-        if (_treasureHuntWindow == null)
+        if (!FetchWindow())
         {
-            _treasureHuntWindow = TryFindTreasureHuntWindow();
-
-            if (_treasureHuntWindow == null)
-            {
-                throw new InvalidOperationException("Treasure hunt window doesn't exist yet.");
-            }
+            Log.LogError("Treasure hunt window doesn't exist yet.");
+            return false;
         }
 
         List<VisualElement> steps = _treasureHuntWindow.Query("ItemSteps").ToList();
+
         if (steps.Count <= stepIndex)
         {
-            throw new InvalidOperationException($"Step {stepIndex} is out of range.");
+            Log.LogError("Step {Index} is out of range.", stepIndex);
+            return false;
         }
 
         VisualElement step = steps._items[stepIndex];
@@ -65,9 +61,52 @@ public class TreasureHuntWindowAccessor : MonoBehaviour
             additionalTextContainer.style.display = DisplayStyle.Flex;
             SetAdditionalText(additionalTextContainer, text);
         }
+
+        return true;
     }
 
-    VisualElement TryFindTreasureHuntWindow()
+    static bool ClearImpl()
+    {
+        if (!FetchWindow())
+        {
+            Log.LogError("Treasure hunt window doesn't exist yet.");
+            return false;
+        }
+
+        List<VisualElement> steps = _treasureHuntWindow.Query("ItemSteps").ToList();
+
+        foreach (VisualElement step in steps)
+        {
+            VisualElement lastChild = step.m_Children._items.LastOrDefault(i => i != null);
+            if (lastChild != null)
+            {
+                lastChild.style.paddingBottom = 0;
+            }
+
+            DofusVisualElement additionalTextContainer = step.Q<DofusVisualElement>(AdditionalTextContainerName);
+            if (additionalTextContainer == null)
+            {
+                continue;
+            }
+
+            additionalTextContainer.style.display = DisplayStyle.None;
+        }
+
+        return true;
+    }
+
+    static bool FetchWindow()
+    {
+        if (_treasureHuntWindow != null)
+        {
+            return true;
+        }
+
+        _treasureHuntWindow = TryFindTreasureHuntWindow();
+        return _treasureHuntWindow != null;
+    }
+
+    static VisualElement TryFindTreasureHuntWindow()
     {
         UIDocument uiRoot = Helpers.FindObjectOfType<UIDocument>();
         if (!uiRoot)
