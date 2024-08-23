@@ -11,12 +11,16 @@
     </PropertyGroup>
     
     <PropertyGroup>
-        <DofusBuildId>80586dab8f524ef1b30871e0e49ece8a</DofusBuildId>
+        <DofusBuildId Condition="'$(DOFUSBUILDID)' == ''">80586dab8f524ef1b30871e0e49ece8a</DofusBuildId>
     </PropertyGroup>
 
+    <Target Name="DisplayDofusBuildId" BeforeTargets="CoreCompile">
+        <Message Importance="high" Text="Dofus build ID: $(DOFUSBUILDID)"/>
+    </Target>
+    
     <ItemGroup>
-        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusBuildIdAttribute">
-            <_Parameter1>$(DofusBuildId)</_Parameter1>
+        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusBuildIdAttribute" Condition="'$(DOFUSBUILDID)' != ''">
+            <_Parameter1>$(DOFUSBUILDID)</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 </Project>

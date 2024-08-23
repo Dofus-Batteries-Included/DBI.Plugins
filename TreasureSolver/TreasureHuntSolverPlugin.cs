@@ -13,7 +13,7 @@ namespace DofusBatteriesIncluded.TreasureSolver;
 [BepInProcess("Dofus.exe")]
 class TreasureHuntSolverPlugin : DBIPlugin
 {
-    protected override async Task StartAsync()
+    protected override Task StartAsync()
     {
         AddComponent<TreasureHuntManager>();
 
@@ -23,6 +23,7 @@ class TreasureHuntSolverPlugin : DBIPlugin
         ClueFinders.RegisterFinder("Dofus pour les noobs (offline)", async () => await LoadDplbClueFinder(path));
 
         DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
+        return Task.CompletedTask;
     }
 
     async Task<StaticClueFinder> LoadDplbClueFinder(string path)

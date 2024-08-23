@@ -34,7 +34,7 @@ public static class StringExtensions
             {
                 stringBuilder.Append(r);
             }
-            else if (strReplacements.TryGetValue(c, out string? s))
+            else if (strReplacements.TryGetValue(c, out string s))
             {
                 stringBuilder.Append(s);
             }

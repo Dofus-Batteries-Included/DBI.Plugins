@@ -25,7 +25,6 @@ public class TreasureHuntManager : MonoBehaviour
     static TreasureHuntManager _instance;
     TreasureHuntEvent _lastEvent;
     Coroutine _coroutine;
-    bool _subscribedToMapChanged;
 
     public static void SetLastEvent(TreasureHuntEvent lastEvent)
     {

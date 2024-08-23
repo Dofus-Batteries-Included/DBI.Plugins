@@ -63,7 +63,7 @@ public static class GamePathUtils
         }
 
         Direction opposite = direction.Invert();
-        string? oppositeStr = ToArrow(opposite);
+        string oppositeStr = ToArrow(opposite);
         if (oppositeStr == null)
         {
             return null;

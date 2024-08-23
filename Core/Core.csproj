@@ -44,10 +44,5 @@
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
         </Reference>
     </ItemGroup>
-    
-    <ItemGroup>
-      <None Update="metadata.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
+
 </Project>

@@ -40,11 +40,12 @@ public abstract class DBIPlugin : BasePlugin
         {
             Log.LogWarning("Could not determine expected build ID.");
         }
-        else if (!DBI.DofusBuildId.HasValue)
+        else
         {
-            Log.LogWarning("Could not determine actual build ID.");
+            Log.LogDebug("Found expected build ID: {Expected}.", expectedBuildId.Value);
         }
-        else if (expectedBuildId.Value != DBI.DofusBuildId.Value)
+
+        if (expectedBuildId.HasValue && DBI.DofusBuildId.HasValue && expectedBuildId.Value != DBI.DofusBuildId.Value)
         {
             Log.LogInformation(
                 "Expected game build ID doesn't match actual build ID: {Expected} != {Actual}. "

@@ -11,7 +11,16 @@ public static class DBI
     static DBI()
     {
         Enabled = Configuration.Configure("General", "Enabled", true).WithDescription("Enable or disable all Dofus Batteries Included plugins.").Hide().Bind();
+
         DofusBuildId = ReadDofusBuildId();
+        if (!DofusBuildId.HasValue)
+        {
+            Log.LogWarning("Could not determine actual build ID.");
+        }
+        else
+        {
+            Log.LogDebug("Found actual build ID: {Actual}.", DofusBuildId.Value);
+        }
     }
 
     public static bool Enabled { get; internal set; }
@@ -25,7 +34,7 @@ public static class DBI
     public static DBIMessaging Messaging { get; } = new();
     public static DBIPlayer Player { get; } = new();
 
-    static readonly ILogger Log = Logging.Create(typeof(DBI));
+    static readonly ILogger Log = Logging.Create();
 
     static Guid? ReadDofusBuildId()
     {
