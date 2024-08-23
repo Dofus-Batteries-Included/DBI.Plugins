@@ -16,7 +16,7 @@ public class DBIConfiguration
 
     public DBIConfiguration(string fileName = "DofusBatteriesIncluded.cfg")
     {
-        _bepinexConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, fileName), true);
+        _bepinexConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, fileName), false);
     }
 
     public ConfigurationEntryBuilder<T> Configure<T>(string category, string key, T defaultValue) => new(category, key, defaultValue);

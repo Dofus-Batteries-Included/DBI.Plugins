@@ -9,4 +9,14 @@
             https://nuget.samboy.dev/v3/index.json
         </RestoreAdditionalProjectSources>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <DofusBuildId>80586dab8f524ef1b30871e0e49ece8a</DofusBuildId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusBuildIdAttribute">
+            <_Parameter1>$(DofusBuildId)</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

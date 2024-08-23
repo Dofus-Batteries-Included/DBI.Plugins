@@ -2,6 +2,7 @@
 using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using DofusBatteriesIncluded.Core.Metadata;
 using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
@@ -14,7 +15,7 @@ public abstract class DBIPlugin : BasePlugin
 
     public DBIPlugin()
     {
-        BepInPlugin pluginAttribute = GetType().GetCustomAttribute<BepInPlugin>();
+        BepInPlugin pluginAttribute = MetadataHelper.GetMetadata(GetType());
         if (pluginAttribute == null)
         {
             throw new InvalidOperationException("Expected plugin to have a [BepInPlugin] attrribute.");
@@ -34,6 +35,27 @@ public abstract class DBIPlugin : BasePlugin
 
     public override sealed void Load()
     {
+        Guid? expectedBuildId = GetExpectedBuildId();
+        if (!expectedBuildId.HasValue)
+        {
+            Log.LogWarning("Could not determine expected build ID.");
+        }
+        else if (!DBI.DofusBuildId.HasValue)
+        {
+            Log.LogWarning("Could not determine actual build ID.");
+        }
+        else if (expectedBuildId.Value != DBI.DofusBuildId.Value)
+        {
+            Log.LogInformation(
+                "Expected game build ID doesn't match actual build ID: {Expected} != {Actual}. "
+                + "{Name} won't start, please download the version of the plugin that matches the version of the game.",
+                expectedBuildId.Value,
+                DBI.DofusBuildId.Value,
+                Name
+            );
+            return;
+        }
+
         if (!DBI.Enabled)
         {
             Log.LogInformation("Dofus Batteries Included is disabled.");
@@ -79,4 +101,6 @@ public abstract class DBIPlugin : BasePlugin
 
     protected virtual Task StartAsync() => Task.CompletedTask;
     protected virtual Task StopAsync() => Task.CompletedTask;
+
+    Guid? GetExpectedBuildId() => GetType().Assembly.GetCustomAttribute<ExpectedDofusBuildIdAttribute>()?.BuildId;
 }
