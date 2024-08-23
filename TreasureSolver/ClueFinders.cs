@@ -13,15 +13,17 @@ public static class ClueFinders
 
     public static IReadOnlyCollection<Entry> Finders => Entries;
 
-    public static void RegisterFinder(string name, Func<Task<IClueFinder>> finderFactory, bool isDefault = false)
+    public static void RegisterFinder(string name, string displayName, Func<Task<IClueFinder>> finderFactory, bool isDefault = false)
     {
-        Entries.Add(new Entry(name, finderFactory));
+        Entries.Add(new Entry(name, displayName, finderFactory));
 
         if (isDefault)
         {
             _defaultFinder = name;
         }
     }
+
+    public static void SetDefaultFinder(string name) => _defaultFinder = name;
 
     public static async Task<IClueFinder> GetFinder(string name)
     {
@@ -56,13 +58,15 @@ public static class ClueFinders
 
     public class Entry
     {
-        public Entry(string name, Func<Task<IClueFinder>> finderFactory)
+        public Entry(string name, string displayName, Func<Task<IClueFinder>> finderFactory)
         {
             Name = name;
+            DisplayName = displayName;
             Factory = finderFactory;
         }
 
         public string Name { get; }
+        public string DisplayName { get; }
         public Func<Task<IClueFinder>> Factory { get; }
         public IClueFinder Instance { get; set; }
 

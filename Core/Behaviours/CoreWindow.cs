@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Core.Engine.Options;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
+using Core.UILogic.Config.OptionElement;
+using Microsoft.Extensions.Logging;
 using UnityEngine.UIElements;
+using Action = System.Action;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+using Enum = System.Enum;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DofusBatteriesIncluded.Core.Behaviours;
@@ -144,11 +150,31 @@ public class CoreWindow : DofusBatteriesIncludedWindow
                 switch (entry)
                 {
                     case DBIConfiguration.Entry<bool> boolEntry:
+                    {
                         BoolOption option = CreateOptionData(boolEntry);
                         options.Add(new IOptionData(option.Pointer));
                         break;
+                    }
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(entry));
+                    {
+                        if (entry.AcceptableValuesDescriptions is { Count: > 0 })
+                        {
+                            MultipleChoiceOption option = CreateMultipleChoiceOptionData(entry);
+                            options.Add(new IOptionData(option.Pointer));
+                        }
+                        else
+                        {
+                            Log.LogWarning("Configuration type not implemented, will display option as is.");
+
+                            TextButtonOption option = new((Action)(() => { }))
+                            {
+                                text = $"{entry.Key}: {entry.CurrentValueDescription}",
+                                description = new DescriptionData { text = entry.Description?.Description }
+                            };
+                            options.Add(new IOptionData(option.Pointer));
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -219,13 +245,41 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
         };
 
-    static BoolOption CreateOptionData(DBIConfiguration.Entry<bool> boolEntry)
+    static BoolOption CreateOptionData(DBIConfiguration.Entry<bool> entry)
     {
-        BoolOption option = new(null, new Option<bool>(boolEntry.DefaultValue) { m_value = boolEntry.Value })
+        BoolOption option = new(null, new Option<bool>(entry.DefaultValue) { m_value = entry.Value })
         {
-            text = boolEntry.Key,
-            description = new DescriptionData { text = boolEntry.Description.Description },
-            valueChangedCallback = (Action<bool>)(newValue => DBI.Configuration.Set(boolEntry.Category, boolEntry.Key, newValue))
+            text = entry.Key,
+            description = new DescriptionData { text = entry.Description?.Description },
+            valueChangedCallback = (Action<bool>)entry.Set
+        };
+        return option;
+    }
+
+    static MultipleChoiceOption CreateMultipleChoiceOptionData(DBIConfiguration.Entry entry)
+    {
+        Thread.Sleep(1000);
+
+        IReadOnlyList<ValueDescription> values = entry.AcceptableValuesDescriptions;
+        ValueDescription value = entry.CurrentValueDescription;
+        int valueIndex = values.Select((v, i) => new { Value = v, Index = i }).FirstOrDefault(v => v.Value.Name == value.Name)?.Index ?? 0;
+        ValueDescription defaultValue = entry.DefaultValueDescription;
+        int defaultValueIndex = values.Select((v, i) => new { Value = v, Index = i }).FirstOrDefault(v => v.Value.Name == defaultValue.Name)?.Index ?? 0;
+
+        Il2CppSystem.Collections.Generic.List<Il2CppSystem.ValueTuple<int, string>> choices = new();
+        for (int i = 0; i < values.Count; i++)
+        {
+            Il2CppSystem.ValueTuple<int, string> choice = new Il2CppSystem.ValueTuple<int, string>(i, values[i].DisplayName);
+            choices.System_Collections_IList_Add(choice);
+        }
+
+        Option<int> dataSource = new(defaultValueIndex) { m_value = valueIndex, m_onChanged = (Action<int, int>)((_, newValue) => entry.SetValueWithName(values[newValue].Name)) };
+        MultipleChoiceOption option = new(dataSource, null)
+        {
+            type = OptionType.MultipleChoice,
+            text = entry.Key,
+            description = new DescriptionData { text = entry.Description?.Description },
+            choices = choices
         };
         return option;
     }
