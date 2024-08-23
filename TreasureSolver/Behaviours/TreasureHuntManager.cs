@@ -85,17 +85,9 @@ public class TreasureHuntManager : MonoBehaviour
                 Position lastKnownCoord = flags.Count == 0 ? GetMapPosition(lastEvent.StartMapId) : flags[^1];
                 TreasureHuntEvent.Types.TreasureHuntStep nextStep = GetNextStep(lastEvent);
 
-                Task<IClueFinder> clueFinderTask = ClueFinders.GetDefaultFinder();
-                yield return CoroutineExtensions.WaitForCompletion(clueFinderTask);
-                IClueFinder clueFinder = clueFinderTask.Result;
-
-                if (clueFinder == null)
-                {
-                    Log.LogError("Could not find clue finder.");
-                    yield break;
-                }
-
-                if (HandleStep(lastEvent, lastKnownCoord, nextStep, clueFinder))
+                Task<bool> handleStepTask = HandleStep(lastEvent, lastKnownCoord, nextStep);
+                yield return CoroutineExtensions.WaitForCompletion(handleStepTask);
+                if (handleStepTask.Result)
                 {
                     yield break;
                 }
@@ -108,8 +100,15 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    static bool HandleStep(TreasureHuntEvent message, Position startPosition, TreasureHuntEvent.Types.TreasureHuntStep step, IClueFinder clueFinder)
+    static async Task<bool> HandleStep(TreasureHuntEvent message, Position startPosition, TreasureHuntEvent.Types.TreasureHuntStep step)
     {
+        IClueFinder clueFinder = await ClueFinders.GetDefaultFinder();
+        if (clueFinder == null)
+        {
+            Log.LogError("Could not find clue finder.");
+            return false;
+        }
+
         switch (step.StepCase)
         {
             case TreasureHuntEvent.Types.TreasureHuntStep.StepOneofCase.FollowDirectionToPoi:
@@ -121,7 +120,7 @@ public class TreasureHuntManager : MonoBehaviour
 
                 int poiId = step.FollowDirectionToPoi.PoiLabelId;
                 Direction direction = GetDirection(step.FollowDirectionToPoi.Direction);
-                return MarkNextClue(message, startPosition, clueFinder, direction, poiId);
+                return await MarkNextClue(message, startPosition, clueFinder, direction, poiId);
             }
             case TreasureHuntEvent.Types.TreasureHuntStep.StepOneofCase.FollowDirectionToHint:
                 return true;
@@ -145,9 +144,9 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    static bool MarkNextClue(TreasureHuntEvent message, Position startPosition, IClueFinder clueFinder, Direction direction, int poiId)
+    static async Task<bool> MarkNextClue(TreasureHuntEvent message, Position startPosition, IClueFinder clueFinder, Direction direction, int poiId)
     {
-        Position? cluePosition = clueFinder.FindPositionOfNextClue(startPosition, direction, poiId, 10);
+        Position? cluePosition = await clueFinder.FindPositionOfNextClue(startPosition, direction, poiId, 10);
         return cluePosition.HasValue ? TryMarkNextPosition(message, cluePosition.Value) : TryMarkUnknownPosition(message);
     }
 

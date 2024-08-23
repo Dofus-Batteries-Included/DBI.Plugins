@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DofusBatteriesIncluded.Core.Maps;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
@@ -13,7 +14,7 @@ public class StaticClueFinder : IClueFinder
         Clues = clues;
     }
 
-    public Position? FindPositionOfNextClue(Position start, Direction direction, int clueId, int maxDistance)
+    public Task<Position?> FindPositionOfNextClue(Position start, Direction direction, int clueId, int maxDistance)
     {
         foreach (Position position in GetPositionsInDirection(start, direction, maxDistance))
         {
@@ -22,10 +23,10 @@ public class StaticClueFinder : IClueFinder
                 continue;
             }
 
-            return position;
+            return Task.FromResult<Position?>(position);
         }
 
-        return null;
+        return Task.FromResult<Position?>(null);
     }
 
     static IEnumerable<Position> GetPositionsInDirection(Position start, Direction direction, int maxDistance)

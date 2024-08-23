@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Maps;
 using DofusBatteriesIncluded.TreasureSolver.Behaviours;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
@@ -20,10 +18,10 @@ class TreasureHuntSolverPlugin : DBIPlugin
         AddComponent<TreasureHuntManager>();
 
         ClueFinders.RegisterFinder(ClueFinderConfig.DofusPourLesNoobs.Name, ClueFinderConfig.DofusPourLesNoobs.DisplayName, async () => await LoadDplbClueFinder());
-        ClueFinders.RegisterFinder(ClueFinderConfig.DofusHunt.Name, ClueFinderConfig.DofusHunt.DisplayName, async () => await LoadDofusHuntFinder());
+        ClueFinders.RegisterFinder(ClueFinderConfig.DofusMapHunt.Name, ClueFinderConfig.DofusMapHunt.DisplayName, async () => await DofusHuntClueFinder.Create());
 
         DBI.Configuration.Configure("Treasure Hunt", "Clue Finder", ClueFinderConfig.DofusPourLesNoobs.Name)
-            .WithPossibleValues(ClueFinderConfig.DofusPourLesNoobs.Name, ClueFinderConfig.DofusHunt.Name)
+            .WithPossibleValues(ClueFinderConfig.DofusPourLesNoobs.Name, ClueFinderConfig.DofusMapHunt.Name)
             .WithDescription("The source of clues to use when solving treasure hunts.")
             .RegisterChangeCallback(ClueFinders.SetDefaultFinder, true)
             .Bind();
@@ -51,12 +49,10 @@ class TreasureHuntSolverPlugin : DBIPlugin
         }
     }
 
-    static Task<IClueFinder> LoadDofusHuntFinder() => Task.FromResult<IClueFinder>(new StaticClueFinder(new Dictionary<Position, IReadOnlyCollection<int>>()));
-
-    record struct ClueFinderConfig : IEquatable<ClueFinderConfig>
+    record struct ClueFinderConfig
     {
         public static ClueFinderConfig DofusPourLesNoobs { get; } = new("DofusPourLesNoobs", "Dofus pour les noobs (offline)");
-        public static ClueFinderConfig DofusHunt { get; } = new("DofusHunt", "Dofus hunt");
+        public static ClueFinderConfig DofusMapHunt { get; } = new("DofusMapHunt", "Dofus Map Hunt");
 
         ClueFinderConfig(string name, string displayName)
         {

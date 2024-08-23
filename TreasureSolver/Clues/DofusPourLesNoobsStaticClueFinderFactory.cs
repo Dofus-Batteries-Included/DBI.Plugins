@@ -18,29 +18,29 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
 
     public static async Task<StaticClueFinder> Create(string dplbFilePath)
     {
-        List<PointOfInterest> gamePois = [];
-        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
-        {
-            gamePois.Add(poi);
-        }
-
         await using FileStream stream = File.OpenRead(dplbFilePath);
         DPLBFile parsedFile = await JsonSerializer.DeserializeAsync<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        Dictionary<int, int> dplbClueToGameClueMapping = new();
-        foreach (PointOfInterest gameClue in gamePois)
+        List<(int Id, string Name)> gamePois = [];
+        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
         {
-            string nameWithoutAccent = gameClue.name.RemoveAccents();
+            gamePois.Add((poi.id, poi.name));
+        }
+
+        Dictionary<int, int> dplbClueToGameClueMapping = new();
+        foreach ((int id, string name) in gamePois)
+        {
+            string nameWithoutAccent = name.RemoveAccents();
             ClueNames dplbClue = parsedFile.Clues.FirstOrDefault(
                 c => nameWithoutAccent == c.HintFr.RemoveAccents() || nameWithoutAccent == c.HintEn.RemoveAccents() || nameWithoutAccent == c.HintEs.RemoveAccents()
             );
             if (dplbClue is null)
             {
-                Log.LogWarning("Could not find clue {Name} ({Id}) in DPLB file.", nameWithoutAccent, gameClue.id);
+                Log.LogWarning("Could not find clue {Name} ({Id}) in DPLB file.", nameWithoutAccent, id);
                 continue;
             }
 
-            dplbClueToGameClueMapping[dplbClue.ClueId] = gameClue.id;
+            dplbClueToGameClueMapping[dplbClue.ClueId] = id;
         }
 
         Dictionary<Position, IReadOnlyCollection<int>> clues = parsedFile.Maps.ToDictionary(
