@@ -18,6 +18,7 @@ public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
     public string Description { get; private set; } = "";
     public List<T> PossibleValues { get; } = [];
     public bool Hidden { get; private set; }
+    public List<Callback> Callbacks { get; } = [];
 
     public ConfigurationEntryBuilder<T> WithDescription(string value)
     {
@@ -31,6 +32,12 @@ public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
         return this;
     }
 
+    public ConfigurationEntryBuilder<T> RegisterChangeCallback(Action<T> onValueChanged, bool callWithInitialValue = false)
+    {
+        Callbacks.Add(new Callback(onValueChanged, callWithInitialValue));
+        return this;
+    }
+
     public ConfigurationEntryBuilder<T> Hide()
     {
         Hidden = true;
@@ -38,4 +45,16 @@ public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
     }
 
     public T Bind() => DBI.Configuration.Bind(this);
+
+    public class Callback
+    {
+        public Callback(Action<T> onValueChangedCallback, bool callWithInitialValue)
+        {
+            OnValueChangedCallback = onValueChangedCallback;
+            CallWithInitialValue = callWithInitialValue;
+        }
+
+        public Action<T> OnValueChangedCallback { get; private set; }
+        public bool CallWithInitialValue { get; private set; }
+    }
 }

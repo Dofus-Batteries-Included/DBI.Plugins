@@ -22,11 +22,11 @@ class TreasureHuntSolverPlugin : DBIPlugin
         ClueFinders.RegisterFinder(ClueFinderConfig.DofusPourLesNoobs.Name, ClueFinderConfig.DofusPourLesNoobs.DisplayName, async () => await LoadDplbClueFinder());
         ClueFinders.RegisterFinder(ClueFinderConfig.DofusHunt.Name, ClueFinderConfig.DofusHunt.DisplayName, async () => await LoadDofusHuntFinder());
 
-        string configuredClueFinderName = DBI.Configuration.Configure("Treasure Hunt", "Clue Finder", ClueFinderConfig.DofusPourLesNoobs.Name)
+        DBI.Configuration.Configure("Treasure Hunt", "Clue Finder", ClueFinderConfig.DofusPourLesNoobs.Name)
             .WithPossibleValues(ClueFinderConfig.DofusPourLesNoobs.Name, ClueFinderConfig.DofusHunt.Name)
             .WithDescription("The source of clues to use when solving treasure hunts.")
+            .RegisterChangeCallback(ClueFinders.SetDefaultFinder, true)
             .Bind();
-        ClueFinders.SetDefaultFinder(configuredClueFinderName);
 
         DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
         return Task.CompletedTask;

@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
+using Microsoft.Extensions.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DofusBatteriesIncluded.TreasureSolver;
 
 public static class ClueFinders
 {
+    static readonly ILogger Log = DBI.Logging.Create(typeof(ClueFinders));
     static readonly List<Entry> Entries = [];
     static string _defaultFinder;
+
+    public static event EventHandler<string> DefaultFinderChanged;
 
     public static IReadOnlyCollection<Entry> Finders => Entries;
 
@@ -23,7 +29,12 @@ public static class ClueFinders
         }
     }
 
-    public static void SetDefaultFinder(string name) => _defaultFinder = name;
+    public static void SetDefaultFinder(string name)
+    {
+        _defaultFinder = name;
+        Log.LogInformation("Default finder set to {Finder}.", _defaultFinder);
+        DefaultFinderChanged?.Invoke(null, _defaultFinder);
+    }
 
     public static async Task<IClueFinder> GetFinder(string name)
     {

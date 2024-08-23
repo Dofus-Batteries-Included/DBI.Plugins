@@ -10,7 +10,6 @@ using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Coroutines;
 using DofusBatteriesIncluded.Core.Maps;
-using DofusBatteriesIncluded.Core.Maps.PathFinding;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
@@ -57,6 +56,14 @@ public class TreasureHuntManager : MonoBehaviour
                     SetLastEvent(_lastEvent);
                 }
             };
+        };
+
+        ClueFinders.DefaultFinderChanged += (_, _) =>
+        {
+            if (_lastEvent != null)
+            {
+                SetLastEvent(_lastEvent);
+            }
         };
     }
 

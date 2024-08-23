@@ -23,17 +23,6 @@ public class DBIConfiguration
 
     public Entry<T> Get<T>(string category, string key) => _entries.OfType<Entry<T>>().FirstOrDefault(e => e.Category == category && e.Key == key);
 
-    public void Set<T>(string category, string key, T value)
-    {
-        Entry<T> entry = _entries.OfType<Entry<T>>().FirstOrDefault(e => e.Category == category && e.Key == key);
-        if (entry == null)
-        {
-            throw new InvalidOperationException($"Entry {category}:{key} not found.");
-        }
-
-        entry.ConfigEntry.Value = value;
-    }
-
     public IEnumerable<Entry> GetAll() => _entries;
 
     internal T Bind<T>(ConfigurationEntryBuilder<T> builder) where T: IEquatable<T>
@@ -54,6 +43,15 @@ public class DBIConfiguration
         );
         entry = new Entry<T>(builder.Category, builder.Key, builder.DefaultValue, acceptableValues, bepinexEntry) { Hidden = builder.Hidden };
         _entries.Add(entry);
+
+        foreach (ConfigurationEntryBuilder<T>.Callback callback in builder.Callbacks)
+        {
+            entry.ValueChanged += (_, newValue) => callback.OnValueChangedCallback(newValue);
+            if (callback.CallWithInitialValue)
+            {
+                callback.OnValueChangedCallback(entry.Value);
+            }
+        }
 
         return entry.Value;
     }
@@ -101,7 +99,13 @@ public class DBIConfiguration
         public override IReadOnlyList<ValueDescription> AcceptableValuesDescriptions => AcceptableValues?.Select(v => new ValueDescription(v?.ToString(), v?.ToString())).ToArray();
         public ConfigEntry<T> ConfigEntry { get; }
 
-        public void Set(T value) => DBI.Configuration.Set(Category, Key, value);
+        public event EventHandler<T> ValueChanged;
+
+        public void Set(T value)
+        {
+            ConfigEntry.Value = value;
+            ValueChanged?.Invoke(this, value);
+        }
 
         public override void SetValueWithName(string valueName)
         {
@@ -123,8 +127,6 @@ public class DBIConfiguration
 
 public class ValueDescription
 {
-    public ValueDescription() { }
-
     public ValueDescription(string name, string displayName)
     {
         Name = name;
