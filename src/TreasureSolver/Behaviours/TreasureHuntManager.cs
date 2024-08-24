@@ -224,7 +224,7 @@ public class TreasureHuntManager : MonoBehaviour
             }
             else
             {
-                stepMessage += " reached destination";
+                stepMessage += " arrived";
             }
         }
 
