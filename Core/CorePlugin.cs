@@ -1,16 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System.Reflection;
+using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core.Behaviours;
+using DofusBatteriesIncluded.Core.Metadata;
 using DofusBatteriesIncluded.Core.Player;
 using DofusBatteriesIncluded.Core.Protocol;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using Guid = System.Guid;
 
 namespace DofusBatteriesIncluded.Core;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 class CorePlugin : DBIPlugin
 {
+    public CorePlugin() : base(GetExpectedBuildIdFromAssemblyAttribute()) { }
+
     public override bool CanBeDisabled => false;
 
     protected override Task StartAsync()
@@ -30,4 +35,6 @@ class CorePlugin : DBIPlugin
 
         return Task.CompletedTask;
     }
+
+    static Guid? GetExpectedBuildIdFromAssemblyAttribute() => typeof(CorePlugin).Assembly.GetCustomAttribute<ExpectedDofusBuildIdAttribute>()?.BuildId;
 }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
-using DofusBatteriesIncluded.Core.Metadata;
 using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
@@ -14,8 +12,9 @@ public abstract class DBIPlugin : BasePlugin
 {
     protected new ILogger Log { get; }
 
-    public DBIPlugin()
+    public DBIPlugin(Guid? expectedBuildId = null)
     {
+        ExpectedBuildId = expectedBuildId;
         BepInPlugin pluginAttribute = MetadataHelper.GetMetadata(GetType());
         if (pluginAttribute == null)
         {
@@ -31,27 +30,27 @@ public abstract class DBIPlugin : BasePlugin
     public string Id { get; }
     public string Name { get; }
     public string Version { get; }
+    public Guid? ExpectedBuildId { get; }
 
     public virtual bool CanBeDisabled => true;
 
     public override sealed void Load()
     {
-        Guid? expectedBuildId = GetExpectedBuildId();
-        if (!expectedBuildId.HasValue)
+        if (!ExpectedBuildId.HasValue)
         {
-            Log.LogWarning("Could not determine expected build ID.");
+            Log.LogWarning("Expected build ID was not provided, the plugin will run even if it has not been built against to correct game files.");
         }
         else
         {
-            Log.LogDebug("Found expected build ID: {Expected}.", expectedBuildId.Value);
+            Log.LogDebug("Found expected build ID: {Expected}.", ExpectedBuildId.Value);
         }
 
-        if (expectedBuildId.HasValue && DBI.DofusBuildId.HasValue && expectedBuildId.Value != DBI.DofusBuildId.Value)
+        if (ExpectedBuildId.HasValue && DBI.DofusBuildId.HasValue && ExpectedBuildId.Value != DBI.DofusBuildId.Value)
         {
             Log.LogInformation(
                 "Expected game build ID doesn't match actual build ID: {Expected} != {Actual}. "
                 + "{Name} won't start, please download the version of the plugin that matches the version of the game.",
-                expectedBuildId.Value,
+                ExpectedBuildId.Value,
                 DBI.DofusBuildId.Value,
                 Name
             );
@@ -103,6 +102,4 @@ public abstract class DBIPlugin : BasePlugin
 
     protected virtual Task StartAsync() => Task.CompletedTask;
     protected virtual Task StopAsync() => Task.CompletedTask;
-
-    Guid? GetExpectedBuildId() => GetType().Assembly.GetCustomAttribute<ExpectedDofusBuildIdAttribute>()?.BuildId;
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core;
+using DofusBatteriesIncluded.Core.Metadata;
 using DofusBatteriesIncluded.TreasureSolver.Behaviours;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
@@ -13,6 +15,8 @@ namespace DofusBatteriesIncluded.TreasureSolver;
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
 class TreasureHuntSolverPlugin : DBIPlugin
 {
+    public TreasureHuntSolverPlugin() : base(GetExpectedBuildIdFromAssemblyAttribute()) { }
+
     protected override Task StartAsync()
     {
         AddComponent<TreasureHuntManager>();
@@ -65,4 +69,6 @@ class TreasureHuntSolverPlugin : DBIPlugin
 
         public override string ToString() => Name;
     }
+
+    static Guid? GetExpectedBuildIdFromAssemblyAttribute() => typeof(TreasureHuntSolverPlugin).Assembly.GetCustomAttribute<ExpectedDofusBuildIdAttribute>()?.BuildId;
 }
