@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Components.Tooltips;
 using Core.UILogic.Components.Tooltips.Builder;
@@ -45,6 +44,7 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
     UIDocument _uiDocument;
     DofusVisualElement _gameMenuContainer;
     TooltipRoot _tooltipRoot;
+    bool _widgetManagerNeedsRepositioning;
 
     readonly List<ButtonToAdd> _toAdd = [];
     readonly List<ButtonInstance> _buttons = [];
@@ -65,6 +65,7 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
         TryLoadGameMenuContainer();
         TryLoadTooltipRoot();
         TryAddButtons();
+        TryRepositionWidgetManager();
     }
 
     void TryLoadUiDocument()
@@ -118,7 +119,7 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 
     void TryAddButtons()
     {
-        if (!_uiDocument || _gameMenuContainer == null)
+        if (!_uiDocument || _gameMenuContainer == null || _toAdd.Count == 0)
         {
             return;
         }
@@ -134,6 +135,26 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
             _toAdd.Remove(button);
             _buttons.Add(buttonInstance);
         }
+
+        _widgetManagerNeedsRepositioning = true;
+    }
+
+    void TryRepositionWidgetManager()
+    {
+        if (!_uiDocument || !_widgetManagerNeedsRepositioning)
+        {
+            return;
+        }
+
+        VisualElement widgetManager = _uiDocument.rootVisualElement.Q<VisualElement>("WidgetManager");
+        VisualElement menu = widgetManager?.m_Children._items.FirstOrDefault();
+        if (menu == null)
+        {
+            return;
+        }
+
+        menu.style.marginRight = 128 + _buttons.Count * 40;
+        _widgetManagerNeedsRepositioning = false;
     }
 
     ButtonInstance InstantiateButton(string name, Action<MouseUpEvent> action)
