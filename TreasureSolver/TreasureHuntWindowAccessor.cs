@@ -49,6 +49,10 @@ public static class TreasureHuntWindowAccessor
 
             additionalTextContainer = CreateAdditionalTextContainer();
             step.Add(additionalTextContainer);
+
+            VisualElement pad = new();
+            pad.style.paddingBottom = 4;
+            step.Add(pad);
         }
 
         if (text == null)
@@ -113,8 +117,7 @@ public static class TreasureHuntWindowAccessor
 
     static DofusVisualElement CreateAdditionalTextContainer()
     {
-        DofusVisualElement result = new()
-            { name = AdditionalTextContainerName, gapValue = 4, style = { flexDirection = FlexDirection.Row, paddingLeft = 16, paddingRight = 16, paddingBottom = 4 } };
+        DofusVisualElement result = new() { name = AdditionalTextContainerName, gapValue = 4, style = { flexDirection = FlexDirection.Row, paddingLeft = 16, paddingRight = 16 } };
 
         DofusLabel label = new() { style = { paddingLeft = 24 } };
         label.AddToClassList(ThemeConstants.TextShortSmallRegular);
