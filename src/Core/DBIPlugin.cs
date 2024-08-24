@@ -80,7 +80,7 @@ public abstract class DBIPlugin : BasePlugin
         try
         {
             StartAsync().GetAwaiter().GetResult();
-            Status = PluginStatus.Started;
+            Status = PluginStatus.Running;
         }
         catch (Exception exn)
         {

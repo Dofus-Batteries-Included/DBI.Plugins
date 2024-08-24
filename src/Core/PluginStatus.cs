@@ -3,6 +3,6 @@
 public enum PluginStatus
 {
     NotStarted,
-    Started,
+    Running,
     FailedToStart
 }
