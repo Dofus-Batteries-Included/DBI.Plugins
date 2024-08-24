@@ -1,0 +1,113 @@
+# Dofus Batteries Included (DBI)
+
+DBI is first and foremost a tool that helps writing plugins for the Unity version of the game Dofus.
+It is built upon [BepInEx](https://github.com/BepInEx/BepInEx).
+
+This project has only been tested on windows computers.
+
+**DISCLAIMER: The goal of this tool is to provide quality of life improvements to our beloved game. If your goal is to cheat or harm other players experience in any way, you are garbage and get the hell out of here.**
+
+## Getting started
+
+### Installation guide
+
+- Download and install [BepInEx Unity (IL2CPP)](https://docs.bepinex.dev/master/articles/user_guide/installation/index.html) in the Dofus game folder.
+- Download the [latest release](#) (WIP: realeases aren't available yet, build the project)
+- Move the `BepInEx/plugins/DofusBatteriesIncluded/` folder of the release to the `BepInEx/plugins/` folder of your BepInEx install.
+
+WARNING: A specific version of the plugins can only work for the specific version of the game that it was built against. Trying to use a plugin with another version of the game can lead to unexpected results, or even crashes of the game. The plugins have a built-in mechanism that prevents them from running if they have been built for another version of the game.
+
+### Build guide
+
+- Download and install [BepInEx Unity (IL2CPP)](https://docs.bepinex.dev/master/articles/user_guide/installation/index.html) in the Dofus game folder
+- Run `Dofus.exe` once and wait for BepInEx some necessary files
+- Once the game is running, a `BepInEx/interop/` folder should have been created
+- Locate the `Dofus_Data/boot.config` file in the game install folder, the `build-guid` value will be necessary below
+- Clone the repository
+- Copy the content of the `BepInEx/interop/` to the `Interop` folder of the reporistory, overwrite all files if necessary
+- Run `dotnet publish -p:DOFUSBUILDID={build-guid} -o dist` (replace `{build-guid}` with the value found in `boot.config`)
+- Only some of the assemblies in the `dist/` folder need to be copied to the `BepInEx/plugins/` folder: only copy the assemblies starting with `DofusBatteriesIncluded` and the `Resources` folder
+
+## How it works
+
+### Write your first plugin
+
+Create a new .NET 6 class library project. 
+We will need packages from additional nuget feeds:
+- DBI feed (WIP: nuget feed is not setup yet)
+- https://nuget.bepinex.dev/v3/index.json
+- https://nuget.samboy.dev/v3/index.json
+
+Add the following to the csproj of your project
+```
+<PropertyGroup>
+    <RestoreAdditionalProjectSources>
+        (WIP: nuget feed is not setup yet)
+        https://nuget.bepinex.dev/v3/index.json;
+        https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+</PropertyGroup>
+```
+
+Then reference the BepInEx nugets and the DBI.Core project:
+```
+<ItemGroup>
+    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+    <PackageReference Include="DBI.Core" Version="1.*"/>
+</ItemGroup>
+```
+
+Finally create your plugin.
+
+```
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
+class MyAwesomePlugin : DBIPlugin
+{
+    protected override Task StartAsync()
+    {
+        Log.LogInformation("Hello world!");
+    }
+}
+```
+
+Compile the project and move the `DofusBatteriesIncluded.Core.dll` assembly and the project assembly to the `BepInEx/plugins/` folder of the game. Run `Dofus.exe` and wait for the log message.\
+Congrats! 
+
+### The Core plugin
+
+The common features of DBI are implemented in the `Core` assembly and the `CorePlugin` plugin. Most of the features provided by the assembly are accessible through the `DBI` static class.
+
+#### Check expected build ID
+
+To specify the expected build ID of you plugin, provide the ID to the `DBIPlugin` base class constructor. If no expected build ID is provided, the plugin will always be executed. 
+The actual build ID will be read from the `Dofus_Data/boot.config` file when the plugin is loaded. If the expected build ID does not match the actual build ID, the plugin will return and no additional code will be executed. In particular, the `StartAsync` method of the plugin will NOT be called.
+
+WARNING: A specific version of the plugins can only work for the specific version of the game that it was built against. Trying to use a plugin with another version of the game can lead to unexpected results, or even crashes of the game. **It is recommended to always provide an expected build ID.**
+
+#### Settings
+
+DBI uses the configuration system provided by BepInEx and store the configuration of all plugins in the `BepInEx/config/DofusBatteriesIncluded.cfg` file.
+There is a global `[DBI] Enabled` setting that allows to enable of disable all the plugins. If DBI is disabled, no plugin will be loaded: the `StartAsync` methods will NOT be executed.\
+Additionally, the inheritors of `DBIPlugin` define a `[PluginName] Enabled` setting by default. If a plugin is disabled, it will not be loaded: the `StartAsync` methods will NOT be executed. This setting is removed if the plugin overrides the `CanBeDisabled` property.
+
+The `Core` assembly also provides a way to define new configurations:
+- Boolean
+```csharp
+bool currentValue = DBI.Configuration.Configure("Awesome plugin", "My config?", true).Bind();
+```
+- Multiple choice
+```csharp
+string currentValue = DBI.Configuration.Configure("Awesome plugin", "My config", "My default value")
+    .WithPossibleValues("My default value", "My other value")
+    .WithDescription("The description of this awesome configuration.")
+    .RegisterChangeCallback(OnConfigChange)
+    .Bind();
+```
+
+Finally, the `Core` plugin adds a new widget to the game. The widget has two tabs:
+- The General tab that lists the currently installed plugins\
+![General tab](https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/img/general_tab.png)
+- The Settings tab that lists the settings of all the plugins (the one created using DBI.Configuration)\
+![Settings tab](https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/img/settings_tab.png)
