@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Metadata;
+using DofusBatteriesIncluded.Core.Player;
 using DofusBatteriesIncluded.TreasureSolver.Behaviours;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,12 @@ namespace DofusBatteriesIncluded.TreasureSolver;
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
 class TreasureHuntSolverPlugin : DBIPlugin
 {
+    bool _loaded;
+
     public TreasureHuntSolverPlugin() : base(GetExpectedBuildIdFromAssemblyAttribute()) { }
 
     protected override Task StartAsync()
     {
-        AddComponent<TreasureHuntManager>();
-
         ClueFinders.RegisterFinder(ClueFinderConfig.DofusPourLesNoobs.Name, ClueFinderConfig.DofusPourLesNoobs.DisplayName, async () => await LoadDplbClueFinder());
         ClueFinders.RegisterFinder(ClueFinderConfig.DofusMapHunt.Name, ClueFinderConfig.DofusMapHunt.DisplayName, async () => await DofusHuntClueFinder.Create());
 
@@ -30,8 +31,22 @@ class TreasureHuntSolverPlugin : DBIPlugin
             .RegisterChangeCallback(ClueFinders.SetDefaultFinder, true)
             .Bind();
 
-        DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
+        DBI.Player.PlayerChangeCompleted += OnPlayerLoaded;
+
         return Task.CompletedTask;
+    }
+
+    void OnPlayerLoaded(object _, CurrentPlayerState __)
+    {
+        if (_loaded)
+        {
+            return;
+        }
+
+        AddComponent<TreasureHuntManager>();
+        DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
+
+        _loaded = true;
     }
 
     async Task<StaticClueFinder> LoadDplbClueFinder()

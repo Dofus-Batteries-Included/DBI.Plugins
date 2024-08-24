@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DofusBatteriesIncluded.Core.Protocol;
@@ -48,7 +49,7 @@ public class DBIMessaging : IDisposable
             return;
         }
 
-        foreach (IMessageListener listener in _listeners)
+        foreach (IMessageListener listener in _listeners.ToArray())
         {
             if (!listenerType.IsInstanceOfType(listener))
             {

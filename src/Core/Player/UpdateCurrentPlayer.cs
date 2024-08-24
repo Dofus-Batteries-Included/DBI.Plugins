@@ -4,7 +4,7 @@ using DofusBatteriesIncluded.Core.Protocol;
 
 namespace DofusBatteriesIncluded.Core.Player;
 
-public class UpdateCurrentPlayer : IMessageListener<CharacterSelectionEvent>
+public class UpdateCurrentPlayer : IMessageListener<CharacterSelectionEvent>, IMessageListener<CharacterLoadingCompleteEvent>
 {
     public Task HandleAsync(CharacterSelectionEvent message)
     {
@@ -14,10 +14,16 @@ public class UpdateCurrentPlayer : IMessageListener<CharacterSelectionEvent>
         }
 
         DBI.Player.SetCurrentPlayer(
-            message.Success.Character.Id,
+            message.Success.Character.Id, 
             message.Success.Character.CharacterBasicInformation.Name,
             message.Success.Character.CharacterBasicInformation.Level
         );
+        return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(CharacterLoadingCompleteEvent message)
+    {
+        DBI.Player.OnPlayerChangeCompleted();
         return Task.CompletedTask;
     }
 }

@@ -2,10 +2,10 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/.idea.DofusBatteriesIncluded.iml
 /contentModel.xml
-/modules.xml
 /projectSettingsUpdater.xml
+/.idea.DofusBatteriesIncluded.iml
+/modules.xml
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
