@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace DofusBatteriesIncluded.TreasureSolver;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[BepInProcess("Dofus.exe")]
+[BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
 class TreasureHuntSolverPlugin : DBIPlugin
 {
     protected override Task StartAsync()

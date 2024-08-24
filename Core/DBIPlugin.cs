@@ -8,6 +8,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace DofusBatteriesIncluded.Core;
 
+[BepInProcess("Dofus.exe")]
 // ReSharper disable once InconsistentNaming
 public abstract class DBIPlugin : BasePlugin
 {

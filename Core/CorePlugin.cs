@@ -9,7 +9,6 @@ using Il2CppInterop.Runtime.Injection;
 namespace DofusBatteriesIncluded.Core;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[BepInProcess("Dofus.exe")]
 class CorePlugin : DBIPlugin
 {
     public override bool CanBeDisabled => false;
