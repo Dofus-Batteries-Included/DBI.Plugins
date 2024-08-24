@@ -169,7 +169,7 @@ public class TreasureHuntManager : MonoBehaviour
                         int npcId = nextStep.FollowDirectionToHint.NpcId;
                         _lookingForNpcId = npcId;
 
-                        bool done = _knownNpcPositions.TryGetValue(npcId, out Position position) ? TryMarkNextPosition(lastEvent, position) : TryMarkUnknownPosition(lastEvent);
+                        bool done = _knownNpcPositions.TryGetValue(npcId, out Position position) ? TryMarkNextPosition(lastEvent, position) : TryMarkUnknownNpcPosition(lastEvent);
                         if (done)
                         {
                             yield break;
@@ -229,6 +229,12 @@ public class TreasureHuntManager : MonoBehaviour
         }
 
         return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, stepMessage);
+    }
+
+    static bool TryMarkUnknownNpcPosition(TreasureHuntEvent message)
+    {
+        Log.LogInformation("NPC position is unknown.");
+        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, "Not found yet");
     }
 
     static bool TryMarkUnknownPosition(TreasureHuntEvent message)
