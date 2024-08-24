@@ -86,6 +86,10 @@ The actual build ID will be read from the `Dofus_Data/boot.config` file when the
 
 WARNING: A specific version of the plugins can only work for the specific version of the game that it was built against. Trying to use a plugin with another version of the game can lead to unexpected results, or even crashes of the game. **It is recommended to always provide an expected build ID.**
 
+#### Logging
+
+DBI provides integration with Microsoft loggers: simply call one of the `DBI.Logging.Create` methods to get an `ILogger` that outputs to the `BepInEx` console window.
+
 #### Settings
 
 DBI uses the configuration system provided by BepInEx and store the configuration of all plugins in the `BepInEx/config/DofusBatteriesIncluded.cfg` file.
@@ -106,8 +110,25 @@ string currentValue = DBI.Configuration.Configure("Awesome plugin", "My config",
     .Bind();
 ```
 
-Finally, the `Core` plugin adds a new widget to the game. The widget has two tabs:
+Finally, the `Core` plugin adds a new widget to the game, accessible using a new button in the top right menu. 
+The widget has two tabs:
 - The General tab that lists the currently installed plugins\
 ![General tab](https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/img/general_tab.png)
 - The Settings tab that lists the settings of all the plugins (the one created using DBI.Configuration)\
 ![Settings tab](https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/img/settings_tab.png)
+
+#### Windows
+
+The abstract `DofusBatteriesIncludedWindow` can be used to create new windows. The window can then be filled in the abstract `Build` method. See `CoreWindow.cs` for an example.
+
+#### Messaging
+
+The `Core` assembly provides a way to listen to any event received by the game. 
+- Either use `DBI.Messaging.GetListener<TEvent>()` to get a listener and subscribe to its `MessageReceived` event
+- Or use `DBI.Message.RegisterListener<TListener>()` to register an implementation of `IMessageListener<TEvent>` that will receive events of type `TEvent`
+
+This is the most reliable way to get the current state of the game without having to deal with the obfuscated symbols of the game.
+
+#### Player
+
+The `Core` assembly gets basic information about the current player and exposes them in `DBI.Player`. It also provides useful events.
