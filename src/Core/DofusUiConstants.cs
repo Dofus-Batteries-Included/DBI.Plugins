@@ -4,7 +4,7 @@ namespace DofusBatteriesIncluded.Core;
 
 public class DofusUiConstants
 {
-    public static readonly string TextHighlightPrimary100 = ThemeConstants.HighlightPrimary100;
+    public static readonly string TextHighlightPrimary100 = "textColor_highlight_primary100";
     public static readonly string TextWhite65 = "textColor_white_white65";
     public static readonly string TextWhite100 = ThemeConstants.TextColorWhiteWhite100;
     public static readonly string TextLightRed100 = ThemeConstants.TextColorQualitativeLightRed100;
