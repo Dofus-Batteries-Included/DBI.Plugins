@@ -12,6 +12,7 @@ using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Coroutines;
 using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.Core.Maps.PathFinding;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace DofusBatteriesIncluded.TreasureSolver.Behaviours;
 public class TreasureHuntManager : MonoBehaviour
 {
     static readonly ILogger Log = DBI.Logging.Create<TreasureHuntManager>();
+    const int CluesMaxDistance = 10;
 
     static TreasureHuntManager _instance;
     TreasureHuntEvent _lastEvent;
@@ -147,11 +149,13 @@ public class TreasureHuntManager : MonoBehaviour
                         int poiId = nextStep.FollowDirectionToPoi.PoiLabelId;
                         Direction direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
 
-                        Task<Position?> cluePositionTask = clueFinder.FindPositionOfNextClue(lastKnownCoord, direction, poiId, 10);
+                        Task<Position?> cluePositionTask = clueFinder.FindPositionOfNextClue(lastKnownCoord, direction, poiId, CluesMaxDistance);
                         yield return CoroutineExtensions.WaitForCompletion(cluePositionTask);
                         Position? cluePosition = cluePositionTask.Result;
 
-                        bool done = cluePosition.HasValue ? TryMarkNextPosition(lastEvent, cluePosition.Value) : TryMarkUnknownPosition(lastEvent);
+                        bool done = cluePosition.HasValue
+                            ? TryMarkNextPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, cluePosition.Value)
+                            : TryMarkUnknownPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, direction);
                         if (done)
                         {
                             yield break;
@@ -166,10 +170,13 @@ public class TreasureHuntManager : MonoBehaviour
                             yield break;
                         }
 
+                        Direction direction = GetDirection(nextStep.FollowDirectionToHint.Direction);
                         int npcId = nextStep.FollowDirectionToHint.NpcId;
                         _lookingForNpcId = npcId;
 
-                        bool done = _knownNpcPositions.TryGetValue(npcId, out Position position) ? TryMarkNextPosition(lastEvent, position) : TryMarkUnknownNpcPosition(lastEvent);
+                        bool done = _knownNpcPositions.TryGetValue(npcId, out Position position)
+                            ? TryMarkNextPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, position)
+                            : TryMarkUnknownPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, direction, "Not found yet");
                         if (done)
                         {
                             yield break;
@@ -186,7 +193,7 @@ public class TreasureHuntManager : MonoBehaviour
 
                         Direction direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
                         Position targetPosition = lastKnownCoord.MoveInDirection(direction, nextStep.FollowDirection.MapCount);
-                        if (TryMarkNextPosition(lastEvent, targetPosition))
+                        if (TryMarkNextPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, targetPosition))
                         {
                             yield break;
                         }
@@ -209,18 +216,22 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    static bool TryMarkNextPosition(TreasureHuntEvent message, Position position)
+    static bool TryMarkNextPosition(int step, Position lastFlag, Position targetPosition)
     {
-        Log.LogInformation("Found next clue at {Position}.", position);
+        Log.LogInformation("Found next clue at {Position}.", targetPosition);
 
-        string stepMessage = $"[{position.X},{position.Y}]";
+        string stepMessage = $"[{targetPosition.X},{targetPosition.Y}]";
 
         if (DBI.Player.State != null)
         {
-            int distance = position.DistanceTo(DBI.Player.State.CurrentMapPosition);
+            Position playerPosition = DBI.Player.State.CurrentMapPosition;
+
+            int distance = targetPosition.DistanceTo(playerPosition);
             if (distance > 0)
             {
-                stepMessage += $" {distance} maps";
+                stepMessage += GamePathUtils.GetDirectionFromTo(playerPosition, targetPosition) == GamePathUtils.GetDirectionFromTo(lastFlag, targetPosition)?.Invert()
+                    ? $" back {distance} maps"
+                    : $" {distance} maps";
             }
             else
             {
@@ -228,19 +239,22 @@ public class TreasureHuntManager : MonoBehaviour
             }
         }
 
-        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, stepMessage);
+        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, stepMessage);
     }
 
-    static bool TryMarkUnknownNpcPosition(TreasureHuntEvent message)
+    static bool TryMarkUnknownPosition(int step, Position lastFlag, Direction direction, string text = "Not found")
     {
-        Log.LogInformation("NPC position is unknown.");
-        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, "Not found yet");
-    }
+        Position playerPosition = DBI.Player.State.CurrentMapPosition;
+        bool inPath = direction switch
+        {
+            Direction.Top => playerPosition.X == lastFlag.X && playerPosition.Y - lastFlag.Y is <= 0 and >= -CluesMaxDistance,
+            Direction.Bottom => playerPosition.X == lastFlag.X && playerPosition.Y - lastFlag.Y is >= 0 and <= CluesMaxDistance,
+            Direction.Left => playerPosition.Y == lastFlag.Y && playerPosition.X - lastFlag.X is <= 0 and >= -CluesMaxDistance,
+            Direction.Right => playerPosition.Y == lastFlag.Y && playerPosition.X - lastFlag.X is >= 0 and <= CluesMaxDistance,
+            _ => false
+        };
 
-    static bool TryMarkUnknownPosition(TreasureHuntEvent message)
-    {
-        Log.LogInformation("Could not find next clue.");
-        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(message.KnownSteps.Count - 1, "Not found");
+        return inPath ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text) : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Out of path, go back");
     }
 
     static Position GetMapPosition(long id)
