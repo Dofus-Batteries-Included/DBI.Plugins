@@ -30,51 +30,6 @@ WARNING: A specific version of the plugins can only work for the specific versio
 
 ## How it works
 
-### Write your first plugin
-
-Create a new .NET 6 class library project. 
-We will need packages from additional nuget feeds:
-- DBI feed (WIP: nuget feed is not setup yet)
-- https://nuget.bepinex.dev/v3/index.json
-- https://nuget.samboy.dev/v3/index.json
-
-Add the following to the csproj of your project
-```
-<PropertyGroup>
-    <RestoreAdditionalProjectSources>
-        (WIP: nuget feed is not setup yet)
-        https://nuget.bepinex.dev/v3/index.json;
-        https://nuget.samboy.dev/v3/index.json
-    </RestoreAdditionalProjectSources>
-</PropertyGroup>
-```
-
-Then reference the BepInEx nugets and the DBI.Core project:
-```
-<ItemGroup>
-    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
-    <PackageReference Include="DBI.Core" Version="1.*"/>
-</ItemGroup>
-```
-
-Finally create your plugin.
-
-```
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
-class MyAwesomePlugin : DBIPlugin
-{
-    protected override Task StartAsync()
-    {
-        Log.LogInformation("Hello world!");
-    }
-}
-```
-
-Compile the project and move the `DofusBatteriesIncluded.Core.dll` assembly and the project assembly to the `BepInEx/plugins/` folder of the game. Run `Dofus.exe` and wait for the log message.\
-Congrats! 
-
 ### The Core plugin
 
 The common features of DBI are implemented in the `Core` assembly and the `CorePlugin` plugin. Most of the features provided by the assembly are accessible through the `DBI` static class.
@@ -132,3 +87,73 @@ This is the most reliable way to get the current state of the game without havin
 #### Player
 
 The `Core` assembly gets basic information about the current player and exposes them in `DBI.Player`. It also provides useful events.
+
+### Your plugin
+
+#### Setup
+
+Create a new .NET 6 class library project.
+We will need packages from additional nuget feeds:
+- DBI feed (WIP: nuget feed is not setup yet)
+- https://nuget.bepinex.dev/v3/index.json
+- https://nuget.samboy.dev/v3/index.json
+
+Add the following to the csproj of your project
+```
+<PropertyGroup>
+    <RestoreAdditionalProjectSources>
+        (WIP: nuget feed is not setup yet)
+        https://nuget.bepinex.dev/v3/index.json;
+        https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+</PropertyGroup>
+```
+
+Then reference the BepInEx nugets and the DBI.Core project:
+```
+<ItemGroup>
+    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+    <PackageReference Include="DBI.Core" Version="1.*"/>
+</ItemGroup>
+```
+
+Finally create your plugin.
+
+```
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
+class MyAwesomePlugin : DBIPlugin
+{
+    protected override Task StartAsync()
+    {
+        Log.LogInformation("Hello world!");
+    }
+}
+```
+
+Compile the project and move the `DofusBatteriesIncluded.Core.dll` assembly and the project assembly to the `BepInEx/plugins/` folder of the game. Run `Dofus.exe` and wait for the log message.\
+Congrats! 
+
+Assemblies from the `Interop/` folder can be referenced using a `<HintPath>`, for example:
+```
+<ItemGroup>
+    <Reference Include="UnityEngine">
+        <HintPath>..\Interop\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+        <HintPath>..\Interop\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+        <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Core">
+        <HintPath>..\Interop\Core.dll</HintPath>
+    </Reference>
+</ItemGroup>
+```
+
+#### Gotchas
+
+- **Multithreading**: by default the only thread that can communicate with the IL2CPP domain is the main thread. Watch out when using async-await that all the communication with the game threads happens before the first await.\
+There are some tools to help integrate tasks in Unity behaviours, for example tasks can be awaited in Coroutines using `CoroutineExtensions.WaitForCompletion(Task task)`: the task itself will run in another thread but the rest of the Coroutine will be executed in the main thread.
