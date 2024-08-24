@@ -16,8 +16,6 @@ namespace DofusBatteriesIncluded.TreasureSolver;
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
 class TreasureHuntSolverPlugin : DBIPlugin
 {
-    bool _loaded;
-
     public TreasureHuntSolverPlugin() : base(GetExpectedBuildIdFromAssemblyAttribute()) { }
 
     protected override Task StartAsync()
@@ -31,22 +29,10 @@ class TreasureHuntSolverPlugin : DBIPlugin
             .RegisterChangeCallback(ClueFinders.SetDefaultFinder, true)
             .Bind();
 
-        DBI.Player.PlayerChangeCompleted += OnPlayerLoaded;
-
-        return Task.CompletedTask;
-    }
-
-    void OnPlayerLoaded(object _, CurrentPlayerState __)
-    {
-        if (_loaded)
-        {
-            return;
-        }
-
         AddComponent<TreasureHuntManager>();
         DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
 
-        _loaded = true;
+        return Task.CompletedTask;
     }
 
     async Task<StaticClueFinder> LoadDplbClueFinder()
