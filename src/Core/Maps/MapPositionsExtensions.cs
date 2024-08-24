@@ -99,6 +99,11 @@ public static class MapUtils
 
         Position next = map.GetPosition().MoveInDirection(direction);
         MapCoordinates coords = DataCenterModule.mapCoordinatesRoot.GetMapCoordinatesByCoords(next.X, next.Y);
+        if (coords == null)
+        {
+            nextMapId = null;
+            return true;
+        }
 
         nextMapId = null;
         foreach (long neighborMapId in coords.mapIds)
