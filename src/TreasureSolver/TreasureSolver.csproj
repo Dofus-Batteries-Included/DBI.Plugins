@@ -12,7 +12,7 @@
         <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/LICENSE</PackageLicense>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageReadmeFile>TreasureSolver/README.md</PackageReadmeFile>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
