@@ -7,3 +7,4 @@ source = "https://dofusbatteriesincluded-bqehgfemfrgbasb2.francecentral-01.azure
 [github]
 user = "Dofus-Batteries-Included"
 repo = "DBI"
+version_prefix = "v"
