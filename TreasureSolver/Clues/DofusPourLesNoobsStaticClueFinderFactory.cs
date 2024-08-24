@@ -18,13 +18,13 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
 
     public static async Task<StaticClueFinder> Create(string dplbFilePath)
     {
-        await using FileStream stream = File.OpenRead(dplbFilePath);
-        DPLBFile parsedFile = await JsonSerializer.DeserializeAsync<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
+        List<(int Id, string Name)> gamePois = GetGamePois();
 
-        List<(int Id, string Name)> gamePois = [];
-        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
+        DPLBFile parsedFile;
+        await using (FileStream stream = File.OpenRead(dplbFilePath))
         {
-            gamePois.Add((poi.id, poi.name));
+            parsedFile = await JsonSerializer.DeserializeAsync<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
         Dictionary<int, int> dplbClueToGameClueMapping = new();
@@ -49,6 +49,16 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
         );
 
         return new StaticClueFinder(clues);
+    }
+
+    static List<(int Id, string Name)> GetGamePois()
+    {
+        List<(int Id, string Name)> gamePois = [];
+        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
+        {
+            gamePois.Add((poi.id, poi.name));
+        }
+        return gamePois;
     }
 
     // ReSharper disable once InconsistentNaming

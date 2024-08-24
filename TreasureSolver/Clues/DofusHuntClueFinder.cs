@@ -86,6 +86,9 @@ public class DofusHuntClueFinder : IClueFinder
 
     public static async Task<DofusHuntClueFinder> Create()
     {
+        // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
+        List<(int Id, string Name)> gamePois = GetGamePois();
+
         Dictionary<int, int> mapping = [];
 
         string page = await GetAsync("https://dofus-map.com/fr/hunt");
@@ -108,12 +111,6 @@ public class DofusHuntClueFinder : IClueFinder
             return null;
         }
 
-        List<(int Id, string Name)> gamePois = [];
-        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
-        {
-            gamePois.Add((poi.id, poi.name));
-        }
-
         foreach ((int id, string name) in gamePois)
         {
             string nameWithoutAccent = name.RemoveAccents();
@@ -128,5 +125,15 @@ public class DofusHuntClueFinder : IClueFinder
         }
 
         return new DofusHuntClueFinder(mapping);
+    }
+
+    static List<(int Id, string Name)> GetGamePois()
+    {
+        List<(int Id, string Name)> gamePois = [];
+        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
+        {
+            gamePois.Add((poi.id, poi.name));
+        }
+        return gamePois;
     }
 }
