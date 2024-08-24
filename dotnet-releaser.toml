@@ -1,0 +1,9 @@
+[msbuild]
+project = ["src/Core/Core.csproj", "src/TreasureSolver/TreasureSolver.csproj"]
+
+[nuget]
+source = "https://dofusbatteriesincluded-bqehgfemfrgbasb2.francecentral-01.azurewebsites.net/v3/index.json"
+
+[github]
+user = "Dofus-Batteries-Included"
+repo = "DBI"

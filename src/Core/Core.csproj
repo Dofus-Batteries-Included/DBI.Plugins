@@ -2,14 +2,27 @@
 
     <PropertyGroup>
         <AssemblyName>DofusBatteriesIncluded.Core</AssemblyName>
-        <Product>DBI.Core</Product>
-        <Description>Base plugin necessary for all Dofus Batteries Included plugins.</Description>
         <RootNamespace>DofusBatteriesIncluded.Core</RootNamespace>
+        <Title>Dofus Batteries Included - Core</Title>
+        <Product>DBI.Core</Product>
+        <Authors>Ismail Bennani</Authors>
+        <Description>Base plugin necessary for all Dofus Batteries Included plugins.</Description>
+        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI</RepositoryUrl>
+        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/LICENSE</PackageLicense>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageReadmeFile>../README.md</PackageReadmeFile>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+        <PackageReference Include="MinVer" Version="5.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
     
     <ItemGroup>
@@ -45,4 +58,8 @@
         </Reference>
     </ItemGroup>
 
+    <PropertyGroup>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+    </PropertyGroup>
+    
 </Project>
