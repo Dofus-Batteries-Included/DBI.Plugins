@@ -85,15 +85,15 @@ public class TreasureHuntManager : MonoBehaviour
     {
         long mapId = evt.MapId;
         bool foundLookingForNpc = false;
-        foreach (ActorPositionInformation actor in evt.Actors.array.Where(a => a != null))
+        foreach (ActorPositionInformation actor in evt.Actors.array.Take(evt.Actors.Count))
         {
-            ActorPositionInformation.Types.ActorInformation.Types.RolePlayActor.ActorOneofCase? actorCase = actor.ActorInformation?.RolePlayActor?.ActorCase;
-            if (actorCase != ActorPositionInformation.Types.ActorInformation.Types.RolePlayActor.ActorOneofCase.NpcActor)
+            ActorPositionInformation.Types.ActorInformation.InformationOneofCase? actorCase = actor.ActorInformation?.InformationCase;
+            if (actorCase != ActorPositionInformation.Types.ActorInformation.InformationOneofCase.RolePlayActor || actor.ActorInformation.RolePlayActor == null)
             {
                 continue;
             }
 
-            int npcId = actor.ActorInformation.RolePlayActor.NpcActor.NpcId;
+            int npcId = actor.ActorInformation.RolePlayActor.TreasureHuntNpcId;
             _knownNpcMapsIds[npcId] = mapId;
 
             foundLookingForNpc |= npcId == _lookingForNpcId;
@@ -178,7 +178,7 @@ public class TreasureHuntManager : MonoBehaviour
                             yield break;
                         }
 
-                        Direction? direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
+                        Direction? direction = GetDirection(nextStep.FollowDirectionToHint.Direction);
                         if (!direction.HasValue)
                         {
                             Log.LogWarning("Found invalid direction in event {Direction}.", nextStep.FollowDirectionToPoi.Direction);
