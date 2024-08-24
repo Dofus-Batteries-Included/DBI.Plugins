@@ -54,7 +54,7 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
     static List<(int Id, string Name)> GetGamePois()
     {
         List<(int Id, string Name)> gamePois = [];
-        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
+        foreach (PointOfInterest poi in DataCenterModule.GetDataRoot<PointOfInterestRoot>().GetObjects())
         {
             gamePois.Add((poi.id, poi.name));
         }

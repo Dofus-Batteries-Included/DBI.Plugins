@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using DofusBatteriesIncluded.Core.Maps.PathFinding;
 
-namespace DofusBatteriesIncluded.Core.Maps.PathFinding;
+namespace DofusBatteriesIncluded.Core;
 
-public static class PathFinder
+// ReSharper disable once InconsistentNaming
+public class DBIPathFinder
 {
     static readonly AStar AStar = new();
 
-    public static GamePath GetShortestPath(long source, IEnumerable<long> targets)
+    public GamePath GetShortestPath(long source, IEnumerable<long> targets)
     {
         GamePath shortest = null;
 
@@ -28,5 +30,5 @@ public static class PathFinder
         return shortest;
     }
 
-    public static GamePath GetShortestPath(long source, long target) => AStar.GetShortestPath(source, target);
+    public GamePath GetShortestPath(long source, long target) => AStar.GetShortestPath(source, target);
 }

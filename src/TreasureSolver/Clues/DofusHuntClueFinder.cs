@@ -7,9 +7,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
+using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Extensions;
 using DofusBatteriesIncluded.Core.Maps;
+using Il2CppInterop.Runtime;
 using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
@@ -25,17 +27,41 @@ public class DofusHuntClueFinder : IClueFinder
         _gameCluesToDofusMapHuntClues = gameCluesToDofusMapHuntClues;
     }
 
-    public async Task<Position?> FindPositionOfNextClue(Position start, Direction direction, int clueId, int maxDistance)
+    public async Task<long?> FindMapOfNextClue(long startMapId, Direction direction, int clueId, int maxDistance)
     {
         if (!_gameCluesToDofusMapHuntClues.TryGetValue(clueId, out int dmhClueId))
         {
+            Log.LogWarning("Could not find clue {ClueId} in Dofus Map Hunt clues", clueId);
+            return null;
+        }
+
+        Position? startMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(startMapId)?.GetPosition();
+        if (!startMapPosition.HasValue)
+        {
+            Log.LogWarning("Could not find start map {StartMapId}", startMapId);
+            return null;
+        }
+
+        string directionStr = direction switch
+        {
+            Direction.Right => "right",
+            Direction.Bottom => "bottom",
+            Direction.Left => "left",
+            Direction.Top => "top",
+            _ => null
+        };
+        if (directionStr == null)
+        {
+            Log.LogWarning("Invalid direction {Direction}", direction);
             return null;
         }
 
         string response;
         try
         {
-            response = await GetAsync($"https://dofus-map.com/huntTool/getData.php?x={start.X}&y={start.Y}&direction={direction}&world=0&language=fr");
+            response = await GetAsync(
+                $"https://dofus-map.com/huntTool/getData.php?x={startMapPosition.Value.X}&y={startMapPosition.Value.Y}&direction={direction}&world=0&language=fr"
+            );
         }
         catch (Exception exn)
         {
@@ -60,7 +86,20 @@ public class DofusHuntClueFinder : IClueFinder
             return null;
         }
 
-        return new Position(hint.X, hint.Y);
+        // attach current thread to IL2CPP to ensure it has access to the IL2CPP domain
+        IL2CPP.il2cpp_thread_attach(IL2CPP.il2cpp_domain_get());
+        MapCoordinates coords = DataCenterModule.GetDataRoot<MapCoordinatesRoot>().GetMapCoordinatesByCoords(hint.X, hint.Y);
+
+        foreach (long mapId in MapUtils.MoveInDirection(startMapId, direction).Take(maxDistance))
+        {
+            if (coords.mapIds.Contains(mapId))
+            {
+                return mapId;
+            }
+        }
+
+        Log.LogWarning("Could not find map at coord [{X},{Y}] that is accessible from map {StartMapId} by going in direction {Direction}", hint.X, hint.Y, startMapId, direction);
+        return null;
     }
 
     static async Task<string> GetAsync(string uri)
@@ -130,7 +169,7 @@ public class DofusHuntClueFinder : IClueFinder
     static List<(int Id, string Name)> GetGamePois()
     {
         List<(int Id, string Name)> gamePois = [];
-        foreach (PointOfInterest poi in DataCenterModule.pointOfInterestRoot.GetObjects())
+        foreach (PointOfInterest poi in DataCenterModule.GetDataRoot<PointOfInterestRoot>().GetObjects())
         {
             gamePois.Add((poi.id, poi.name));
         }

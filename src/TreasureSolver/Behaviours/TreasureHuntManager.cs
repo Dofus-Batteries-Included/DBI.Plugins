@@ -29,7 +29,7 @@ public class TreasureHuntManager : MonoBehaviour
     static TreasureHuntManager _instance;
     TreasureHuntEvent _lastEvent;
     Coroutine _coroutine;
-    readonly Dictionary<int, Position> _knownNpcPositions = [];
+    readonly Dictionary<int, long> _knownNpcMapsIds = [];
     int? _lookingForNpcId;
 
     public static void SetLastEvent(TreasureHuntEvent lastEvent)
@@ -52,7 +52,7 @@ public class TreasureHuntManager : MonoBehaviour
         }
         else
         {
-            _instance._knownNpcPositions.Clear();
+            _instance._knownNpcMapsIds.Clear();
         }
     }
 
@@ -87,7 +87,6 @@ public class TreasureHuntManager : MonoBehaviour
     void OnMapChanged(MapComplementaryInformationEvent evt)
     {
         long mapId = evt.MapId;
-        Position mapPosition = DataCenterModule.mapPositionsRoot.GetMapPositionById(mapId).GetPosition();
         bool foundLookingForNpc = false;
         foreach (ActorPositionInformation actor in evt.Actors.array.Where(a => a != null))
         {
@@ -98,7 +97,7 @@ public class TreasureHuntManager : MonoBehaviour
             }
 
             int npcId = actor.ActorInformation.RolePlayActor.NpcActor.NpcId;
-            _knownNpcPositions[npcId] = mapPosition;
+            _knownNpcMapsIds[npcId] = mapId;
 
             foundLookingForNpc |= npcId == _lookingForNpcId;
         }
@@ -109,7 +108,7 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    IEnumerator HandleEvent(TreasureHuntEvent lastEvent)
+    IEnumerator HandleEvent(TreasureHuntEvent evt)
     {
         int tryCount = 0;
         while (tryCount < 100)
@@ -118,14 +117,21 @@ public class TreasureHuntManager : MonoBehaviour
             // also clear it so that event handling only has to set fields properly
             if (TreasureHuntWindowAccessor.TryClear())
             {
-                if (lastEvent.CurrentCheckPoint == lastEvent.TotalCheckPoint || lastEvent.Flags.Count == lastEvent.TotalStepCount)
+                if (evt.CurrentCheckPoint == evt.TotalCheckPoint)
                 {
+                    Log.LogInformation("Reached end of current checkpoint.");
                     yield break;
                 }
 
-                IReadOnlyList<Position> flags = GetKnownPoiPositions(lastEvent);
-                Position lastKnownCoord = flags.Count == 0 ? GetMapPosition(lastEvent.StartMapId) : flags[^1];
-                TreasureHuntEvent.Types.TreasureHuntStep nextStep = GetNextStep(lastEvent);
+                if (evt.Flags.Count == evt.TotalStepCount)
+                {
+                    Log.LogInformation("Reached end of hunt.");
+                    yield break;
+                }
+
+                int step = evt.KnownSteps.Count - 1;
+                long lastMapId = evt.Flags.array.All(f => f == null) ? evt.StartMapId : evt.Flags.array.Last(f => f != null).MapId;
+                TreasureHuntEvent.Types.TreasureHuntStep nextStep = evt.KnownSteps.array.Last(s => s != null);
 
                 Task<IClueFinder> clueFinderTask = ClueFinders.GetDefaultFinder();
                 yield return CoroutineExtensions.WaitForCompletion(clueFinderTask);
@@ -143,19 +149,23 @@ public class TreasureHuntManager : MonoBehaviour
                     {
                         if (nextStep.FollowDirectionToPoi == null)
                         {
+                            Log.LogWarning("Field {Field} of event is empty.", nameof(nextStep.FollowDirectionToPoi));
                             yield break;
                         }
 
                         int poiId = nextStep.FollowDirectionToPoi.PoiLabelId;
-                        Direction direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
+                        Direction? direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
+                        if (!direction.HasValue)
+                        {
+                            Log.LogWarning("Found invalid direction in event {Direction}.", nextStep.FollowDirectionToPoi.Direction);
+                            yield break;
+                        }
 
-                        Task<Position?> cluePositionTask = clueFinder.FindPositionOfNextClue(lastKnownCoord, direction, poiId, CluesMaxDistance);
+                        Task<long?> cluePositionTask = clueFinder.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
                         yield return CoroutineExtensions.WaitForCompletion(cluePositionTask);
-                        Position? cluePosition = cluePositionTask.Result;
+                        long? clueMapId = cluePositionTask.Result;
 
-                        bool done = cluePosition.HasValue
-                            ? TryMarkNextPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, cluePosition.Value)
-                            : TryMarkUnknownPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, direction);
+                        bool done = clueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, clueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
                         if (done)
                         {
                             yield break;
@@ -167,16 +177,23 @@ public class TreasureHuntManager : MonoBehaviour
                     {
                         if (nextStep.FollowDirectionToHint == null)
                         {
+                            Log.LogWarning("Field {Field} of event is empty.", nameof(nextStep.FollowDirectionToHint));
                             yield break;
                         }
 
-                        Direction direction = GetDirection(nextStep.FollowDirectionToHint.Direction);
+                        Direction? direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
+                        if (!direction.HasValue)
+                        {
+                            Log.LogWarning("Found invalid direction in event {Direction}.", nextStep.FollowDirectionToPoi.Direction);
+                            yield break;
+                        }
+
                         int npcId = nextStep.FollowDirectionToHint.NpcId;
                         _lookingForNpcId = npcId;
 
-                        bool done = _knownNpcPositions.TryGetValue(npcId, out Position position)
-                            ? TryMarkNextPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, position)
-                            : TryMarkUnknownPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, direction, "Not found yet");
+                        bool done = _knownNpcMapsIds.TryGetValue(npcId, out long npcMapId)
+                            ? TryMarkNextPosition(step, lastMapId, npcMapId)
+                            : TryMarkUnknownPosition(step, lastMapId, direction.Value, "Keep looking...");
                         if (done)
                         {
                             yield break;
@@ -188,14 +205,31 @@ public class TreasureHuntManager : MonoBehaviour
                     {
                         if (nextStep.FollowDirection == null)
                         {
+                            Log.LogWarning("Field {Field} of event is empty.", nameof(nextStep.FollowDirection));
                             yield break;
                         }
 
-                        Direction direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
-                        Position targetPosition = lastKnownCoord.MoveInDirection(direction, nextStep.FollowDirection.MapCount);
-                        if (TryMarkNextPosition(lastEvent.KnownSteps.Count - 1, lastKnownCoord, targetPosition))
+                        Direction? direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
+                        if (!direction.HasValue)
                         {
+                            Log.LogWarning("Found invalid direction in event {Direction}.", nextStep.FollowDirectionToPoi.Direction);
                             yield break;
+                        }
+
+                        long targetMapId = MapUtils.MoveInDirection(lastMapId, direction.Value).Skip(nextStep.FollowDirection.MapCount - 1).FirstOrDefault();
+                        if (targetMapId == 0)
+                        {
+                            if (TryMarkUnknownPosition(step, lastMapId, direction.Value))
+                            {
+                                yield break;
+                            }
+                        }
+                        else
+                        {
+                            if (TryMarkNextPosition(step, lastMapId, targetMapId))
+                            {
+                                yield break;
+                            }
                         }
 
                         break;
@@ -208,7 +242,7 @@ public class TreasureHuntManager : MonoBehaviour
                         throw new ArgumentOutOfRangeException(nameof(nextStep.StepCase), nextStep.StepCase, null);
                 }
 
-                TreasureHuntWindowAccessor.TrySetStepAdditionalText(lastEvent.KnownSteps.Count - 1, "Searching...");
+                TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Searching...");
             }
 
             tryCount++;
@@ -216,76 +250,71 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    static bool TryMarkNextPosition(int step, Position lastFlag, Position targetPosition)
+    static bool TryMarkNextPosition(int step, long lastMapId, long targetMapId)
     {
+        MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
+        Position? targetPosition = mapPositionsRoot.GetMapPositionById(targetMapId)?.GetPosition();
+        if (!targetPosition.HasValue)
+        {
+            return true;
+        }
+
+        Position? lastPosition = mapPositionsRoot.GetMapPositionById(lastMapId)?.GetPosition();
+
         Log.LogInformation("Found next clue at {Position}.", targetPosition);
 
-        string stepMessage = $"[{targetPosition.X},{targetPosition.Y}]";
+        string stepMessage = $"[{targetPosition.Value.X},{targetPosition.Value.Y}]";
 
         if (DBI.Player.State != null)
         {
-            Position playerPosition = DBI.Player.State.CurrentMapPosition;
-
-            int distance = targetPosition.DistanceTo(playerPosition);
-            if (distance > 0)
+            if (DBI.Player.State.CurrentMapId == targetMapId)
             {
-                stepMessage += GamePathUtils.GetDirectionFromTo(playerPosition, targetPosition) == GamePathUtils.GetDirectionFromTo(lastFlag, targetPosition)?.Invert()
-                    ? $" back {distance} maps"
-                    : $" {distance} maps";
+                stepMessage += " arrived";
             }
             else
             {
-                stepMessage += " arrived";
+                Position playerPosition = DBI.Player.State.CurrentMapPosition;
+                GamePath path = DBI.PathFinder.GetShortestPath(DBI.Player.State.CurrentMapId, targetMapId);
+                int distance = path?.Count ?? targetPosition.Value.DistanceTo(playerPosition);
+
+                stepMessage += lastPosition.HasValue
+                               && GamePathUtils.GetDirectionFromTo(playerPosition, targetPosition.Value)
+                               == GamePathUtils.GetDirectionFromTo(lastPosition.Value, targetPosition.Value)?.Invert()
+                    ? $" {distance} maps back"
+                    : $" {distance} maps";
             }
         }
 
         return TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, stepMessage);
     }
 
-    static bool TryMarkUnknownPosition(int step, Position lastFlag, Direction direction, string text = "Not found")
+    static bool TryMarkUnknownPosition(int step, long lastFlagMapId, Direction direction, string text = "Not found")
     {
         Position playerPosition = DBI.Player.State.CurrentMapPosition;
-        bool inPath = direction switch
+        bool foundMapInPath = false;
+        foreach (long map in MapUtils.MoveInDirection(lastFlagMapId, direction).Take(CluesMaxDistance))
         {
-            Direction.Top => playerPosition.X == lastFlag.X && playerPosition.Y - lastFlag.Y is <= 0 and >= -CluesMaxDistance,
-            Direction.Bottom => playerPosition.X == lastFlag.X && playerPosition.Y - lastFlag.Y is >= 0 and <= CluesMaxDistance,
-            Direction.Left => playerPosition.Y == lastFlag.Y && playerPosition.X - lastFlag.X is <= 0 and >= -CluesMaxDistance,
-            Direction.Right => playerPosition.Y == lastFlag.Y && playerPosition.X - lastFlag.X is >= 0 and <= CluesMaxDistance,
-            _ => false
-        };
-
-        return inPath ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text) : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Out of path, go back");
-    }
-
-    static Position GetMapPosition(long id)
-    {
-        MapPositions map = DataCenterModule.mapPositionsRoot.GetMapPositionById(id);
-        return new Position(map.posX, map.posY);
-    }
-
-    static IReadOnlyList<Position> GetKnownPoiPositions(TreasureHuntEvent message)
-    {
-        List<Position> result = [];
-        foreach (TreasureHuntEvent.Types.TreasureHuntFlag flag in message.Flags.array.Where(f => f != null))
-        {
-            result.Add(GetMapPosition(flag.MapId));
+            Position? mapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(map)?.GetPosition();
+            if (mapPosition.HasValue && mapPosition.Value == playerPosition)
+            {
+                foundMapInPath = true;
+            }
         }
-        return result;
+
+        return foundMapInPath ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text) : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Player out of search area");
     }
 
-    static TreasureHuntEvent.Types.TreasureHuntStep GetNextStep(TreasureHuntEvent message) => message.KnownSteps.array.Last(s => s != null);
-
-    static Direction GetDirection(Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction direction) =>
+    static Direction? GetDirection(Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction direction) =>
         direction switch
         {
             Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.East => Direction.Right,
             Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.South => Direction.Bottom,
             Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.West => Direction.Left,
             Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.North => Direction.Top,
-            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.SouthEast => throw new NotImplementedException(),
-            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.SouthWest => throw new NotImplementedException(),
-            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.NorthWest => throw new NotImplementedException(),
-            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.NorthEast => throw new NotImplementedException(),
-            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.SouthEast => null,
+            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.SouthWest => null,
+            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.NorthWest => null,
+            Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction.NorthEast => null,
+            _ => null
         };
 }

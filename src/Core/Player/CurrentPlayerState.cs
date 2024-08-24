@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.DataCenter;
+using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core.Maps;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ public class CurrentPlayerState
     public void SetCurrentMap(long mapId)
     {
         CurrentMapId = mapId;
-        CurrentMapPosition = DataCenterModule.mapPositionsRoot.GetMapPositionById(mapId).GetPosition();
+        CurrentMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(mapId).GetPosition();
 
         Log.LogDebug("Current player changed map: {Position}", DBI.Player.State.CurrentMapPosition);
         MapChanged?.Invoke(this, CurrentMapPosition);

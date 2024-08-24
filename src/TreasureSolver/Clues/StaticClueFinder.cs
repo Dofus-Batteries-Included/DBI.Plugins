@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.DataCenter;
+using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core.Maps;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
@@ -14,26 +16,24 @@ public class StaticClueFinder : IClueFinder
         Clues = clues;
     }
 
-    public Task<Position?> FindPositionOfNextClue(Position start, Direction direction, int clueId, int maxDistance)
+    public Task<long?> FindMapOfNextClue(long startMapId, Direction direction, int clueId, int maxDistance)
     {
-        foreach (Position position in GetPositionsInDirection(start, direction, maxDistance))
+        foreach (long mapId in MapUtils.MoveInDirection(startMapId, direction).Take(maxDistance))
         {
-            if (!Clues.TryGetValue(position, out IReadOnlyCollection<int> clues) || !clues.Contains(clueId))
+            Position? mapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(mapId)?.GetPosition();
+            if (!mapPosition.HasValue)
             {
                 continue;
             }
 
-            return Task.FromResult<Position?>(position);
+            if (!Clues.TryGetValue(mapPosition.Value, out IReadOnlyCollection<int> clues) || !clues.Contains(clueId))
+            {
+                continue;
+            }
+
+            return Task.FromResult<long?>(mapId);
         }
 
-        return Task.FromResult<Position?>(null);
-    }
-
-    static IEnumerable<Position> GetPositionsInDirection(Position start, Direction direction, int maxDistance)
-    {
-        for (int i = 1; i <= maxDistance; i++)
-        {
-            yield return start.MoveInDirection(direction, i);
-        }
+        return Task.FromResult<long?>(null);
     }
 }

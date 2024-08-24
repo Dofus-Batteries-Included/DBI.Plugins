@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
+using Core.PathFinding.WorldPathfinding;
 using Microsoft.Extensions.Logging;
 using Enumerable = System.Linq.Enumerable;
 
@@ -29,16 +30,29 @@ class AStar
 
     void ComputePath(long source, long target)
     {
-        MapPositions sourceMap = DataCenterModule.mapPositionsRoot.GetMapPositionById(source);
-        MapPositions targetMap = DataCenterModule.mapPositionsRoot.GetMapPositionById(target);
+        MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
+        MapPositions sourceMap = mapPositionsRoot.GetMapPositionById(source);
+        if (sourceMap == null)
+        {
+            _knownPaths.Add((source, target), null);
+            return;
+        }
 
-        Log.LogDebug("Cache miss while computing path from {SourceMap} to {TargetMap}", sourceMap.name, targetMap.name);
+        MapPositions targetMap = mapPositionsRoot.GetMapPositionById(target);
+        if (targetMap == null)
+        {
+            _knownPaths.Add((source, target), null);
+            return;
+        }
+
+        Log.LogDebug("Cache miss while computing path from {SourceMap} to {TargetMap}", sourceMap.GetPosition(), targetMap.GetPosition());
 
         Dictionary<long, long> cameFrom = new();
 
         if (!Explore(sourceMap, targetMap, cameFrom))
         {
             _knownPaths.Add((source, target), null);
+            return;
         }
 
         List<ChangeMapStep> result = new();
@@ -46,10 +60,10 @@ class AStar
         long current = target;
         while (cameFrom.ContainsKey(current))
         {
-            MapPositions currentMap = DataCenterModule.mapPositionsRoot.GetMapPositionById(current);
+            MapPositions currentMap = mapPositionsRoot.GetMapPositionById(current);
 
             long previous = cameFrom[current];
-            MapPositions previousMap = DataCenterModule.mapPositionsRoot.GetMapPositionById(previous);
+            MapPositions previousMap = mapPositionsRoot.GetMapPositionById(previous);
 
             Direction? direction = GamePathUtils.GetDirectionFromTo(previousMap.GetPosition(), currentMap.GetPosition());
             result.Add(new ChangeMapStep(direction ?? Direction.Unknown));
@@ -83,14 +97,19 @@ class AStar
 
             int currentCost = openCosts[currentMapId];
 
-            foreach (uint neighborId in GetNeighbors(currentMapId))
+            foreach (uint neighborId in MapUtils.GetNeighbors(currentMapId))
             {
+                MapPositions neighborMap = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(neighborId);
+                if (neighborMap == null)
+                {
+                    continue;
+                }
+
                 if (closed.Contains(neighborId) || openCosts.TryGetValue(neighborId, out int neighborCost) && neighborCost < currentCost)
                 {
                     continue;
                 }
 
-                MapPositions neighborMap = DataCenterModule.mapPositionsRoot.GetMapPositionById(neighborId);
                 openCosts[neighborId] = currentCost + 1;
                 open[neighborId] = currentCost + neighborMap.DistanceTo(targetMap);
                 cameFrom[neighborId] = currentMapId;
@@ -107,26 +126,5 @@ class AStar
         }
 
         return false;
-    }
-
-    static IEnumerable<uint> GetNeighbors(uint currentMapId)
-    {
-        MapScrollActions scrollActions = DataCenterModule.mapScrollActionsRoot.GetMapScrollActionById(currentMapId);
-        if (scrollActions.bottomExists)
-        {
-            yield return (uint)scrollActions.bottomMapId;
-        }
-        if (scrollActions.topExists)
-        {
-            yield return (uint)scrollActions.topMapId;
-        }
-        if (scrollActions.leftExists)
-        {
-            yield return (uint)scrollActions.leftMapId;
-        }
-        if (scrollActions.rightExists)
-        {
-            yield return (uint)scrollActions.rightMapId;
-        }
     }
 }

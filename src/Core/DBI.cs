@@ -33,6 +33,7 @@ public static class DBI
     public static DBICommands Commands { get; } = new();
     public static DBIMessaging Messaging { get; } = new();
     public static DBIPlayer Player { get; } = new();
+    public static DBIPathFinder PathFinder { get; } = new();
 
     static readonly ILogger Log = Logging.Create();
 
