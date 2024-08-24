@@ -56,31 +56,28 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
+    public static void Refresh()
+    {
+        if (!_instance)
+        {
+            return;
+        }
+
+        if (_instance._lastEvent != null)
+        {
+            SetLastEvent(_instance._lastEvent);
+        }
+    }
+
     public static void Finish() => SetLastEvent(null);
 
     void Awake()
     {
         _instance = this;
 
-        DBI.Player.PlayerChanged += (_, state) =>
-        {
-            state.MapChanged += (_, _) =>
-            {
-                if (_lastEvent != null)
-                {
-                    SetLastEvent(_lastEvent);
-                }
-            };
-        };
-
-        ClueFinders.DefaultFinderChanged += (_, _) =>
-        {
-            if (_lastEvent != null)
-            {
-                SetLastEvent(_lastEvent);
-            }
-        };
-
+        DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(); }; };
+        ClueFinders.DefaultFinderChanged += (_, _) => { Refresh(); };
+        CorePlugin.DontUseScrollActionsChanged += (_, _) => { Refresh(); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
     }
 
@@ -104,7 +101,7 @@ public class TreasureHuntManager : MonoBehaviour
 
         if (foundLookingForNpc)
         {
-            SetLastEvent(_lastEvent);
+            Refresh();
         }
     }
 
@@ -301,7 +298,9 @@ public class TreasureHuntManager : MonoBehaviour
             }
         }
 
-        return foundMapInPath ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text) : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Player out of search area");
+        return foundMapInPath
+            ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text)
+            : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Player out of search area");
     }
 
     static Direction? GetDirection(Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction direction) =>

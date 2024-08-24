@@ -18,112 +18,46 @@ public static class MapUtils
 
     public static IEnumerable<long> GetNeighbors(long mapId)
     {
-        MapScrollActionsRoot mapScrollActionsRoot = DataCenterModule.GetDataRoot<MapScrollActionsRoot>();
-        MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
-
-        MapScrollActions scrollActions = mapScrollActionsRoot.GetMapScrollActionById(mapId);
-        if (scrollActions != null)
+        foreach (Direction direction in new[] { Direction.Bottom, Direction.Top, Direction.Left, Direction.Right })
         {
-            if (scrollActions.bottomExists)
+            if (!TryGetAdjacentMap(mapId, direction, out long? adjacentMap) || !adjacentMap.HasValue)
             {
-                yield return scrollActions.bottomMapId;
-            }
-            if (scrollActions.topExists)
-            {
-                yield return scrollActions.topMapId;
-            }
-            if (scrollActions.leftExists)
-            {
-                yield return scrollActions.leftMapId;
-            }
-            if (scrollActions.rightExists)
-            {
-                yield return scrollActions.rightMapId;
-            }
-        }
-        else
-        {
-            MapPositions map = mapPositionsRoot.GetMapPositionById(mapId);
-            if (map == null)
-            {
-                Log.LogWarning("Could not find map {Map}.", mapId);
-                yield break;
+                continue;
             }
 
-            foreach (Direction direction in new[] { Direction.Bottom, Direction.Top, Direction.Left, Direction.Right })
-            {
-                Position next = map.GetPosition().MoveInDirection(direction);
-                MapCoordinates coords = DataCenterModule.mapCoordinatesRoot.GetMapCoordinatesByCoords(next.X, next.Y);
-
-                foreach (long neighborId in coords.mapIds)
-                {
-                    MapPositions nextMap = mapPositionsRoot.GetMapPositionById(neighborId);
-                    if (nextMap == null || nextMap.worldMap != map.worldMap)
-                    {
-                        continue;
-                    }
-
-                    yield return neighborId;
-                    break;
-                }
-            }
+            yield return adjacentMap.Value;
         }
     }
 
     public static IEnumerable<long> MoveInDirection(long startMapId, Direction direction)
     {
-        MapScrollActionsRoot mapScrollActionsRoot = DataCenterModule.GetDataRoot<MapScrollActionsRoot>();
-        MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
-
         long currentMap = startMapId;
         while (true)
         {
-            long? nextMapId = null;
-
-            MapScrollActions scrollActions = mapScrollActionsRoot.GetMapScrollActionById(currentMap);
-            if (scrollActions != null)
-            {
-                nextMapId = GetNextMapFromScrollActions(direction, scrollActions);
-            }
-            else
-            {
-                MapPositions map = mapPositionsRoot.GetMapPositionById(currentMap);
-                if (map == null)
-                {
-                    Log.LogWarning("Could not find map {Map}.", currentMap);
-                    yield break;
-                }
-
-                Position next = map.GetPosition().MoveInDirection(direction);
-                MapCoordinates coords = DataCenterModule.mapCoordinatesRoot.GetMapCoordinatesByCoords(next.X, next.Y);
-
-                foreach (long mapId in coords.mapIds)
-                {
-                    MapPositions nextMap = mapPositionsRoot.GetMapPositionById(mapId);
-                    if (nextMap == null || nextMap.worldMap != map.worldMap)
-                    {
-                        continue;
-                    }
-
-                    nextMapId = mapId;
-                    break;
-                }
-            }
-
-            if (nextMapId.HasValue)
+            if (TryGetAdjacentMap(currentMap, direction, out long? nextMapId) && nextMapId.HasValue)
             {
                 yield return nextMapId.Value;
                 currentMap = nextMapId.Value;
+                continue;
             }
-            else
-            {
-                yield break;
-            }
+
+            yield break;
         }
     }
 
-    static long? GetNextMapFromScrollActions(Direction direction, MapScrollActions scrollActions)
+    static bool TryGetAdjacentMap(long mapId, Direction direction, out long? nextMapId) =>
+        !CorePlugin.DontUseScrollActions && TryGetAdjacentMapFromScrollActions(mapId, direction, out nextMapId)
+        || TryGetAdjacentMapFromMapPositions(mapId, direction, out nextMapId);
+
+    static bool TryGetAdjacentMapFromScrollActions(long mapId, Direction direction, out long? nextMapId)
     {
+        MapScrollActions scrollActions = DataCenterModule.GetDataRoot<MapScrollActionsRoot>().GetMapScrollActionById(mapId);
+        if (scrollActions == null)
+        {
+            nextMapId = null;
+            return false;
+        }
+
         bool hasNextMap = direction switch
         {
             Direction.Right => scrollActions.topExists,
@@ -135,16 +69,50 @@ public static class MapUtils
 
         if (!hasNextMap)
         {
-            return null;
+            nextMapId = null;
+        }
+        else
+        {
+            nextMapId = direction switch
+            {
+                Direction.Right => scrollActions.topMapId,
+                Direction.Bottom => scrollActions.bottomMapId,
+                Direction.Left => scrollActions.leftMapId,
+                Direction.Top => scrollActions.rightMapId,
+                _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+            };
         }
 
-        return direction switch
+        return true;
+    }
+
+    static bool TryGetAdjacentMapFromMapPositions(long mapId, Direction direction, out long? nextMapId)
+    {
+        MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
+        MapPositions map = mapPositionsRoot.GetMapPositionById(mapId);
+        if (map == null)
         {
-            Direction.Right => scrollActions.topMapId,
-            Direction.Bottom => scrollActions.bottomMapId,
-            Direction.Left => scrollActions.leftMapId,
-            Direction.Top => scrollActions.rightMapId,
-            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
-        };
+            Log.LogWarning("Could not find map {Map}.", mapId);
+            nextMapId = null;
+            return true;
+        }
+
+        Position next = map.GetPosition().MoveInDirection(direction);
+        MapCoordinates coords = DataCenterModule.mapCoordinatesRoot.GetMapCoordinatesByCoords(next.X, next.Y);
+
+        nextMapId = null;
+        foreach (long neighborMapId in coords.mapIds)
+        {
+            MapPositions nextMap = mapPositionsRoot.GetMapPositionById(neighborMapId);
+            if (nextMap == null || nextMap.worldMap != map.worldMap)
+            {
+                continue;
+            }
+
+            nextMapId = neighborMapId;
+            break;
+        }
+
+        return true;
     }
 }

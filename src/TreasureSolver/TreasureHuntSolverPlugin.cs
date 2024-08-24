@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Metadata;
-using DofusBatteriesIncluded.Core.Player;
 using DofusBatteriesIncluded.TreasureSolver.Behaviours;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
