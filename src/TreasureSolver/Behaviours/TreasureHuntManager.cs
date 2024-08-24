@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Com.Ankama.Dofus.Server.Game.Protocol.Common;
+using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
 using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
@@ -13,6 +15,7 @@ using DofusBatteriesIncluded.Core.Maps;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
+using Direction = DofusBatteriesIncluded.Core.Maps.Direction;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Behaviours;
@@ -24,6 +27,8 @@ public class TreasureHuntManager : MonoBehaviour
     static TreasureHuntManager _instance;
     TreasureHuntEvent _lastEvent;
     Coroutine _coroutine;
+    readonly Dictionary<int, Position> _knownNpcPositions = [];
+    int? _lookingForNpcId;
 
     public static void SetLastEvent(TreasureHuntEvent lastEvent)
     {
@@ -38,7 +43,15 @@ public class TreasureHuntManager : MonoBehaviour
         }
 
         _instance._lastEvent = lastEvent;
-        _instance._coroutine = _instance.StartCoroutine(_instance.HandleEvent(lastEvent).WrapToIl2Cpp());
+
+        if (lastEvent != null)
+        {
+            _instance._coroutine = _instance.StartCoroutine(_instance.HandleEvent(lastEvent).WrapToIl2Cpp());
+        }
+        else
+        {
+            _instance._knownNpcPositions.Clear();
+        }
     }
 
     public static void Finish() => SetLastEvent(null);
@@ -65,6 +78,33 @@ public class TreasureHuntManager : MonoBehaviour
                 SetLastEvent(_lastEvent);
             }
         };
+
+        DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
+    }
+
+    void OnMapChanged(MapComplementaryInformationEvent evt)
+    {
+        long mapId = evt.MapId;
+        Position mapPosition = DataCenterModule.mapPositionsRoot.GetMapPositionById(mapId).GetPosition();
+        bool foundLookingForNpc = false;
+        foreach (ActorPositionInformation actor in evt.Actors.array.Where(a => a != null))
+        {
+            ActorPositionInformation.Types.ActorInformation.Types.RolePlayActor.ActorOneofCase? actorCase = actor.ActorInformation?.RolePlayActor?.ActorCase;
+            if (actorCase != ActorPositionInformation.Types.ActorInformation.Types.RolePlayActor.ActorOneofCase.NpcActor)
+            {
+                continue;
+            }
+
+            int npcId = actor.ActorInformation.RolePlayActor.NpcActor.NpcId;
+            _knownNpcPositions[npcId] = mapPosition;
+
+            foundLookingForNpc |= npcId == _lookingForNpcId;
+        }
+
+        if (foundLookingForNpc)
+        {
+            SetLastEvent(_lastEvent);
+        }
     }
 
     IEnumerator HandleEvent(TreasureHuntEvent lastEvent)
@@ -76,7 +116,7 @@ public class TreasureHuntManager : MonoBehaviour
             // also clear it so that event handling only has to set fields properly
             if (TreasureHuntWindowAccessor.TryClear())
             {
-                if (lastEvent == null || lastEvent.CurrentCheckPoint == lastEvent.TotalCheckPoint || lastEvent.Flags.Count == lastEvent.TotalStepCount)
+                if (lastEvent.CurrentCheckPoint == lastEvent.TotalCheckPoint || lastEvent.Flags.Count == lastEvent.TotalStepCount)
                 {
                     yield break;
                 }
@@ -94,6 +134,7 @@ public class TreasureHuntManager : MonoBehaviour
                     yield break;
                 }
 
+                _lookingForNpcId = null;
                 switch (nextStep.StepCase)
                 {
                     case TreasureHuntEvent.Types.TreasureHuntStep.StepOneofCase.FollowDirectionToPoi:
@@ -119,7 +160,23 @@ public class TreasureHuntManager : MonoBehaviour
                         break;
                     }
                     case TreasureHuntEvent.Types.TreasureHuntStep.StepOneofCase.FollowDirectionToHint:
+                    {
+                        if (nextStep.FollowDirectionToHint == null)
+                        {
+                            yield break;
+                        }
+
+                        int npcId = nextStep.FollowDirectionToHint.NpcId;
+                        _lookingForNpcId = npcId;
+
+                        bool done = _knownNpcPositions.TryGetValue(npcId, out Position position) ? TryMarkNextPosition(lastEvent, position) : TryMarkUnknownPosition(lastEvent);
+                        if (done)
+                        {
+                            yield break;
+                        }
+
                         yield break;
+                    }
                     case TreasureHuntEvent.Types.TreasureHuntStep.StepOneofCase.FollowDirection:
                     {
                         if (nextStep.FollowDirection == null)
