@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Core.Engine.Options;
+using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
 using Core.UILogic.Config.OptionElement;
 using Microsoft.Extensions.Logging;
+using UnityEngine;
 using UnityEngine.UIElements;
 using Action = System.Action;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
@@ -104,6 +106,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         label.isOpen = true;
         label.isSelected = false;
         label.canBeOpened = false;
+        label.clickable.active = false;
         label.noBorder = true;
         visualElement.Add(label);
 
@@ -127,9 +130,31 @@ public class CoreWindow : DofusBatteriesIncludedWindow
                 true
             );
             visualElement.Add(category);
+
+            AddStatusLineToCategory(plugin, category);
         }
 
         return visualElement;
+    }
+
+    static void AddStatusLineToCategory(DBIPlugin plugin, OptionCategory category)
+    {
+        VisualElement container = category.Q("ctr_categoryContent");
+        switch (plugin.Status)
+        {
+            case PluginStatus.Started:
+                AddLine(container, FigmaIcons.radioOn, Color.green, "Started", DofusUiConstants.TextWhite100);
+                break;
+            case PluginStatus.FailedToStart:
+                AddLine(container, FigmaIcons.circleCross, Color.red, "Failed to start", DofusUiConstants.TextLightRed100);
+                break;
+            case PluginStatus.NotStarted:
+                AddLine(container, FigmaIcons.radioOff, Color.gray, "Not started", DofusUiConstants.TextWhite65);
+                break;
+            default:
+                AddLine(container, FigmaIcons.questionMark, "Unknown status");
+                break;
+        }
     }
 
     VisualElement CreateSettingsTab()
@@ -269,7 +294,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         Il2CppSystem.Collections.Generic.List<Il2CppSystem.ValueTuple<int, string>> choices = new();
         for (int i = 0; i < values.Count; i++)
         {
-            Il2CppSystem.ValueTuple<int, string> choice = new Il2CppSystem.ValueTuple<int, string>(i, values[i].DisplayName);
+            Il2CppSystem.ValueTuple<int, string> choice = new(i, values[i].DisplayName);
             choices.System_Collections_IList_Add(choice);
         }
 
@@ -282,6 +307,22 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             choices = choices
         };
         return option;
+    }
+
+    static void AddLine(VisualElement container, FigmaIcons icon, string text) => AddLine(container, icon, Color.white, text, DofusUiConstants.TextWhite100);
+
+    static void AddLine(VisualElement container, FigmaIcons icon, Color iconColor, string text, string statusColor)
+    {
+        DofusVisualElement element = new() { gapValue = 4, style = { display = DisplayStyle.Flex, flexDirection = FlexDirection.Row, paddingLeft = 4 } };
+
+        element.Add(new DofusIcon { icon = icon, style = { width = 20, height = 20 }, color = iconColor });
+
+        DofusLabel dofusLabel = new() { text = text };
+        dofusLabel.AddToClassList(DofusUiConstants.TextShortLargeRegular);
+        dofusLabel.AddToClassList(statusColor);
+        element.Add(dofusLabel);
+
+        container.Add(element);
     }
 
     public enum Category

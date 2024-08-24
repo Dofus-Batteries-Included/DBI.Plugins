@@ -2,7 +2,6 @@
 using System.Linq;
 using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
-using Core.UILogic.UIConsts;
 using DofusBatteriesIncluded.Core;
 using Il2CppSystem.Collections.Generic;
 using Microsoft.Extensions.Logging;
@@ -120,8 +119,8 @@ public static class TreasureHuntWindowAccessor
         DofusVisualElement result = new() { name = AdditionalTextContainerName, gapValue = 4, style = { flexDirection = FlexDirection.Row, paddingLeft = 16, paddingRight = 16 } };
 
         DofusLabel label = new() { style = { paddingLeft = 24 } };
-        label.AddToClassList(ThemeConstants.TextShortSmallRegular);
-        label.AddToClassList("textColor_highlight_primary100");
+        label.AddToClassList(DofusUiConstants.TextShortSmallRegular);
+        label.AddToClassList(DofusUiConstants.TextHighlightPrimary100);
         result.Add(label);
 
         return result;

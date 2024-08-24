@@ -30,6 +30,7 @@ public abstract class DBIPlugin : BasePlugin
     public string Id { get; }
     public string Name { get; }
     public string Version { get; }
+    public PluginStatus Status { get; private set; }
     public Guid? ExpectedBuildId { get; }
 
     public virtual bool CanBeDisabled => true;
@@ -79,10 +80,12 @@ public abstract class DBIPlugin : BasePlugin
         try
         {
             StartAsync().GetAwaiter().GetResult();
+            Status = PluginStatus.Started;
         }
         catch (Exception exn)
         {
             Log.LogError(exn, "Unexpected error while starting plugin {Name}: {Message}.\nYou should disable the plugin and restart the game.", Name, exn.Message);
+            Status = PluginStatus.FailedToStart;
         }
     }
 
