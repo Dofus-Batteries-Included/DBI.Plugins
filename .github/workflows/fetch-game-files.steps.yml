@@ -1,0 +1,33 @@
+name: Fetch game files
+
+on:
+  workflow_call:
+
+jobs:
+  job:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: 'npm'
+
+      - name: Install Cytrus v6
+        run: npm i @Dofus-Batteries-Included/cytrus-v6 -g
+
+      - name: Download BepInEx
+        run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
+
+      - name: Download latest game files
+        run: cytrus-v6 download -g dofus -b -o dofus-beta # Use beta for now
+
+      - name: Extract BepInEx
+        run: 7z x BepInEx.zip -odofus-beta -aoa
+
+      - name: Run game once
+        run: node scripts/bepinex-first-run dofus-beta\Dofus.exe
+
+      - name: Copy Interop assemblies
+        run: robocopy %CD%\dofus-beta\BepInEx\interop\ %CD%\src\Interop\
