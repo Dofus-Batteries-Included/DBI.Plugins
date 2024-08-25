@@ -11,7 +11,7 @@ using UnityEngine.UIElements;
 using CancellationToken = Il2CppSystem.Threading.CancellationToken;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Core.Behaviours;
+namespace DofusBatteriesIncluded.Core.UI.Menus;
 
 public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 {
@@ -57,7 +57,7 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
         {
             Log.LogWarning("Could not find method to assign builder to Tooltip Root. Tooltips won't work.");
         }
-        
+
         DBI.Player.PlayerChanged += (_, _) => _widgetManagerNeedsRepositioning = true;
     }
 

@@ -30,6 +30,7 @@ public abstract class DBIPlugin : BasePlugin
     public string Id { get; }
     public string Name { get; }
     public string Version { get; }
+    public bool Enabled { get; private set; }
     public PluginStatus Status { get; private set; }
     public Guid? ExpectedBuildId { get; }
 
@@ -68,13 +69,17 @@ public abstract class DBIPlugin : BasePlugin
 
         if (CanBeDisabled)
         {
-            bool enabled = DBI.Configuration.Configure(Name, "Enabled", true).WithDescription($"Enable plugin {Name}").Hide().Bind();
+            Enabled = DBI.Configuration.Configure(Name, "Enabled", true).WithDescription($"Enable plugin {Name}").Hide().RegisterChangeCallback(value => Enabled = value).Bind();
 
-            if (!enabled)
+            if (!Enabled)
             {
                 Log.LogInformation("{Name} is disabled.", Name);
                 return;
             }
+        }
+        else
+        {
+            Enabled = true;
         }
 
         try

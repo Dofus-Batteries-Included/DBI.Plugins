@@ -7,19 +7,22 @@ using UnityEngine.UIElements;
 using Action = Il2CppSystem.Action;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Core.Behaviours;
+namespace DofusBatteriesIncluded.Core.UI.Windows;
 
 public class DofusBatteriesIncludedWindow : MonoBehaviour
 {
     static readonly ILogger Log = DBI.Logging.Create<DofusBatteriesIncludedWindow>();
 
     UIDocument _uiDocument;
-    WindowFigma _window;
+    VisualElement _container;
+    protected WindowFigma _window;
     bool _mainSceneLoaded;
 
     public bool IsOpen { get; private set; }
     protected virtual string Name => "Window Header";
     protected virtual string Help => null;
+    protected virtual bool HasCloseButton => true;
+    protected virtual bool HasBackdrop => false;
 
     public void Toggle()
     {
@@ -45,16 +48,20 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
         OnOpen();
     }
 
-    public void Close()
+    /// <param name="force">Don't call OnBeforeClose and assume that it returned true.</param>
+    public void Close(bool force = false)
     {
         if (_window == null)
         {
             throw new InvalidOperationException("Window is not initialized yet.");
         }
 
-        _window.parent.visible = false;
-        IsOpen = false;
-        OnClose();
+        if (force || OnBeforeClose())
+        {
+            _window.parent.visible = false;
+            IsOpen = false;
+            OnAfterClose();
+        }
     }
 
     protected virtual void Build(WindowFigma window)
@@ -64,14 +71,13 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
         window.header.title = Name;
         window.header.showHelpButton = Help != null;
         window.helpButton.text = Help;
-        window.showCloseButton = true;
+        window.showCloseButton = HasCloseButton;
         window.closeButton.add_Clicked((Action)(() => Close()));
-        window.style.width = new Length(50, Length.Unit.Percent);
-        window.style.height = new Length(50, Length.Unit.Percent);
     }
 
     protected virtual void OnOpen() { }
-    protected virtual void OnClose() { }
+    protected virtual bool OnBeforeClose() => true;
+    protected virtual void OnAfterClose() { }
 
     void Start()
     {
@@ -121,16 +127,38 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
 
         if (popupContainer != null)
         {
-            VisualElement container = new() { name = $"{Name} Container" };
-            container.visible = false;
-            container.pickingMode = PickingMode.Ignore;
-            container.style.width = new Length(100, Length.Unit.Percent);
-            container.style.height = new Length(100, Length.Unit.Percent);
-            popupContainer.Add(container);
+            _container = new VisualElement
+            {
+                name = $"{Name} Container",
+                visible = false,
+                pickingMode = PickingMode.Ignore,
+                style =
+                {
+                    position = Position.Absolute,
+                    width = new Length(100, Length.Unit.Percent),
+                    height = new Length(100, Length.Unit.Percent)
+                }
+            };
+            popupContainer.Add(_container);
+
+            if (HasBackdrop)
+            {
+                VisualElement backdrop = new()
+                {
+                    name = $"{Name} Backdrop",
+                    pickingMode = PickingMode.Position,
+                    style =
+                    {
+                        position = Position.Absolute, backgroundColor = new Color(0, 0, 0, 0.2f), width = new Length(100, Length.Unit.Percent),
+                        height = new Length(100, Length.Unit.Percent)
+                    }
+                };
+                _container.Add(backdrop);
+            }
 
             _window = new WindowFigma();
             Build(_window);
-            container.Add(_window);
+            _container.Add(_window);
 
             _window.parent.RegisterCallback<GeometryChangedEvent>((Action<GeometryChangedEvent>)PositionWindow);
 

@@ -6,6 +6,10 @@ using DofusBatteriesIncluded.Core.Behaviours;
 using DofusBatteriesIncluded.Core.Metadata;
 using DofusBatteriesIncluded.Core.Player;
 using DofusBatteriesIncluded.Core.Protocol;
+using DofusBatteriesIncluded.Core.UI;
+using DofusBatteriesIncluded.Core.UI.Dialogs;
+using DofusBatteriesIncluded.Core.UI.Menus;
+using DofusBatteriesIncluded.Core.UI.Windows;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using Guid = System.Guid;
@@ -38,10 +42,14 @@ public class CorePlugin : DBIPlugin
             )
             .Bind();
 
-        AddComponent<DofusBatteriesIncludedCore>();
         AddComponent<DofusBatteriesIncludedCommands>();
+
+        ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedConfirmationDialog>();
+        AddComponent<DofusBatteriesIncludedDialogs>();
+
         ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();
         CoreWindow window = AddComponent<CoreWindow>();
+
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
         menu.AddButton("Dofus Batteries Included", evt => window.Toggle());

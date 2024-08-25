@@ -7,6 +7,8 @@ using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
 using Core.UILogic.Config.OptionElement;
+using DofusBatteriesIncluded.Core.UI.Dialogs;
+using DofusBatteriesIncluded.Core.UI.Windows;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -15,7 +17,7 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using Enum = System.Enum;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Core.Behaviours;
+namespace DofusBatteriesIncluded.Core.UI;
 
 public class CoreWindow : DofusBatteriesIncludedWindow
 {
@@ -30,6 +32,8 @@ public class CoreWindow : DofusBatteriesIncludedWindow
 
     VisualElement _generalTab;
     VisualElement _settingsTab;
+
+    readonly Dictionary<string, bool> _pluginsEnabledInitial = [];
 
     public void SelectCategory(Category category)
     {
@@ -55,6 +59,9 @@ public class CoreWindow : DofusBatteriesIncludedWindow
     protected override void Build(WindowFigma window)
     {
         base.Build(window);
+
+        window.style.width = new Length(50, Length.Unit.Percent);
+        window.style.height = new Length(50, Length.Unit.Percent);
 
         VisualElement container = new();
         container.style.display = DisplayStyle.Flex;
@@ -137,26 +144,6 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         return visualElement;
     }
 
-    static void AddStatusLineToCategory(DBIPlugin plugin, OptionCategory category)
-    {
-        VisualElement container = category.Q("ctr_categoryContent");
-        switch (plugin.Status)
-        {
-            case PluginStatus.Running:
-                AddLine(container, FigmaIcons.radioOn, Color.green, "Running", DofusUiConstants.TextWhite100);
-                break;
-            case PluginStatus.FailedToStart:
-                AddLine(container, FigmaIcons.circleCross, Color.red, "Failed to start", DofusUiConstants.TextLightRed100);
-                break;
-            case PluginStatus.NotStarted:
-                AddLine(container, FigmaIcons.radioOff, Color.gray, "Not started", DofusUiConstants.TextWhite65);
-                break;
-            default:
-                AddLine(container, FigmaIcons.questionMark, "Unknown status");
-                break;
-        }
-    }
-
     VisualElement CreateSettingsTab()
     {
         DBIConfiguration.Entry[] entries = DBI.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
@@ -214,17 +201,64 @@ public class CoreWindow : DofusBatteriesIncludedWindow
 
     CategorySummaryItem CreateItem(Category category, VisualElement sidePanel)
     {
-        string name = GetName(category);
+        string categoryName = GetName(category);
         string displayName = GetDisplayName(category);
 
         CategorySummaryItem item = new();
-        item.Init(name, displayName, false, false, SectionHeader.SectionHeaderDepth.one, (Action<string>)SelectCategory, (Action<string>)(str => { }));
+        item.Init(categoryName, displayName, false, false, SectionHeader.SectionHeaderDepth.one, (Action<string>)SelectCategory, (Action<string>)(_ => { }));
         sidePanel.Add(item);
 
         return item;
     }
 
-    protected override void OnOpen() => SelectCategory(Category.General);
+    protected override void OnOpen()
+    {
+        SelectCategory(Category.General);
+
+        _pluginsEnabledInitial.Clear();
+        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        {
+            _pluginsEnabledInitial[plugin.Name] = plugin.Enabled;
+        }
+    }
+
+    protected override bool OnBeforeClose()
+    {
+        bool requireRestart = false;
+        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        {
+            if (_pluginsEnabledInitial[plugin.Name] != plugin.Enabled)
+            {
+                requireRestart = true;
+                break;
+            }
+        }
+
+        if (!requireRestart)
+        {
+            return true;
+        }
+
+        DialogUtils.OpenConfirmationDialog(
+            opt =>
+            {
+                opt.Message = "Enabling or disabling a plugin requires a restart of the game. "
+                              + "Not restarting the game might lead to unexpected behaviour, or even crashes.\n"
+                              + "Do you want to restart the game ?";
+                opt.ClosedCallback = restart =>
+                {
+                    if (restart)
+                    {
+                        Log.LogInformation("WIP: game should be restarted");
+                    }
+
+                    Close(true);
+                };
+            }
+        );
+
+        return false;
+    }
 
     void SelectCategory(string category)
     {
@@ -323,6 +357,26 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         element.Add(dofusLabel);
 
         container.Add(element);
+    }
+
+    static void AddStatusLineToCategory(DBIPlugin plugin, OptionCategory category)
+    {
+        VisualElement container = category.Q("ctr_categoryContent");
+        switch (plugin.Status)
+        {
+            case PluginStatus.Running:
+                AddLine(container, FigmaIcons.radioOn, Color.green, "Running", DofusUiConstants.TextWhite100);
+                break;
+            case PluginStatus.FailedToStart:
+                AddLine(container, FigmaIcons.circleCross, Color.red, "Failed to start", DofusUiConstants.TextLightRed100);
+                break;
+            case PluginStatus.NotStarted:
+                AddLine(container, FigmaIcons.radioOff, Color.gray, "Not started", DofusUiConstants.TextWhite65);
+                break;
+            default:
+                AddLine(container, FigmaIcons.questionMark, "Unknown status");
+                break;
+        }
     }
 
     public enum Category
