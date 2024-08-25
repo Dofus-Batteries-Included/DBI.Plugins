@@ -1,0 +1,49 @@
+name: Fetch game files
+
+on:
+  workflow_call:
+
+jobs:
+  fetch-game-files:
+    name: Fetch game files
+    runs-on: windows-latest
+    
+    permissions:
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Checkout
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+        
+      - name: Setup Github NPM registry for @dofus-batteries-included namespace
+        run: |
+          echo @dofus-batteries-included:registry=https://npm.pkg.github.com > ~/.npmrc
+          echo //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }} >> ~/.npmrc
+
+      - name: Install Cytrus v6
+        run: npm i @dofus-batteries-included/cytrus-v6 -g
+
+      - name: Download BepInEx
+        run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
+
+      - name: Download latest game files
+        run: cytrus-v6 download -g dofus -b -o dofus-beta # Use beta for now
+
+      - name: Extract BepInEx
+        run: 7z x BepInEx.zip -odofus-beta -aoa
+
+      - name: Run game once
+        run: node scripts/bepinex-first-run dofus-beta\Dofus.exe
+
+      - name: Upload Interop assemblies
+        uses: actions/upload-artifact@v4
+        with:
+          name: interop-assemblies
+          path: dofus-beta/BepInEx/interop/*
