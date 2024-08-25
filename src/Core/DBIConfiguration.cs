@@ -14,7 +14,7 @@ public class DBIConfiguration
     readonly ConfigFile _bepinexConfigFile;
     readonly List<Entry> _entries = [];
 
-    public DBIConfiguration(string fileName = "DofusBatteriesIncluded.cfg")
+    internal DBIConfiguration(string fileName = "DofusBatteriesIncluded.cfg")
     {
         _bepinexConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, fileName), false);
     }

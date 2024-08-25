@@ -249,7 +249,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
                 {
                     if (restart)
                     {
-                        Log.LogInformation("WIP: game should be restarted");
+                        ApplicationHelpers.RestartAllClients();
                     }
 
                     Close(true);

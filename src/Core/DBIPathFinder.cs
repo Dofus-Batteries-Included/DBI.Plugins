@@ -8,6 +8,8 @@ public class DBIPathFinder
 {
     static readonly AStar AStar = new();
 
+    internal DBIPathFinder() { }
+
     public GamePath GetShortestPath(long source, IEnumerable<long> targets)
     {
         GamePath shortest = null;

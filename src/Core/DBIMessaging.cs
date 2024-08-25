@@ -14,7 +14,7 @@ public class DBIMessaging : IDisposable
     static readonly ILogger Log = DBI.Logging.Create<DBIMessaging>();
     readonly HashSet<IMessageListener> _listeners = [];
 
-    public DBIMessaging()
+    internal DBIMessaging()
     {
         Messaging.MessageReceived += OnMessageReceived;
     }

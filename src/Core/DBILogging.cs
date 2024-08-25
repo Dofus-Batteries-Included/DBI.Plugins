@@ -9,6 +9,8 @@ public class DBILogging
 {
     readonly DofusBatteriesIncludedLoggerProvider _provider = new();
 
+    internal DBILogging() { }
+
     public ILogger Create() => Create("");
     public ILogger Create(string name) => _provider.CreateLogger(name);
     public ILogger Create(Type type) => Create(type.Name);

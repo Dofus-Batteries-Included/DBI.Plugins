@@ -9,9 +9,11 @@ namespace DofusBatteriesIncluded.Core;
 // ReSharper disable once InconsistentNaming
 public class DBICommands
 {
-    Dictionary<KeyCode, List<Command>> Commands { get; } = new();
-
     public static readonly ILogger Log = DBI.Logging.Create<DBICommands>();
+
+    internal DBICommands() { }
+
+    Dictionary<KeyCode, List<Command>> Commands { get; } = new();
 
     public void Register(string name, KeyCode key, Action action) => Register(name, null, key, action);
 

@@ -12,7 +12,7 @@ public abstract class DBIPlugin : BasePlugin
 {
     protected new ILogger Log { get; }
 
-    public DBIPlugin(Guid? expectedBuildId = null)
+    protected DBIPlugin(Guid? expectedBuildId = null)
     {
         ExpectedBuildId = expectedBuildId;
         BepInPlugin pluginAttribute = MetadataHelper.GetMetadata(GetType());

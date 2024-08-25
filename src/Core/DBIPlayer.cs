@@ -6,6 +6,8 @@ namespace DofusBatteriesIncluded.Core;
 // ReSharper disable once InconsistentNaming
 public class DBIPlayer
 {
+    internal DBIPlayer() { }
+
     public CurrentPlayerState State { get; private set; }
     public event EventHandler<CurrentPlayerState> PlayerChanged;
     public event EventHandler<CurrentPlayerState> PlayerChangeCompleted;
@@ -16,8 +18,5 @@ public class DBIPlayer
         PlayerChanged?.Invoke(this, State);
     }
 
-    internal void OnPlayerChangeCompleted()
-    {
-        PlayerChangeCompleted?.Invoke(this, State);
-    }
+    internal void OnPlayerChangeCompleted() => PlayerChangeCompleted?.Invoke(this, State);
 }
