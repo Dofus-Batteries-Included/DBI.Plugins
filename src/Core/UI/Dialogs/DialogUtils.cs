@@ -1,4 +1,5 @@
 ﻿using System;
+using DofusBatteriesIncluded.Core.Behaviours;
 using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.Core.UI.Dialogs;
@@ -9,7 +10,7 @@ public static class DialogUtils
 
     public static void OpenConfirmationDialog(Action<ConfirmationDialogConfiguration> configure = null)
     {
-        DofusBatteriesIncludedDialogs dialogs = Helpers.FindObjectOfType<DofusBatteriesIncludedDialogs>();
+        DofusBatteriesIncludedDialogs dialogs = UnityHelpers.FindObjectOfType<DofusBatteriesIncludedDialogs>();
         if (dialogs is null)
         {
             Log.LogWarning("Could not find instance of {Type}.", nameof(DofusBatteriesIncludedDialogs));

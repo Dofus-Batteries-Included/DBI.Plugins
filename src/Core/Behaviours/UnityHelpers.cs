@@ -6,9 +6,9 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Core.Behaviours;
 
-public static class Helpers
+public static class UnityHelpers
 {
     delegate IntPtr FindObjectsOfTypeDelegate(IntPtr type);
 
@@ -26,7 +26,7 @@ public static class Helpers
 
     public static T FindObjectOfType<T>() where T: Il2CppObjectBase => FindObjectsOfType<T>().FirstOrDefault();
 
-    static readonly Dictionary<string, Delegate> unreliableCache = new();
+    static readonly Dictionary<string, Delegate> UnreliableCache = new();
 
     /// <summary>
     ///     Get an iCall which may be one of multiple different signatures (ie, the name changed in different Unity versions).
@@ -37,7 +37,7 @@ public static class Helpers
         // use the first possible signature as the 'key'.
         string key = possibleSignatures.First();
 
-        if (unreliableCache.TryGetValue(key, out Delegate value))
+        if (UnreliableCache.TryGetValue(key, out Delegate value))
         {
             return (T)value;
         }
@@ -48,7 +48,7 @@ public static class Helpers
             if (ptr != IntPtr.Zero)
             {
                 T iCall = (T)Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));
-                unreliableCache.Add(key, iCall);
+                UnreliableCache.Add(key, iCall);
                 return iCall;
             }
         }

@@ -3,6 +3,7 @@ using System.Linq;
 using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
 using DofusBatteriesIncluded.Core;
+using DofusBatteriesIncluded.Core.Behaviours;
 using Il2CppSystem.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using UnityEngine.UIElements;
@@ -104,7 +105,7 @@ public static class TreasureHuntWindowAccessor
 
     static VisualElement TryFindTreasureHuntWindow()
     {
-        UIDocument uiRoot = Helpers.FindObjectOfType<UIDocument>();
+        UIDocument uiRoot = UnityHelpers.FindObjectOfType<UIDocument>();
         if (!uiRoot)
         {
             return null;

@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.UILogic.Components.Figma;
+using DofusBatteriesIncluded.Core.Behaviours;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -112,7 +113,7 @@ public class DofusBatteriesIncludedWindow : MonoBehaviour
             return;
         }
 
-        _uiDocument = Helpers.FindObjectOfType<UIDocument>();
+        _uiDocument = UnityHelpers.FindObjectOfType<UIDocument>();
     }
 
     void TryBuildWindow()
