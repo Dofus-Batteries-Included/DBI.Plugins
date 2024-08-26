@@ -2,6 +2,10 @@ name: Fetch game files
 
 on:
   workflow_call:
+    outputs:
+      build_id:
+        description: "Game build id"
+        value: ${{ jobs.fetch-game-files.outputs.build_id }}
 
 jobs:
   fetch-game-files:
