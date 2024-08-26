@@ -9,12 +9,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-fetch-game-files:
-    uses: Dofus-Batteries-Included/DBI/.github/workflows/fetch-game-files.job.yml@main
+  fetch-game-files:
+    uses: ./.github/workflows/fetch-game-files.job.yml
   
   build-release:
     name: Build & Release
-    needs: call-fetch-game-files
+    needs: fetch-game-files
     runs-on: windows-latest
     concurrency: release
 
@@ -40,14 +40,14 @@ jobs:
 
       - name: Display build information
         run: |
-          echo "Build id: ${{ needs.call-fetch-game-files.outputs.game_build_id }}"
-          echo "Version: ${{ needs.call-fetch-game-files.outputs.game_version }}"
+          echo "Build id: ${{ needs.fetch-game-files.outputs.game_build_id }}"
+          echo "Version: ${{ needs.fetch-game-files.outputs.game_version }}"
 
       - name: Build, Tests, Cover, Pack and Publish
         shell: bash
         env:
-          DofusBuildId: ${{ needs.call-fetch-game-files.outputs.game_build_id }}
-          DofusVersion: ${{ needs.call-fetch-game-files.outputs.game_version }}
+          DofusBuildId: ${{ needs.fetch-game-files.outputs.game_build_id }}
+          DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
         run: |
           dotnet tool install --global dotnet-releaser
           dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" dotnet-releaser.toml
