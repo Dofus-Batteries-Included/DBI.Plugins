@@ -57,8 +57,16 @@ jobs:
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
       - name: Stop when versions match
-        run: echo "Versions match, stopping."
+        run: |
+          echo "Versions match: ${{ steps.fetch_last_release_version.outputs.version }} = ${{ steps.fetch_dofus_version.outputs.dofus_version }}." 
+          echo "Stopping."
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
+        
+      - name: Continue when versions don't match
+        run: |
+          echo "Versions don'tmatch: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}." 
+          echo "Will add tag to last commit to trigger a new release."
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
 
       - name: Get latest tag
         id: fetch_latest_tag
