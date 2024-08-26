@@ -16,7 +16,7 @@ jobs:
       packages: read
 
     outputs:
-      build_id: ${{ steps.build_id.outputs.DofusBuildId }}
+      build_id: ${{ steps.read_game_build_id.outputs.DofusBuildId }}
 
     steps:
       - name: Checkout
@@ -51,11 +51,11 @@ jobs:
         timeout-minutes: 10
 
       - name: Read game build id
-        id: build_id
+        id: read_game_build_id
         run: |
           $DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
           echo "Found build id: $DofusBuildId"
-          echo "DofusBuildId=$DofusBuildId" > $GITHUB_OUTPUT
+          echo "DofusBuildId=$DofusBuildId" >> $GITHUB_OUTPUT
 
       - name: Upload Interop assemblies
         uses: actions/upload-artifact@v4
