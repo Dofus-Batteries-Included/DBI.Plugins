@@ -1,6 +1,10 @@
 [msbuild]
 project = ["src/Core/Core.csproj", "src/TreasureSolver/TreasureSolver.csproj"]
 
+[[pack]]
+rid = ["win-x64", "win-arm", "win-arm64"]
+kinds = ["zip"]
+
 [nuget]
 source = "github"
 
