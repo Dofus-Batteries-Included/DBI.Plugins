@@ -41,8 +41,9 @@ jobs:
       - name: Read build id
         id: build_id
         run: |
-          echo "Build id: $(cat src/Interop/build-id)"
-          echo "DofusBuildId=$(cat src/Interop/build-id)" >> $GITHUB_OUTPUT
+          $DofusBuildId=$(cat src/Interop/build-id)
+          echo "Build id: $DofusBuildId"
+          echo "DofusBuildId=$DofusBuildId" >> $GITHUB_OUTPUT
 
       - name: Build, Tests, Cover, Pack and Publish
         shell: bash

@@ -45,9 +45,9 @@ jobs:
 
       - name: Read game build id
         run: |
-          set DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
-          echo "Found build id: %DofusBuildId%"
-          echo %DofusBuildId% > src/Interop/build-id
+          $DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
+          echo "Found build id: $DofusBuildId"
+          echo $DofusBuildId > src/Interop/build-id
 
       - name: Upload Interop assemblies
         uses: actions/upload-artifact@v4
