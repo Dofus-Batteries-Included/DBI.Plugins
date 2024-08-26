@@ -53,7 +53,7 @@ jobs:
           DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
         run: |
           dotnet tool install --global dotnet-releaser
-          dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" dotnet-releaser.toml
+          dotnet-releaser run --nuget-token "${{secrets.GITHUB_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" dotnet-releaser.toml
 
 permissions:
   contents: write
