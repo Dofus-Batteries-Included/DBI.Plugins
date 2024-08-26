@@ -19,8 +19,8 @@ jobs:
       packages: read
 
     outputs:
-      game_build_id: ${{ steps.read_game_build_id.outputs.DofusBuildId }}
-      game_version: ${{ steps.download_latest_game_files.outputs.DofusVersion }}
+      game_build_id: ${{ steps.read_game_build_id.outputs.dofus_build_id }}
+      game_version: ${{ steps.download_latest_game_files.outputs.dofus_version }}
 
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: latest
@@ -46,7 +46,7 @@ jobs:
         run: |
           $DofusVersion=$(cytrus-v6 version -g dofus -b)
           echo "Found version: $DofusVersion"
-          echo "DofusVersion=$DofusVersion" >> "$GITHUB_OUTPUT"
+          echo "dofus_version=$DofusVersion" >> "$GITHUB_OUTPUT"
 
       - name: Download BepInEx
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
@@ -66,7 +66,7 @@ jobs:
         run: |
           $DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
           echo "Found build id: $DofusBuildId"
-          echo "DofusBuildId=$DofusBuildId" >> "$GITHUB_OUTPUT"
+          echo "dofus_build_id=$DofusBuildId" >> "$GITHUB_OUTPUT"
 
       - name: Upload Interop assemblies
         uses: actions/upload-artifact@v4
