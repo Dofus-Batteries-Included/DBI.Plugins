@@ -16,7 +16,7 @@ jobs:
       packages: read
 
     outputs:
-      build_id: ${{ steps.build_id.outputs.build_id }}
+      build_id: ${{ steps.build_id.outputs.DofusBuildId }}
 
     steps:
       - name: Checkout
