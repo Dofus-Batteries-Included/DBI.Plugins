@@ -2,7 +2,7 @@
 project = ["src/Core/Core.csproj", "src/TreasureSolver/TreasureSolver.csproj"]
 
 [nuget]
-source = "https://nuget.pkg.github.com/Dofus-Batteries-Included/index.json"
+source = "github"
 
 [github]
 user = "Dofus-Batteries-Included"
