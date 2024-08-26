@@ -19,8 +19,8 @@ jobs:
       packages: read
 
     outputs:
-      game_build_id: ${{ steps.read_game_build_id.outputs.dofus_build_id }}
-      game_version: ${{ steps.download_latest_game_files.outputs.dofus_version }}
+      game_build_id: ${{ steps.read_dofus_build_id.outputs.dofus_build_id }}
+      game_version: ${{ steps.read_dofus_version.outputs.dofus_version }}
 
     steps:
       - name: Checkout
@@ -42,11 +42,8 @@ jobs:
         run: npm i @dofus-batteries-included/cytrus-v6 -g
 
       - name: Read current game version
-        id: download_latest_game_files
-        run: |
-          $DofusVersion=$(cytrus-v6 version -g dofus -b)
-          echo "Found version: $DofusVersion"
-          echo "dofus_version=$DofusVersion" >> "$GITHUB_OUTPUT"
+        id: read_dofus_version
+        run: echo "dofus_version=$(cytrus-v6 version -g dofus -b)" >> "$GITHUB_OUTPUT"
 
       - name: Download BepInEx
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
@@ -62,11 +59,13 @@ jobs:
         timeout-minutes: 10
 
       - name: Read game build id
-        id: read_game_build_id
+        id: read_dofus_build_id
+        run: echo "dofus_build_id=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)" >> "$GITHUB_OUTPUT"
+
+      - name: Display build information
         run: |
-          $DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
-          echo "Found build id: $DofusBuildId"
-          echo "dofus_build_id=$DofusBuildId" >> "$GITHUB_OUTPUT"
+          echo "Build id: ${{ steps.read_dofus_build_id.outputs.dofus_build_id }}"
+          echo "Version: ${{ steps.read_dofus_version.outputs.dofus_version }}"
 
       - name: Upload Interop assemblies
         uses: actions/upload-artifact@v4
