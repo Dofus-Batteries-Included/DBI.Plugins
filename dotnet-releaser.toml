@@ -1,3 +1,5 @@
+profile = "custom"
+
 [msbuild]
 project = ["src/Core/Core.csproj", "src/TreasureSolver/TreasureSolver.csproj"]
 
