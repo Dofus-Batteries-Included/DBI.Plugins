@@ -12,6 +12,7 @@
     
     <PropertyGroup>
         <DofusBuildId Condition="'$(DOFUSBUILDID)' == ''">80586dab8f524ef1b30871e0e49ece8a</DofusBuildId>
+        <DofusBuildId Condition="'$(OFUSVERSION)' == ''">2.73.19.19</DofusBuildId>
     </PropertyGroup>
 
     <Target Name="DisplayDofusBuildId" BeforeTargets="CoreCompile">
@@ -21,6 +22,9 @@
     <ItemGroup>
         <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusBuildIdAttribute" Condition="'$(DOFUSBUILDID)' != ''">
             <_Parameter1>$(DOFUSBUILDID)</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusVersionAttribute" Condition="'$(OFUSVERSION)' != ''">
+            <_Parameter1>$(OFUSVERSION)</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 </Project>

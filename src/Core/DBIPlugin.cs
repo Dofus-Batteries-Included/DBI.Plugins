@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using DofusBatteriesIncluded.Core.Metadata;
 using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
@@ -12,14 +14,16 @@ public abstract class DBIPlugin : BasePlugin
 {
     protected new ILogger Log { get; }
 
-    protected DBIPlugin(Guid? expectedBuildId = null)
+    protected DBIPlugin(Guid? expectedBuildId = null, string expectedVersion = null)
     {
-        ExpectedBuildId = expectedBuildId;
         BepInPlugin pluginAttribute = MetadataHelper.GetMetadata(GetType());
         if (pluginAttribute == null)
         {
             throw new InvalidOperationException("Expected plugin to have a [BepInPlugin] attrribute.");
         }
+
+        ExpectedBuildId = expectedBuildId ?? GetExpectedBuildIdFromAssemblyAttribute();
+        ExpectedVersion = expectedVersion ?? GetExpectedVersionFromAssemblyAttribute();
 
         Log = DBI.Logging.Create(GetType());
         Id = pluginAttribute.GUID;
@@ -33,6 +37,7 @@ public abstract class DBIPlugin : BasePlugin
     public bool Enabled { get; private set; }
     public PluginStatus Status { get; private set; }
     public Guid? ExpectedBuildId { get; }
+    public string ExpectedVersion { get; }
 
     public virtual bool CanBeDisabled => true;
 
@@ -45,6 +50,11 @@ public abstract class DBIPlugin : BasePlugin
         else
         {
             Log.LogDebug("Found expected build ID: {Expected}.", ExpectedBuildId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(ExpectedVersion))
+        {
+            Log.LogDebug("Found expected version: {Expected}.", ExpectedVersion);
         }
 
         if (ExpectedBuildId.HasValue && DBI.DofusBuildId.HasValue && ExpectedBuildId.Value != DBI.DofusBuildId.Value)
@@ -110,4 +120,7 @@ public abstract class DBIPlugin : BasePlugin
 
     protected virtual Task StartAsync() => Task.CompletedTask;
     protected virtual Task StopAsync() => Task.CompletedTask;
+
+    Guid? GetExpectedBuildIdFromAssemblyAttribute() => GetType().Assembly.GetCustomAttribute<ExpectedDofusBuildIdAttribute>()?.BuildId;
+    string GetExpectedVersionFromAssemblyAttribute() => GetType().Assembly.GetCustomAttribute<ExpectedDofusVersionAttribute>()?.Version;
 }

@@ -22,8 +22,6 @@ public class CorePlugin : DBIPlugin
     public static bool DontUseScrollActions { get; private set; }
     public static event EventHandler<bool> DontUseScrollActionsChanged;
 
-    public CorePlugin() : base(GetExpectedBuildIdFromAssemblyAttribute()) { }
-
     public override bool CanBeDisabled => false;
 
     protected override Task StartAsync()
