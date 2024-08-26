@@ -45,7 +45,7 @@ jobs:
         id: read_dofus_version
         run: |
           $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
-          echo "dofus_version=$(CytrusGameVersion.Split("_")[1])" >> $Env:GITHUB_OUTPUT
+          echo "dofus_version=$CytrusGameVersion.Split("_")[1]" >> $Env:GITHUB_OUTPUT
 
       - name: Download BepInEx
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
