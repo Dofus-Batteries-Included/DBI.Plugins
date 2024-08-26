@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
       
       - name: Remove Interop assemblies
-        run: rmdir /s /q src/Interop
+        run: rmdir src/Interop -r -force
 
       - name: Download Interop assemblies
         uses: actions/download-artifact@v4
