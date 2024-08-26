@@ -58,7 +58,7 @@ jobs:
       - name: Package release
         run: |
           md dist/DofusBatteriesIncluded
-          robocopy %CD%/src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/DofusBatteriesIncluded
+          copy src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/DofusBatteriesIncluded
           cd dist
           7z a windows_x64.zip DofusBatteriesIncluded/
 
