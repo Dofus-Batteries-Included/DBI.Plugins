@@ -70,6 +70,17 @@ jobs:
           asset_name: windows_x64.zip
           tag: ${{ github.ref }}
 
+      - name: Write VERSION file that will be released
+        run: echo "${{ needs.fetch-game-files.outputs.game_version }}" >> VERSION
+
+      - name: Upload VERSION file to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: VERSION
+          asset_name: VERSION
+          tag: ${{ github.ref }}
+
 permissions:
   contents: write
   packages: write
