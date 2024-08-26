@@ -12,8 +12,8 @@ This project has only been tested on windows computers.
 ### Installation guide
 
 - Download and install [BepInEx Unity (IL2CPP)](https://docs.bepinex.dev/master/articles/user_guide/installation/index.html) in the Dofus game folder.
-- Download the [latest release](#) (WIP: realeases aren't available yet, build the project)
-- Move the `BepInEx/plugins/DofusBatteriesIncluded/` folder of the release to the `BepInEx/plugins/` folder of your BepInEx install.
+- Download the [latest release](#)
+- Move the `DofusBatteriesIncluded/` folder to the `BepInEx/plugins/` folder of your BepInEx install. The only plugin that is mandatory is `DofusBatteriesIncluded.Core`.
 
 WARNING: A specific version of the plugins can only work for the specific version of the game that it was built against. Trying to use a plugin with another version of the game can lead to unexpected results, or even crashes of the game. The plugins have a built-in mechanism that prevents them from running if they have been built for another version of the game.
 

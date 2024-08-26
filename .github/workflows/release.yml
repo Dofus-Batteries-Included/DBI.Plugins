@@ -57,10 +57,10 @@ jobs:
 
       - name: Package release
         run: |
-          md dist
-          robocopy %CD%/src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/
+          md dist/DofusBatteriesIncluded
+          robocopy %CD%/src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/DofusBatteriesIncluded
           cd dist
-          7z a windows_x64.zip *.dll
+          7z a windows_x64.zip DofusBatteriesIncluded/
 
       - name: Upload compiled libraries to release
         uses: svenstaro/upload-release-action@v2
