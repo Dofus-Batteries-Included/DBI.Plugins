@@ -38,8 +38,16 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Read build id
+        id: build_id
+        run: |
+          echo "Build id: $(cat src/Interop/build-id)"
+          echo "DofusBuildId=$(cat src/Interop/build-id)" >> $GITHUB_OUTPUT
+
       - name: Build, Tests, Cover, Pack and Publish
         shell: bash
+        env:
+          DofusBuildId: ${{ steps.build_id.outputs.DofusBuildId }}
         run: |
           dotnet tool install --global dotnet-releaser
           dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" dotnet-releaser.toml

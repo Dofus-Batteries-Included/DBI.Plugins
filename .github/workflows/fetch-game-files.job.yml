@@ -42,6 +42,12 @@ jobs:
       - name: Run game once
         run: node scripts/bepinex-first-run dofus-beta\Dofus.exe
 
+      - name: Read game build id
+        run: |
+          node scripts/read-build-guid.js | set /p DofusBuildId=
+          echo "Found build id: %DofusBuildId%
+          echo %DofusBuildId% > src/Interop/build-id
+
       - name: Upload Interop assemblies
         uses: actions/upload-artifact@v4
         with:
