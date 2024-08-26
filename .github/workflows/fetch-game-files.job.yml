@@ -41,6 +41,7 @@ jobs:
 
       - name: Run game once
         run: node scripts/bepinex-first-run dofus-beta\Dofus.exe
+        timeout-minutes: 10
 
       - name: Read game build id
         run: |
