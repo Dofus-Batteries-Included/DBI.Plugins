@@ -3,9 +3,12 @@ name: Fetch game files
 on:
   workflow_call:
     outputs:
-      build_id:
+      game_build_id:
         description: "Game build id"
-        value: ${{ jobs.fetch-game-files.outputs.build_id }}
+        value: ${{ jobs.fetch-game-files.outputs.game_build_id }}
+      game_version:
+        description: "Game version"
+        value: ${{ jobs.fetch-game-files.outputs.game_version }}
 
 jobs:
   fetch-game-files:
@@ -16,7 +19,8 @@ jobs:
       packages: read
 
     outputs:
-      build_id: ${{ steps.read_game_build_id.outputs.DofusBuildId }}
+      game_build_id: ${{ steps.read_game_build_id.outputs.DofusBuildId }}
+      game_version: ${{ steps.download_latest_game_files.outputs.DofusVersion }}
 
     steps:
       - name: Checkout
@@ -36,6 +40,10 @@ jobs:
 
       - name: Install Cytrus v6
         run: npm i @dofus-batteries-included/cytrus-v6 -g
+
+      - name: Download latest game files
+        id: download_latest_game_files
+        run: echo "DofusVersion=$(cytrus-v6 version -g dofus -b)" >> $GITHUB_OUTPUT
 
       - name: Download BepInEx
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip

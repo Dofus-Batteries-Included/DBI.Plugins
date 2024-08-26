@@ -40,12 +40,14 @@ jobs:
 
       - name: Display build information
         run: |
-          echo "Build id: ${{ needs.call-fetch-game-files.outputs.build_id }}"
+          echo "Build id: ${{ needs.call-fetch-game-files.outputs.game_build_id }}"
+          echo "Version: ${{ needs.call-fetch-game-files.outputs.game_version }}"
 
       - name: Build, Tests, Cover, Pack and Publish
         shell: bash
         env:
-          DofusBuildId: ${{ needs.call-fetch-game-files.outputs.build_id }}
+          DofusBuildId: ${{ needs.call-fetch-game-files.outputs.game_build_id }}
+          DofusVersion: ${{ needs.call-fetch-game-files.outputs.game_version }}
         run: |
           dotnet tool install --global dotnet-releaser
           dotnet-releaser run --nuget-token "${{secrets.NUGET_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" dotnet-releaser.toml
