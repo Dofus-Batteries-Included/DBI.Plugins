@@ -47,7 +47,7 @@ jobs:
         run: |
           $DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
           echo "Found build id: $DofusBuildId"
-          echo $DofusBuildId > src/Interop/build-id
+          echo $DofusBuildId > dofus-beta/BepInEx/interop/build-id
 
       - name: Upload Interop assemblies
         uses: actions/upload-artifact@v4
