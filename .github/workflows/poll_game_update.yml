@@ -1,0 +1,107 @@
+name: Poll game update
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  job:
+    name: Add tag if game has been updated
+    runs-on: windows-latest
+    concurrency: poll_game_update
+    
+    steps:
+      - name: Fetch last release
+        id: fetch_last_release
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{repository}/releases/latest
+          repository: ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch VERSION file of last release
+        id: fetch_last_release_version
+        run: |
+          $ResponseString=@'
+          ${{ steps.fetch_last_release.outputs.data }}
+          '@
+          $Response=($ResponseString | ConvertFrom-Json)
+          $VersionAsset=($Response.assets | Where-Object {$_.name -eq 'VERSION'})[0]
+          echo "Last release VERSION file: $Url"
+          $Url=$VersionAsset.browser_download_url
+          $Version=$(Invoke-WebRequest -Uri "$Url")
+          echo "Last release version: $Version"
+          echo "version=$Version" >> $Env:GITHUB_OUTPUT
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Setup Github NPM registry for @dofus-batteries-included namespace
+        run: |
+          echo @dofus-batteries-included:registry=https://npm.pkg.github.com > ~/.npmrc
+          echo //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }} >> ~/.npmrc
+
+      - name: Install Cytrus v6
+        run: npm i @dofus-batteries-included/cytrus-v6 -g
+
+      - name: Read current game version
+        id: fetch_dofus_version
+        run: |
+          $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
+          $Version=$CytrusGameVersion.Split("_")[1]
+          echo "Current game version: $Version"
+          echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
+
+      - name: Stop when versions match
+        run: echo "Versions match, stopping."
+        if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
+
+      - name: Get latest tag
+        id: fetch_latest_tag
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: Bump version
+        id: bump_tag
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        uses: WyriHaximus/github-action-next-semvers@v1
+        with:
+          version: ${{ steps.fetch_latest_tag.outputs.tag }}
+
+      - name: Get last commit
+        uses: octokit/request-action@v2.x
+        id: fetch_last_commit
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        with:
+          route: GET /repos/{repository}/commits
+          repository: ${{ github.repository }}
+          per_page: 1
+          page: 1
+      
+      - name: Get last commit ref
+        id: fetch_last_commit_ref
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        run: |
+          $ResponseString=@'
+          ${{ steps.fetch_last_commit.outputs.data }}
+          '@
+          $Response=$($ResponseString | ConvertFrom-Json)
+          echo "ref=$($Response.Sha)" >> $Env:GITHUB_OUTPUT
+
+      - name: Add tag to last commit
+        uses: octokit/request-action@v2.x
+        id: add_pr_comment
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        with:
+          route: POST /repos/{repository}/git/tags
+          repository: ${{ github.repository }}
+          tag: ${{ steps.bump_tag.outputs.v_patch }}
+          message: Bump version to v${{ steps.bump_tag.outputs.v_patch }}
+          type: commit
+          object: ${{ steps.fetch_last_commit_ref.outputs.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
