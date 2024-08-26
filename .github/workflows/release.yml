@@ -42,8 +42,8 @@ jobs:
         id: build_id
         run: |
           $DofusBuildId=$(cat src/Interop/build-id)
-          echo "Build id: $DofusBuildId"
-          echo "DofusBuildId=$DofusBuildId" >> $GITHUB_OUTPUT
+          echo "Build id: ${{ needs.call-fetch-game-files.outputs.build_id }}"
+          echo "DofusBuildId=${{ needs.call-fetch-game-files.outputs.build_id }}" >> $GITHUB_OUTPUT
 
       - name: Build, Tests, Cover, Pack and Publish
         shell: bash
