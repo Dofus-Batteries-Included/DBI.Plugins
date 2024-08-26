@@ -55,6 +55,21 @@ jobs:
           dotnet tool install --global dotnet-releaser
           dotnet-releaser run --nuget-token "${{secrets.GITHUB_TOKEN}}" --github-token "${{secrets.GITHUB_TOKEN}}" dotnet-releaser.toml
 
+      - name: Package release
+        run: |
+          md dist
+          robocopy %CD%/src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/
+          cd dist
+          7z a windows_x64.zip *.dll
+
+      - name: Upload compiled libraries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/windows_x64.zip
+          asset_name: windows_x64.zip
+          tag: ${{ github.ref }}
+
 permissions:
   contents: write
   packages: write

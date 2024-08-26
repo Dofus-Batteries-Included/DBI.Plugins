@@ -1,4 +1,4 @@
-profile = "custom"
+profile = "default"
 
 [msbuild]
 project = ["src/Core/Core.csproj", "src/TreasureSolver/TreasureSolver.csproj"]
