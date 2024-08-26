@@ -43,7 +43,7 @@ jobs:
 
       - name: Read current game version
         id: read_dofus_version
-        run: echo "dofus_version=$(cytrus-v6 version -g dofus -b)" >> "$GITHUB_OUTPUT"
+        run: echo "dofus_version=$(cytrus-v6 version -g dofus -b)" >> $Env:GITHUB_OUTPUT
 
       - name: Download BepInEx
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
@@ -60,7 +60,7 @@ jobs:
 
       - name: Read game build id
         id: read_dofus_build_id
-        run: echo "dofus_build_id=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)" >> "$GITHUB_OUTPUT"
+        run: echo "dofus_build_id=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)" >> $Env:GITHUB_OUTPUT
 
       - name: Display build information
         run: |
