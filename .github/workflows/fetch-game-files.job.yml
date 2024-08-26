@@ -45,7 +45,7 @@ jobs:
 
       - name: Read game build id
         run: |
-          node scripts/read-build-guid.js | set /p DofusBuildId=
+          set DofusBuildId=$(node scripts/read-build-guid.js dofus-beta/Dofus_Data/boot.config)
           echo "Found build id: %DofusBuildId%"
           echo %DofusBuildId% > src/Interop/build-id
 
