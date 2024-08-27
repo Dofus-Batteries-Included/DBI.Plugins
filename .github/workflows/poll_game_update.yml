@@ -95,10 +95,10 @@ jobs:
           $Patch=[Convert]::ToInt32($matches["patch"])
           $Prerelease=$matches["prerelease"]
           
-          echo "Found version: $Major.$Minor.$Patch$Prerelease"
+          echo "Found version: v$Major.$Minor.$Patch$Prerelease"
           
           $NewPatch=$Patch+1
-          $BumpedVersion="$Major.$Minor.$NewPatch$Prerelease"
+          $BumpedVersion="v$Major.$Minor.$NewPatch$Prerelease"
           
           echo "Bumped version: $BumpedVersion"
           echo "new_version=$BumpedVersion" >> $Env:GITHUB_OUTPUT
@@ -128,15 +128,16 @@ jobs:
 
       - name: Add tag to last commit
         uses: octokit/request-action@v2.x
-        id: add_tag
+        id: create_release
         if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         with:
-          route: POST /repos/{repository}/git/tags
+          route: POST /repos/{repository}/releases
           repository: ${{ github.repository }}
-          tag: ${{ steps.bump_version.outputs.new_version }}
-          message: Bump version to v${{ steps.bump_version.outputs.new_version }}
-          type: commit
-          object: ${{ steps.fetch_last_commit_ref.outputs.ref }}
+          tag_name: ${{ steps.bump_version.outputs.new_version }}
+          target_commitish: ${{ steps.fetch_last_commit_ref.outputs.ref }}
+          name: ${{ steps.bump_version.outputs.new_version }}
+          body: "AUTO-GENERATED: This release has been triggered by an update of the game: ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
 
@@ -144,13 +145,13 @@ jobs:
         if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         run: |
           echo @'
-            Status: ${{ steps.add_tag.outputs.status }}
+            Status: ${{ steps.create_release.outputs.status }}
           
             Headers:
-            ${{ steps.add_tag.outputs.headers }}
+            ${{ steps.create_release.outputs.headers }}
           
             Data:
-            ${{ steps.add_tag.outputs.data }}
+            ${{ steps.create_release.outputs.data }}
           '@
           
 
