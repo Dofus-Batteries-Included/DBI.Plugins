@@ -9,11 +9,6 @@
             https://nuget.samboy.dev/v3/index.json
         </RestoreAdditionalProjectSources>
     </PropertyGroup>
-    
-    <PropertyGroup>
-        <DofusBuildId Condition="'$(DOFUSBUILDID)' == ''">80586dab8f524ef1b30871e0e49ece8a</DofusBuildId>
-        <DofusBuildId Condition="'$(OFUSVERSION)' == ''">2.73.19.19</DofusBuildId>
-    </PropertyGroup>
 
     <Target Name="DisplayDofusBuildId" BeforeTargets="CoreCompile">
         <Message Importance="high" Text="Dofus build ID: $(DOFUSBUILDID)"/>
