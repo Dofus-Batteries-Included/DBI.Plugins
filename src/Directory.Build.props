@@ -17,6 +17,7 @@
 
     <Target Name="DisplayDofusBuildId" BeforeTargets="CoreCompile">
         <Message Importance="high" Text="Dofus build ID: $(DOFUSBUILDID)"/>
+        <Message Importance="high" Text="Dofus version: $(OFUSVERSION)"/>
     </Target>
     
     <ItemGroup>
