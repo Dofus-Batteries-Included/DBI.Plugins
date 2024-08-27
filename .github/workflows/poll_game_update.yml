@@ -29,8 +29,8 @@ jobs:
           '@
           $Response=($ResponseString | ConvertFrom-Json)
           $VersionAsset=($Response.assets | Where-Object {$_.name -eq 'VERSION'})[0]
-          echo "Last release VERSION file: $Url"
           $Url=$VersionAsset.browser_download_url
+          echo "Last release VERSION file: $Url"
           $Version=$(Invoke-WebRequest -Uri "$Url")
           echo "Last release version: $Version"
           echo "version=$Version" >> $Env:GITHUB_OUTPUT
