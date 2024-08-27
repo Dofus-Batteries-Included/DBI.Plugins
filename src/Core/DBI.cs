@@ -23,6 +23,8 @@ public static class DBI
         }
     }
 
+    public static readonly string AppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DofusBatteriesIncluded");
+
     public static bool Enabled { get; internal set; }
     public static Guid? DofusBuildId { get; internal set; }
     public static DBIConfiguration Configuration { get; } = new();

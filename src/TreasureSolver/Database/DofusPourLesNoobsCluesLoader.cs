@@ -5,19 +5,24 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
+using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Extensions;
-using DofusBatteriesIncluded.Core.Maps;
 using Microsoft.Extensions.Logging;
+using Xtensive.Orm;
+using MapCoordinates = Core.DataCenter.Metadata.World.MapCoordinates;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues;
+namespace DofusBatteriesIncluded.TreasureSolver.Database;
 
-public static class DofusPourLesNoobsStaticClueFinderFactory
+public static class DofusPourLesNoobsCluesLoader
 {
-    static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsStaticClueFinderFactory));
+    static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsCluesLoader));
 
-    public static async Task<StaticClueFinder> Create(string dplbFilePath)
+    public static async Task LoadCluesAsync(Domain domain, string dplbFilePath)
     {
+        await using Session session = await domain.OpenSessionAsync();
+        await using TransactionScope transaction = await session.OpenTransactionAsync();
+
         // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
         List<(int Id, string Name)> gamePois = GetGamePois();
 
@@ -43,12 +48,34 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
             dplbClueToGameClueMapping[dplbClue.ClueId] = id;
         }
 
-        Dictionary<Position, IReadOnlyCollection<int>> clues = parsedFile.Maps.ToDictionary(
-            m => new Position(m.X, m.Y),
-            IReadOnlyCollection<int> (m) => m.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToHashSet()
-        );
+        int cluesCount = 0;
+        int mapsCount = 0;
+        MapCoordinatesRoot coordinates = DataCenterModule.GetDataRoot<MapCoordinatesRoot>();
+        foreach (MapClues mapClues in parsedFile.Maps)
+        {
+            MapCoordinates mapCoordinates = coordinates.GetMapCoordinatesByCoords(mapClues.X, mapClues.Y);
+            MapPositions[] maps = mapCoordinates.maps._items.Where(m => m is { worldMap: 1 }).ToArray();
+            if (maps.Length == 0)
+            {
+                Log.LogWarning("Could not find map in world 1 at position [{X},{Y}].", mapClues.X, mapClues.Y);
+                continue;
+            }
 
-        return new StaticClueFinder(clues);
+            HashSet<int> clueIds = mapClues.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToHashSet();
+            foreach (MapPositions map in maps)
+            {
+                foreach (int clueId in clueIds)
+                {
+                    _ = new Clue(map.id, clueId);
+                    cluesCount++;
+                }
+                mapsCount++;
+            }
+        }
+
+        Log.LogInformation("Loaded a total of {CluesCount} clues in {MapsCout} maps.", cluesCount, mapsCount);
+
+        transaction.Complete();
     }
 
     static List<(int Id, string Name)> GetGamePois()

@@ -67,15 +67,15 @@ jobs:
           md dist/DofusBatteriesIncluded
           copy src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/DofusBatteriesIncluded
           cd dist
-          7z a windows_x64.zip DofusBatteriesIncluded/
+          7z a release.zip DofusBatteriesIncluded/
 
       - name: Upload compiled libraries to release
         if: ${{ github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/windows_x64.zip
-          asset_name: windows_x64.zip
+          file: dist/release.zip
+          asset_name: release.zip
           tag: ${{ github.ref }}
 
       - name: Write VERSION file that will be released

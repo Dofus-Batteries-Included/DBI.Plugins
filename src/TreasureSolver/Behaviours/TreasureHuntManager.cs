@@ -76,7 +76,6 @@ public class TreasureHuntManager : MonoBehaviour
         _instance = this;
 
         DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(); }; };
-        ClueFinders.DefaultFinderChanged += (_, _) => { Refresh(); };
         CorePlugin.DontUseScrollActionsChanged += (_, _) => { Refresh(); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
     }
@@ -130,10 +129,10 @@ public class TreasureHuntManager : MonoBehaviour
                 long lastMapId = evt.Flags.array.All(f => f == null) ? evt.StartMapId : evt.Flags.array.Last(f => f != null).MapId;
                 TreasureHuntEvent.Types.TreasureHuntStep nextStep = evt.KnownSteps.array.Last(s => s != null);
 
-                Task<IClueFinder> clueFinderTask = ClueFinders.GetDefaultFinder();
-                yield return CoroutineExtensions.WaitForCompletion(clueFinderTask);
-                IClueFinder clueFinder = clueFinderTask.Result;
-                if (clueFinder == null)
+                Task<ICluesService> cluesServiceTask = TreasureSolver.GetCluesService();
+                yield return CoroutineExtensions.WaitForCompletion(cluesServiceTask);
+                ICluesService cluesService = cluesServiceTask.Result;
+                if (cluesService == null)
                 {
                     Log.LogError("Could not find clue finder.");
                     yield break;
@@ -158,7 +157,7 @@ public class TreasureHuntManager : MonoBehaviour
                             yield break;
                         }
 
-                        Task<long?> cluePositionTask = clueFinder.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
+                        Task<long?> cluePositionTask = cluesService.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
                         yield return CoroutineExtensions.WaitForCompletion(cluePositionTask);
                         long? clueMapId = cluePositionTask.Result;
 
