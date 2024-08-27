@@ -137,7 +137,7 @@ jobs:
           target_commitish: ${{ steps.fetch_last_commit_ref.outputs.ref }}
           name: ${{ steps.bump_version.outputs.new_version }}
           body: |
-            "AUTO-GENERATED: This release has been triggered by an update of the game: ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
+            "AUTO-GENERATED: This release has been triggered by the update of the game to version ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
