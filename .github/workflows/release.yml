@@ -6,6 +6,7 @@ name: Release
 on:
   push:
     tags: "v*"
+  create: # tags are created by the poll_games_update workflow
   workflow_dispatch:
 
 jobs:
