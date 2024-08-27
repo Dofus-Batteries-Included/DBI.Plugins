@@ -124,7 +124,7 @@ jobs:
           '@
           $Response=($ResponseString | ConvertFrom-Json)
           echo "Last commit: $Response.Sha"
-          echo "ref=$Response.Sha" >> $Env:GITHUB_OUTPUT
+          echo "ref=$($Response.Sha)" >> $Env:GITHUB_OUTPUT
 
       - name: Add tag to last commit
         uses: octokit/request-action@v2.x
