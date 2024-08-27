@@ -138,3 +138,6 @@ jobs:
           object: ${{ steps.fetch_last_commit_ref.outputs.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  contents: write
