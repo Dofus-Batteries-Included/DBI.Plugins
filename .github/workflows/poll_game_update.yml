@@ -138,7 +138,7 @@ jobs:
           type: commit
           object: ${{ steps.fetch_last_commit_ref.outputs.ref }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
 
       - name: Display response of create tag request
         if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
