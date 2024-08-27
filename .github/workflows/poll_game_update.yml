@@ -128,7 +128,7 @@ jobs:
 
       - name: Add tag to last commit
         uses: octokit/request-action@v2.x
-        id: add_pr_comment
+        id: add_tag
         if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         with:
           route: POST /repos/{repository}/git/tags
@@ -140,6 +140,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Display response of create tag request
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        run: |
+          echo @'
+            Status: ${{ steps.add_tag.outputs.status }}
+          
+            Headers:
+            ${{ steps.add_tag.outputs.headers }}
+          
+            Data:
+            ${{ steps.add_tag.outputs.data }}
+          '@
+          
+
 permissions:
   contents: write
-  packages: write
+  packages: read
