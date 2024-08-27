@@ -55,6 +55,11 @@ foreach ($Project in $Projects)
         copy $File $Dir
     }
 
+    $ResourcesFolder = "src/$Project/bin/$Configuration/net6.0/publish/Resources"
+    if (Test-Path $ResourcesFolder) {
+        copy "$ResourcesFolder" $Dir -Recurse
+    }
+
     $RuntimesFolder = "src/$Project/bin/$Configuration/net6.0/publish/runtimes/win-x64"
     if (Test-Path $RuntimesFolder) {
         copy "$RuntimesFolder/**/*.dll" $Dir -Recurse

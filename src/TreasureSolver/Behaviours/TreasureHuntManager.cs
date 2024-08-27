@@ -129,9 +129,7 @@ public class TreasureHuntManager : MonoBehaviour
                 long lastMapId = evt.Flags.array.All(f => f == null) ? evt.StartMapId : evt.Flags.array.Last(f => f != null).MapId;
                 TreasureHuntEvent.Types.TreasureHuntStep nextStep = evt.KnownSteps.array.Last(s => s != null);
 
-                Task<ICluesService> cluesServiceTask = TreasureSolver.GetCluesService();
-                yield return CoroutineExtensions.WaitForCompletion(cluesServiceTask);
-                ICluesService cluesService = cluesServiceTask.Result;
+                ICluesService cluesService = TreasureSolver.GetCluesService();
                 if (cluesService == null)
                 {
                     Log.LogError("Could not find clue finder.");

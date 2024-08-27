@@ -2,14 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Extensions;
 using Microsoft.Extensions.Logging;
-using Xtensive.Orm;
 using MapCoordinates = Core.DataCenter.Metadata.World.MapCoordinates;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Database;
@@ -18,18 +16,15 @@ public static class DofusPourLesNoobsCluesLoader
 {
     static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsCluesLoader));
 
-    public static async Task LoadCluesAsync(Domain domain, string dplbFilePath)
+    public static IReadOnlyDictionary<long, IReadOnlyCollection<int>> LoadClues(string dplbFilePath)
     {
-        await using Session session = await domain.OpenSessionAsync();
-        await using TransactionScope transaction = await session.OpenTransactionAsync();
-
         // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
         List<(int Id, string Name)> gamePois = GetGamePois();
 
         DPLBFile parsedFile;
-        await using (FileStream stream = File.OpenRead(dplbFilePath))
+        using (FileStream stream = File.OpenRead(dplbFilePath))
         {
-            parsedFile = await JsonSerializer.DeserializeAsync<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            parsedFile = JsonSerializer.Deserialize<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
         Dictionary<int, int> dplbClueToGameClueMapping = new();
@@ -50,32 +45,34 @@ public static class DofusPourLesNoobsCluesLoader
 
         int cluesCount = 0;
         int mapsCount = 0;
+        Dictionary<long, IReadOnlyCollection<int>> result = [];
         MapCoordinatesRoot coordinates = DataCenterModule.GetDataRoot<MapCoordinatesRoot>();
+        MapPositionsRoot positions = DataCenterModule.GetDataRoot<MapPositionsRoot>();
         foreach (MapClues mapClues in parsedFile.Maps)
         {
             MapCoordinates mapCoordinates = coordinates.GetMapCoordinatesByCoords(mapClues.X, mapClues.Y);
-            MapPositions[] maps = mapCoordinates.maps._items.Where(m => m is { worldMap: 1 }).ToArray();
-            if (maps.Length == 0)
-            {
-                Log.LogWarning("Could not find map in world 1 at position [{X},{Y}].", mapClues.X, mapClues.Y);
-                continue;
-            }
+            int[] clueIds = mapClues.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToArray();
 
-            HashSet<int> clueIds = mapClues.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToHashSet();
-            foreach (MapPositions map in maps)
+            if (mapCoordinates.mapIds != null)
             {
-                foreach (int clueId in clueIds)
+                for (int i = 0; i < mapCoordinates.mapIds.Count; i++)
                 {
-                    _ = new Clue(map.id, clueId);
-                    cluesCount++;
+                    MapPositions position = positions.GetMapPositionById(mapCoordinates.mapIds[i]);
+                    if (position is not { worldMap: 1 })
+                    {
+                        continue;
+                    }
+
+                    result[position.id] = clueIds;
+                    cluesCount += clueIds.Length;
+                    mapsCount++;
                 }
-                mapsCount++;
             }
         }
 
         Log.LogInformation("Loaded a total of {CluesCount} clues in {MapsCout} maps.", cluesCount, mapsCount);
 
-        transaction.Complete();
+        return result;
     }
 
     static List<(int Id, string Name)> GetGamePois()

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using DofusBatteriesIncluded.Core;
+﻿using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
 using DofusBatteriesIncluded.TreasureSolver.Database;
 using Microsoft.Extensions.Logging;
@@ -12,9 +11,5 @@ static class TreasureSolver
 
     static ICluesService _cluesService;
 
-    public static async Task<ICluesService> GetCluesService()
-    {
-        _cluesService = await DatabaseCluesService.CreateAsync();
-        return _cluesService;
-    }
+    public static ICluesService GetCluesService() => _cluesService ??= LocalCluesService.Create();
 }
