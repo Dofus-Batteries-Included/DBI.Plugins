@@ -63,33 +63,50 @@ jobs:
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
         
       - name: Continue when versions don't match
+        id: continue_when_versions_match
         run: |
-          echo "Versions don'tmatch: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}." 
+          echo "Versions don'tmatch: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
           echo "Will add tag to last commit to trigger a new release."
+          echo "create_new_tag=true" >> $Env:GITHUB_OUTPUT
         if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
 
       - name: Checkout
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Get latest tag
         id: fetch_latest_tag
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         uses: WyriHaximus/github-action-get-previous-tag@v1
 
       - name: Bump version
-        id: bump_tag
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
-        uses: WyriHaximus/github-action-next-semvers@v1
-        with:
-          version: ${{ steps.fetch_latest_tag.outputs.tag }}
+        id: bump_version
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        run: |
+          $Version="${{ steps.fetch_latest_tag.outputs.tag }}"
+          $Regex="v(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)(?<prerelease>-.*)?"
+          if ($Version -notmatch $Regex) {
+            throw "$Version is not a valid version number"
+          }
+          $Major=[Convert]::ToInt32($matches["major"])
+          $Minor=[Convert]::ToInt32($matches["minor"])
+          $Patch=[Convert]::ToInt32($matches["patch"])
+          $Prerelease=$matches["prerelease"]
+          
+          echo "Found version: $Major.$Minor.$Patch$Prerelease"
+          
+          $NewPatch=$Patch+1
+          $BumpedVersion="$Major.$Minor.$NewPatch$Prerelease"
+          
+          echo "Bumped version: $BumpedVersion"
+          echo "new_version=$BumpedVersion" >> $Env:GITHUB_OUTPUT
 
       - name: Get last commit
         uses: octokit/request-action@v2.x
         id: fetch_last_commit
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         with:
           route: GET /repos/{repository}/commits
           repository: ${{ github.repository }}
@@ -98,7 +115,7 @@ jobs:
       
       - name: Get last commit ref
         id: fetch_last_commit_ref
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         run: |
           $ResponseString=@'
           ${{ steps.fetch_last_commit.outputs.data }}
@@ -109,12 +126,12 @@ jobs:
       - name: Add tag to last commit
         uses: octokit/request-action@v2.x
         id: add_pr_comment
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         with:
           route: POST /repos/{repository}/git/tags
           repository: ${{ github.repository }}
-          tag: ${{ steps.bump_tag.outputs.v_patch }}
-          message: Bump version to v${{ steps.bump_tag.outputs.v_patch }}
+          tag: ${{ steps.bump_version.outputs.new_version }}
+          message: Bump version to v${{ steps.bump_version.outputs.new_version }}
           type: commit
           object: ${{ steps.fetch_last_commit_ref.outputs.ref }}
         env:
