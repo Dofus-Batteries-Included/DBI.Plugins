@@ -112,7 +112,9 @@ jobs:
           repository: ${{ github.repository }}
           per_page: 1
           page: 1
-      
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
       - name: Get last commit ref
         id: fetch_last_commit_ref
         if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
