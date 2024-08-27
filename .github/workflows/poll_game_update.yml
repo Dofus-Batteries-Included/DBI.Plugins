@@ -68,6 +68,12 @@ jobs:
           echo "Will add tag to last commit to trigger a new release."
         if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
 
+      - name: Checkout
+        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Get latest tag
         id: fetch_latest_tag
         if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
