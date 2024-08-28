@@ -1,31 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
+using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Extensions;
-using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.TreasureSolver.Clues.Data;
 using Microsoft.Extensions.Logging;
+using MapCoordinates = Core.DataCenter.Metadata.World.MapCoordinates;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
-public static class DofusPourLesNoobsStaticClueFinderFactory
+public static class DofusPourLesNoobsCluesLoader
 {
-    static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsStaticClueFinderFactory));
+    static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsCluesLoader));
 
-    public static async Task<StaticClueFinder> Create(string dplbFilePath)
+    public static ICluesDataSource LoadClues(string dplbFilePath)
     {
         // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
         List<(int Id, string Name)> gamePois = GetGamePois();
 
         DPLBFile parsedFile;
-        await using (FileStream stream = File.OpenRead(dplbFilePath))
+        using (FileStream stream = File.OpenRead(dplbFilePath))
         {
-            parsedFile = await JsonSerializer.DeserializeAsync<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            parsedFile = JsonSerializer.Deserialize<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
+
+        DateTime fileDate = File.GetLastWriteTime(dplbFilePath);
 
         Dictionary<int, int> dplbClueToGameClueMapping = new();
         foreach ((int id, string name) in gamePois)
@@ -43,12 +47,35 @@ public static class DofusPourLesNoobsStaticClueFinderFactory
             dplbClueToGameClueMapping[dplbClue.ClueId] = id;
         }
 
-        Dictionary<Position, IReadOnlyCollection<int>> clues = parsedFile.Maps.ToDictionary(
-            m => new Position(m.X, m.Y),
-            IReadOnlyCollection<int> (m) => m.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToHashSet()
-        );
+        int cluesCount = 0;
+        int mapsCount = 0;
+        CluesDataSource result = new();
+        MapCoordinatesRoot coordinates = DataCenterModule.GetDataRoot<MapCoordinatesRoot>();
+        MapPositionsRoot positions = DataCenterModule.GetDataRoot<MapPositionsRoot>();
+        foreach (MapClues mapClues in parsedFile.Maps)
+        {
+            MapCoordinates mapCoordinates = coordinates.GetMapCoordinatesByCoords(mapClues.X, mapClues.Y);
+            int[] clueIds = mapClues.Clues.Where(c => dplbClueToGameClueMapping.ContainsKey(c)).Select(c => dplbClueToGameClueMapping[c]).ToArray();
 
-        return new StaticClueFinder(clues);
+            if (mapCoordinates.mapIds != null)
+            {
+                for (int i = 0; i < mapCoordinates.mapIds.Count; i++)
+                {
+                    MapPositions position = positions.GetMapPositionById(mapCoordinates.mapIds[i]);
+                    if (position is not { worldMap: 1 })
+                    {
+                        continue;
+                    }
+
+                    result.AddRecords(position.id, clueIds.Select(clueId => new ClueRecord { ClueId = clueId, WasFound = true, RecordDate = fileDate }).ToArray());
+
+                    cluesCount += clueIds.Length;
+                    mapsCount++;
+                }
+            }
+        }
+
+        return result;
     }
 
     static List<(int Id, string Name)> GetGamePois()

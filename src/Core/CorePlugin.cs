@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Core.Behaviours;
-using DofusBatteriesIncluded.Core.Metadata;
 using DofusBatteriesIncluded.Core.Player;
 using DofusBatteriesIncluded.Core.Protocol;
 using DofusBatteriesIncluded.Core.UI;
@@ -12,7 +10,6 @@ using DofusBatteriesIncluded.Core.UI.Menus;
 using DofusBatteriesIncluded.Core.UI.Windows;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using Guid = System.Guid;
 
 namespace DofusBatteriesIncluded.Core;
 
@@ -59,6 +56,4 @@ public class CorePlugin : DBIPlugin
 
         return Task.CompletedTask;
     }
-
-    static Guid? GetExpectedBuildIdFromAssemblyAttribute() => typeof(CorePlugin).Assembly.GetCustomAttribute<ExpectedDofusBuildIdAttribute>()?.BuildId;
 }
