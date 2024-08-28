@@ -57,10 +57,14 @@ jobs:
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
       - name: Stop when versions match
-        run: |
-          echo "Versions match: ${{ steps.fetch_last_release_version.outputs.version }} = ${{ steps.fetch_dofus_version.outputs.dofus_version }}." 
-          echo "Stopping."
-        if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
+        uses: octokit/request-action@v2.x
+        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        with:
+          route: GET /repos/{repository}/actions/runs/{run_id}/cancel
+          repository: ${{ github.repository }}
+          run_id: ${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Continue when versions don't match
         id: continue_when_versions_match
@@ -126,7 +130,7 @@ jobs:
           echo "Last commit: $($Response.Sha)"
           echo "ref=$($Response.Sha)" >> $Env:GITHUB_OUTPUT
 
-      - name: Add tag to last commit
+      - name: Create release
         uses: octokit/request-action@v2.x
         id: create_release
         if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
