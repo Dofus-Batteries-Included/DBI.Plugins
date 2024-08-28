@@ -60,7 +60,7 @@ jobs:
         uses: octokit/request-action@v2.x
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
         with:
-          route: GET /repos/{repository}/actions/runs/{run_id}/cancel
+          route: POST /repos/{repository}/actions/runs/{run_id}/cancel
           repository: ${{ github.repository }}
           run_id: ${{ github.run_id }}
         env:
