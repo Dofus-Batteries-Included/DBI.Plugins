@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +14,16 @@ public class LocalCluesService : ICluesService
 {
     static readonly ILogger Log = DBI.Logging.Create<LocalCluesService>();
 
-    readonly Dictionary<long, HashSet<int>> _clues;
+    readonly IReadOnlyCluesDataSource[] _externalSources;
+    readonly JsonFileCluesDataSource _localSource;
+    readonly List<IReadOnlyCluesDataSource> _dataSources;
 
-    public LocalCluesService(IReadOnlyDictionary<long, IReadOnlyCollection<int>> clues)
+    LocalCluesService(JsonFileCluesDataSource localSource, params IReadOnlyCluesDataSource[] externalSources)
     {
-        _clues = clues.ToDictionary(kv => kv.Key, kv => kv.Value.ToHashSet());
+        _externalSources = externalSources;
+        _localSource = localSource;
+        _dataSources = externalSources.ToList();
+        _dataSources.Add(_localSource);
     }
 
     public Task<long?> FindMapOfNextClue(long startMapId, Direction direction, int clueId, int cluesMaxDistance)
@@ -25,11 +31,7 @@ public class LocalCluesService : ICluesService
         long[] maps = MapUtils.MoveInDirection(startMapId, direction).Take(cluesMaxDistance).ToArray();
         foreach (long map in maps)
         {
-            if (!_clues.TryGetValue(map, out HashSet<int> clues))
-            {
-                continue;
-            }
-
+            IReadOnlyCollection<int> clues = _dataSources.GetCluesAt(map);
             if (clues.Contains(clueId))
             {
                 return Task.FromResult<long?>(map);
@@ -39,17 +41,22 @@ public class LocalCluesService : ICluesService
         return Task.FromResult<long?>(null);
     }
 
-    public Task RegisterCluesAsync(long mapId, params int[] clues)
+    public Task RegisterCluesAsync(long mapId, params (int ClueId, bool IsPresent)[] clues)
     {
-        if (!_clues.ContainsKey(mapId))
+        (int ClueId, bool IsPresent)[] found = clues.Where(c => c.IsPresent).ToArray();
+        if (found.Length > 0)
         {
-            _clues[mapId] = [];
+            Log.LogInformation("Saving that clue {Clues} were found in map {MapId}...", string.Join(", ", found), mapId);
         }
 
-        foreach (int clue in clues)
+        (int ClueId, bool IsPresent)[] notFound = clues.Where(c => !c.IsPresent).ToArray();
+        if (found.Length > 0)
         {
-            _clues[mapId].Add(clue);
+            Log.LogInformation("Saving that clue {Clues} were not found in map {MapId}...", string.Join(", ", notFound), mapId);
         }
+
+        DateTime now = DateTime.Now;
+        _localSource.AddRecords(mapId, clues.Select(x => new ClueRecord(x.ClueId, x.IsPresent, now)).ToArray());
 
         return Task.CompletedTask;
     }
@@ -62,20 +69,23 @@ public class LocalCluesService : ICluesService
         string basePath = directory == null ? "" : Path.GetFullPath(directory);
         string path = Path.Combine(basePath, "Resources", "dofuspourlesnoobs_clues.json");
 
-        IReadOnlyDictionary<long, IReadOnlyCollection<int>> clues;
+        List<IReadOnlyCluesDataSource> clues = [];
         if (File.Exists(path))
         {
             Log.LogInformation("Initializing clues from DPLB file at {Path}...", path);
-            clues = DofusPourLesNoobsCluesLoader.LoadClues(path);
+            clues.Add(DofusPourLesNoobsCluesLoader.LoadClues(path));
         }
         else
         {
             Log.LogError("Could not find DPLB file at {Path}, will not load clues.", path);
-            clues = new Dictionary<long, IReadOnlyCollection<int>>();
         }
+
+        string localSourcePath = Path.Join(DBI.AppDataFolder, "TreasureSolver", "clues.json");
+        Log.LogInformation("Initializing local source of clues from file at {Path}...", localSourcePath);
+        JsonFileCluesDataSource localSource = new(localSourcePath);
 
         Log.LogInformation("LOCAL clues service ready.");
 
-        return new LocalCluesService(clues);
+        return new LocalCluesService(localSource, clues.ToArray());
     }
 }

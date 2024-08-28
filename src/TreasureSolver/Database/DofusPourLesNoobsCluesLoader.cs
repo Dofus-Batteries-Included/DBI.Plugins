@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -16,7 +17,7 @@ public static class DofusPourLesNoobsCluesLoader
 {
     static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsCluesLoader));
 
-    public static IReadOnlyDictionary<long, IReadOnlyCollection<int>> LoadClues(string dplbFilePath)
+    public static IReadOnlyCluesDataSource LoadClues(string dplbFilePath)
     {
         // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
         List<(int Id, string Name)> gamePois = GetGamePois();
@@ -26,6 +27,8 @@ public static class DofusPourLesNoobsCluesLoader
         {
             parsedFile = JsonSerializer.Deserialize<DPLBFile>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
+
+        DateTime fileDate = File.GetLastWriteTime(dplbFilePath);
 
         Dictionary<int, int> dplbClueToGameClueMapping = new();
         foreach ((int id, string name) in gamePois)
@@ -45,7 +48,7 @@ public static class DofusPourLesNoobsCluesLoader
 
         int cluesCount = 0;
         int mapsCount = 0;
-        Dictionary<long, IReadOnlyCollection<int>> result = [];
+        CluesDataSource result = new();
         MapCoordinatesRoot coordinates = DataCenterModule.GetDataRoot<MapCoordinatesRoot>();
         MapPositionsRoot positions = DataCenterModule.GetDataRoot<MapPositionsRoot>();
         foreach (MapClues mapClues in parsedFile.Maps)
@@ -63,7 +66,8 @@ public static class DofusPourLesNoobsCluesLoader
                         continue;
                     }
 
-                    result[position.id] = clueIds;
+                    result.AddRecords(position.id, clueIds.Select(clueId => new ClueRecord(clueId, true, fileDate)).ToArray());
+
                     cluesCount += clueIds.Length;
                     mapsCount++;
                 }
