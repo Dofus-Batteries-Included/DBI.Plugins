@@ -58,7 +58,7 @@ jobs:
           route: GET /repos/{repository}/statuses/{sha}
           repository: ${{ github.repository }}
           sha: ${{ github.sha }}
-          state: ${{ github.event.workflow_run.conclusion }}
+          state: ${{ job.status }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
