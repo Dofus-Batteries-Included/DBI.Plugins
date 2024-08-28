@@ -261,14 +261,16 @@ public class TreasureHuntManager : MonoBehaviour
 
         if (DBI.Player.State != null)
         {
-            if (DBI.Player.State.CurrentMapId == targetMapId)
+            long playerMapId = DBI.Player.State.CurrentMapId;
+            Position playerPosition = DBI.Player.State.CurrentMapPosition;
+            Position? targetMapPosition = mapPositionsRoot.GetMapPositionById(targetMapId)?.GetPosition();
+            if (playerMapId == targetMapId || CorePlugin.DontUseScrollActions && playerPosition == targetMapPosition)
             {
                 stepMessage += " arrived";
             }
             else
             {
-                Position playerPosition = DBI.Player.State.CurrentMapPosition;
-                GamePath path = DBI.PathFinder.GetShortestPath(DBI.Player.State.CurrentMapId, targetMapId);
+                GamePath path = DBI.PathFinder.GetShortestPath(playerMapId, targetMapId);
                 int distance = path?.Count ?? targetPosition.Value.DistanceTo(playerPosition);
 
                 stepMessage += lastPosition.HasValue
