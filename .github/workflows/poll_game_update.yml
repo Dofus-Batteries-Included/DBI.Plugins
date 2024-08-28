@@ -58,7 +58,7 @@ jobs:
 
       - name: Stop when versions match
         uses: octokit/request-action@v2.x
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
         with:
           route: GET /repos/{repository}/actions/runs/{run_id}/cancel
           repository: ${{ github.repository }}
@@ -69,7 +69,7 @@ jobs:
       - name: Continue when versions don't match
         id: continue_when_versions_match
         run: |
-          echo "Versions don'tmatch: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
+          echo "Versions don't match: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
           echo "Will add tag to last commit to trigger a new release."
           echo "create_new_tag=true" >> $Env:GITHUB_OUTPUT
         if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
