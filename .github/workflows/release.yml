@@ -50,7 +50,7 @@ jobs:
         env:
           DofusBuildId: ${{ needs.fetch-game-files.outputs.game_build_id }}
           DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
-        run: cd src; dotnet build --configuration Release --no-restore --output nuget/ -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
+        run: cd src; dotnet build --configuration Release --no-restore -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
 
       - name: Pack
         if: ${{ github.event_name == 'release' }}
