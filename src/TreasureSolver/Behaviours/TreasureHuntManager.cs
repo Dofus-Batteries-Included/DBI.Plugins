@@ -76,7 +76,7 @@ public class TreasureHuntManager : MonoBehaviour
         _instance = this;
 
         DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(); }; };
-        CorePlugin.DontUseScrollActionsChanged += (_, _) => { Refresh(); };
+        CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
     }
 
@@ -264,7 +264,7 @@ public class TreasureHuntManager : MonoBehaviour
             long playerMapId = DBI.Player.State.CurrentMapId;
             Position playerPosition = DBI.Player.State.CurrentMapPosition;
             Position? targetMapPosition = mapPositionsRoot.GetMapPositionById(targetMapId)?.GetPosition();
-            if (playerMapId == targetMapId || CorePlugin.DontUseScrollActions && playerPosition == targetMapPosition)
+            if (playerMapId == targetMapId || !CorePlugin.UseScrollActions && playerPosition == targetMapPosition)
             {
                 stepMessage += " arrived";
             }
