@@ -57,19 +57,23 @@ jobs:
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
       - name: Stop when versions match
+        if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
         uses: octokit/request-action@v2.x
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
         with:
-          route: GET /repos/{repository}/actions/runs/{run_id}/cancel
+          route: POST /repos/{repository}/actions/runs/{run_id}/cancel
           repository: ${{ github.repository }}
           run_id: ${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for workflow cancellation
+        if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
+        run: while ($True) { echo "Waiting for job to be cancelled"; sleep 5; }
         
       - name: Continue when versions don't match
         id: continue_when_versions_match
         run: |
-          echo "Versions don'tmatch: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
+          echo "Versions don't match: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
           echo "Will add tag to last commit to trigger a new release."
           echo "create_new_tag=true" >> $Env:GITHUB_OUTPUT
         if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
@@ -158,8 +162,8 @@ jobs:
             Data:
             ${{ steps.create_release.outputs.data }}
           '@
-          
 
 permissions:
+  actions: write
   contents: write
   packages: read
