@@ -5,10 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Maps;
-using DofusBatteriesIncluded.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Database;
+namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public class LocalCluesService : ICluesService
 {

@@ -1,6 +1,5 @@
 ﻿using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
-using DofusBatteriesIncluded.TreasureSolver.Database;
 using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.TreasureSolver;

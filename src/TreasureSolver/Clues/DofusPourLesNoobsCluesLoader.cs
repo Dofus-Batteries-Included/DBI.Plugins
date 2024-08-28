@@ -11,7 +11,7 @@ using DofusBatteriesIncluded.Core.Extensions;
 using Microsoft.Extensions.Logging;
 using MapCoordinates = Core.DataCenter.Metadata.World.MapCoordinates;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Database;
+namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public static class DofusPourLesNoobsCluesLoader
 {

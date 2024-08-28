@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Database;
+namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public class ClueRecord
 {

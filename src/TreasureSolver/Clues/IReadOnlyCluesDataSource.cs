@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Database;
+namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public interface IReadOnlyCluesDataSource
 {

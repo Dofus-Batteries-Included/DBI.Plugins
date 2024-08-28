@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Database;
+namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public class CluesDataSource : IReadOnlyCluesDataSource
 {
