@@ -51,5 +51,16 @@ jobs:
       - name: Test
         run: cd src; dotnet test --configuration Release --no-restore
 
+      - name: Set status
+        uses: octokit/request-action@v2.x
+        if: ${{ always() }}
+        with:
+          route: GET /repos/{repository}/statuses/{sha}
+          repository: ${{ github.repository }}
+          sha: ${{ github.sha }}
+          state: ${{ github.event.workflow_run.conclusion }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 permissions:
   packages: read
