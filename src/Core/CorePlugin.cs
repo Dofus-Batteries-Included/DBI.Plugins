@@ -16,23 +16,23 @@ namespace DofusBatteriesIncluded.Core;
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class CorePlugin : DBIPlugin
 {
-    public static bool DontUseScrollActions { get; private set; }
-    public static event EventHandler<bool> DontUseScrollActionsChanged;
+    public static bool UseScrollActions { get; private set; }
+    public static event EventHandler<bool> UseScrollActionsChanged;
 
     public override bool CanBeDisabled => false;
 
     protected override Task StartAsync()
     {
-        DontUseScrollActions = DBI.Configuration.Configure("Path Finding", "Do not use scroll actions", true)
+        UseScrollActions = DBI.Configuration.Configure("Path Finding", "Experimental: use scroll actions", false)
             .WithDescription(
-                "Scroll actions seem off, this toggle is used to remove them and assume that the adjacent maps of a given map are the ones directly adjacent to it coordinate-wise. "
-                + "It will be off whenever the adjacent is not directly next to the map, e.g. if it is above or below. It will also fail to take into account obstacles between maps."
+                "Scroll actions are supposed to give us the available scroll actions for maps, they take into account the actual world graph. "
+                + "However they seem off so it is not recommended to enable this option. For Treasure Hunts it doesn't really matter if we don't take into account obstacles."
             )
             .RegisterChangeCallback(
                 value =>
                 {
-                    DontUseScrollActions = value;
-                    DontUseScrollActionsChanged?.Invoke(this, value);
+                    UseScrollActions = value;
+                    UseScrollActionsChanged?.Invoke(this, value);
                 }
             )
             .Bind();
