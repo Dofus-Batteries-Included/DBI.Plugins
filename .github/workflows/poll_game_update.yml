@@ -57,8 +57,8 @@ jobs:
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
       - name: Stop when versions match
-        uses: octokit/request-action@v2.x
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
+        uses: octokit/request-action@v2.x
         with:
           route: POST /repos/{repository}/actions/runs/{run_id}/cancel
           repository: ${{ github.repository }}
@@ -162,8 +162,8 @@ jobs:
             Data:
             ${{ steps.create_release.outputs.data }}
           '@
-          
 
 permissions:
+  actions: write
   contents: write
   packages: read
