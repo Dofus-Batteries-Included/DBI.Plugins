@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
-using Core.PathFinding.WorldPathfinding;
 using Microsoft.Extensions.Logging;
 using Enumerable = System.Linq.Enumerable;
 
@@ -10,8 +9,16 @@ namespace DofusBatteriesIncluded.Core.Maps.PathFinding;
 class AStar
 {
     const int MaxIterations = 100000;
-    readonly Dictionary<(long, long), GamePath> _knownPaths = new();
     static readonly ILogger Log = DBI.Logging.Create<AStar>();
+
+    readonly MapPositionsRoot _mapPositionsRoot;
+    MapPositions _sourceMap;
+    readonly Dictionary<(long, long), GamePath> _knownPaths = new();
+
+    public AStar()
+    {
+        _mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
+    }
 
     public GamePath GetShortestPath(long source, long target)
     {
@@ -30,26 +37,25 @@ class AStar
 
     void ComputePath(long source, long target)
     {
-        MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
-        MapPositions sourceMap = mapPositionsRoot.GetMapPositionById(source);
-        if (sourceMap == null)
+        _sourceMap = _mapPositionsRoot.GetMapPositionById(source);
+        if (_sourceMap == null)
         {
             _knownPaths.Add((source, target), null);
             return;
         }
 
-        MapPositions targetMap = mapPositionsRoot.GetMapPositionById(target);
+        MapPositions targetMap = _mapPositionsRoot.GetMapPositionById(target);
         if (targetMap == null)
         {
             _knownPaths.Add((source, target), null);
             return;
         }
 
-        Log.LogDebug("Cache miss while computing path from {SourceMap} to {TargetMap}", sourceMap.GetPosition(), targetMap.GetPosition());
+        Log.LogDebug("Cache miss while computing path from {SourceMap} to {TargetMap}", _sourceMap.GetPosition(), targetMap.GetPosition());
 
         Dictionary<long, long> cameFrom = new();
 
-        if (!Explore(sourceMap, targetMap, cameFrom))
+        if (!Explore(_sourceMap, targetMap, cameFrom))
         {
             _knownPaths.Add((source, target), null);
             return;
@@ -60,10 +66,10 @@ class AStar
         long current = target;
         while (cameFrom.ContainsKey(current))
         {
-            MapPositions currentMap = mapPositionsRoot.GetMapPositionById(current);
+            MapPositions currentMap = _mapPositionsRoot.GetMapPositionById(current);
 
             long previous = cameFrom[current];
-            MapPositions previousMap = mapPositionsRoot.GetMapPositionById(previous);
+            MapPositions previousMap = _mapPositionsRoot.GetMapPositionById(previous);
 
             Direction? direction = GamePathUtils.GetDirectionFromTo(previousMap.GetPosition(), currentMap.GetPosition());
             result.Add(new ChangeMapStep(direction ?? Direction.Unknown));
@@ -75,7 +81,7 @@ class AStar
         }
     }
 
-    static bool Explore(MapPositions sourceMap, MapPositions targetMap, IDictionary<long, long> cameFrom)
+    bool Explore(MapPositions sourceMap, MapPositions targetMap, IDictionary<long, long> cameFrom)
     {
         HashSet<uint> closed = new();
         Dictionary<uint, int> open = new();
