@@ -8,6 +8,7 @@ using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Extensions;
+using DofusBatteriesIncluded.TreasureSolver.Clues.Data;
 using Microsoft.Extensions.Logging;
 using MapCoordinates = Core.DataCenter.Metadata.World.MapCoordinates;
 
@@ -17,7 +18,7 @@ public static class DofusPourLesNoobsCluesLoader
 {
     static readonly ILogger Log = DBI.Logging.Create(typeof(DofusPourLesNoobsCluesLoader));
 
-    public static IReadOnlyCluesDataSource LoadClues(string dplbFilePath)
+    public static ICluesDataSource LoadClues(string dplbFilePath)
     {
         // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
         List<(int Id, string Name)> gamePois = GetGamePois();
@@ -66,15 +67,13 @@ public static class DofusPourLesNoobsCluesLoader
                         continue;
                     }
 
-                    result.AddRecords(position.id, clueIds.Select(clueId => new ClueRecord(clueId, true, fileDate)).ToArray());
+                    result.AddRecords(position.id, clueIds.Select(clueId => new ClueRecord { ClueId = clueId, WasFound = true, RecordDate = fileDate }).ToArray());
 
                     cluesCount += clueIds.Length;
                     mapsCount++;
                 }
             }
         }
-
-        Log.LogInformation("Loaded a total of {CluesCount} clues in {MapsCout} maps.", cluesCount, mapsCount);
 
         return result;
     }

@@ -11,4 +11,10 @@ static class TreasureSolver
     static ICluesService _cluesService;
 
     public static ICluesService GetCluesService() => _cluesService ??= LocalCluesService.Create();
+
+    public static bool TryGetCluesService(out ICluesService cluesService)
+    {
+        cluesService = _cluesService;
+        return cluesService != null;
+    }
 }

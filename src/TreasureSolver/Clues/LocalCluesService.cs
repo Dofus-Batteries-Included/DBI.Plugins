@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.TreasureSolver.Clues.Data;
 using Microsoft.Extensions.Logging;
 
 namespace DofusBatteriesIncluded.TreasureSolver.Clues;
@@ -13,11 +14,11 @@ public class LocalCluesService : ICluesService
 {
     static readonly ILogger Log = DBI.Logging.Create<LocalCluesService>();
 
-    readonly IReadOnlyCluesDataSource[] _externalSources;
+    readonly ICluesDataSource[] _externalSources;
     readonly JsonFileCluesDataSource _localSource;
-    readonly List<IReadOnlyCluesDataSource> _dataSources;
+    readonly List<ICluesDataSource> _dataSources;
 
-    LocalCluesService(JsonFileCluesDataSource localSource, params IReadOnlyCluesDataSource[] externalSources)
+    LocalCluesService(JsonFileCluesDataSource localSource, params ICluesDataSource[] externalSources)
     {
         _externalSources = externalSources;
         _localSource = localSource;
@@ -40,22 +41,22 @@ public class LocalCluesService : ICluesService
         return Task.FromResult<long?>(null);
     }
 
-    public Task RegisterCluesAsync(long mapId, params (int ClueId, bool IsPresent)[] clues)
+    public Task RegisterCluesAsync(long mapId, params ClueWithStatus[] clues)
     {
-        (int ClueId, bool IsPresent)[] found = clues.Where(c => c.IsPresent).ToArray();
+        ClueWithStatus[] found = clues.Where(c => c.IsPresent).ToArray();
         if (found.Length > 0)
         {
-            Log.LogInformation("Saving that clue {Clues} were found in map {MapId}...", string.Join(", ", found), mapId);
+            Log.LogInformation("Clue(s) {Clues} were found in map {MapId}...", string.Join(", ", found.Select(f => f.ClueId)), mapId);
         }
 
-        (int ClueId, bool IsPresent)[] notFound = clues.Where(c => !c.IsPresent).ToArray();
-        if (found.Length > 0)
+        ClueWithStatus[] notFound = clues.Where(c => !c.IsPresent).ToArray();
+        if (notFound.Length > 0)
         {
-            Log.LogInformation("Saving that clue {Clues} were not found in map {MapId}...", string.Join(", ", notFound), mapId);
+            Log.LogInformation("Clue(s) {Clues} were not found in map {MapId}...", string.Join(", ", notFound.Select(f => f.ClueId)), mapId);
         }
 
         DateTime now = DateTime.Now;
-        _localSource.AddRecords(mapId, clues.Select(x => new ClueRecord(x.ClueId, x.IsPresent, now)).ToArray());
+        _localSource.AddRecords(mapId, clues.Select(x => new ClueRecord { ClueId = x.ClueId, WasFound = x.IsPresent, RecordDate = now }).ToArray());
 
         return Task.CompletedTask;
     }
@@ -68,11 +69,13 @@ public class LocalCluesService : ICluesService
         string basePath = directory == null ? "" : Path.GetFullPath(directory);
         string path = Path.Combine(basePath, "Resources", "dofuspourlesnoobs_clues.json");
 
-        List<IReadOnlyCluesDataSource> clues = [];
+        List<ICluesDataSource> clues = [];
         if (File.Exists(path))
         {
             Log.LogInformation("Initializing clues from DPLB file at {Path}...", path);
-            clues.Add(DofusPourLesNoobsCluesLoader.LoadClues(path));
+            ICluesDataSource dplbSource = DofusPourLesNoobsCluesLoader.LoadClues(path);
+            clues.Add(dplbSource);
+            Log.LogInformation("Loaded a total of {CluesCount} clues in {MapsCout} maps.", dplbSource.CluesCount, dplbSource.MapsCount);
         }
         else
         {
@@ -82,9 +85,12 @@ public class LocalCluesService : ICluesService
         string localSourcePath = Path.Join(DBI.AppDataFolder, "TreasureSolver", "clues.json");
         Log.LogInformation("Initializing local source of clues from file at {Path}...", localSourcePath);
         JsonFileCluesDataSource localSource = new(localSourcePath);
+        Log.LogInformation("Loaded a total of {CluesCount} clues in {MapsCout} maps.", localSource.CluesCount, localSource.MapsCount);
 
         Log.LogInformation("LOCAL clues service ready.");
 
         return new LocalCluesService(localSource, clues.ToArray());
     }
 }
+
+public record struct ClueWithStatus(int ClueId, bool IsPresent);

@@ -2,6 +2,7 @@
 using BepInEx;
 using DofusBatteriesIncluded.Core;
 using DofusBatteriesIncluded.TreasureSolver.Behaviours;
+using DofusBatteriesIncluded.TreasureSolver.Clues.Listeners;
 
 namespace DofusBatteriesIncluded.TreasureSolver;
 
@@ -13,5 +14,6 @@ class TreasureHuntSolverPlugin : DBIPlugin
     {
         AddComponent<TreasureHuntManager>();
         DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
+        DBI.Messaging.RegisterListener<SaveCluesOnDigAnswerEvent>();
     }
 }
