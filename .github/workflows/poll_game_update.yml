@@ -65,6 +65,10 @@ jobs:
           run_id: ${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for workflow cancellation
+        if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
+        run: while ($True) { echo "Waiting for job to be cancelled"; sleep 5; }
         
       - name: Continue when versions don't match
         id: continue_when_versions_match
