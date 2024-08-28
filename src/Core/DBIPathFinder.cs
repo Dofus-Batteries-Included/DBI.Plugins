@@ -6,17 +6,18 @@ namespace DofusBatteriesIncluded.Core;
 // ReSharper disable once InconsistentNaming
 public class DBIPathFinder
 {
-    static readonly AStar AStar = new();
+    static AStar _cachedAStar;
 
     internal DBIPathFinder() { }
 
     public GamePath GetShortestPath(long source, IEnumerable<long> targets)
     {
+        AStar aStar = GetAStar();
         GamePath shortest = null;
 
         foreach (long target in targets)
         {
-            GamePath path = AStar.GetShortestPath(source, target);
+            GamePath path = aStar.GetShortestPath(source, target);
 
             if (path == null)
             {
@@ -32,5 +33,11 @@ public class DBIPathFinder
         return shortest;
     }
 
-    public GamePath GetShortestPath(long source, long target) => AStar.GetShortestPath(source, target);
+    public GamePath GetShortestPath(long source, long target)
+    {
+        AStar aStar = GetAStar();
+        return aStar.GetShortestPath(source, target);
+    }
+
+    static AStar GetAStar() => _cachedAStar ??= new AStar();
 }
