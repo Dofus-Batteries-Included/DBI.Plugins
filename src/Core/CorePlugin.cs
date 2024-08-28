@@ -23,7 +23,7 @@ public class CorePlugin : DBIPlugin
 
     protected override Task StartAsync()
     {
-        DontUseScrollActions = DBI.Configuration.Configure("Path Finding", "Do not use scroll actions", false)
+        DontUseScrollActions = DBI.Configuration.Configure("Path Finding", "Do not use scroll actions", true)
             .WithDescription(
                 "Scroll actions seem off, this toggle is used to remove them and assume that the adjacent maps of a given map are the ones directly adjacent to it coordinate-wise. "
                 + "It will be off whenever the adjacent is not directly next to the map, e.g. if it is above or below. It will also fail to take into account obstacles between maps."
