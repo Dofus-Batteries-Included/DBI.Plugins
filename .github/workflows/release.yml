@@ -64,8 +64,7 @@ jobs:
       - name: Package release
         if: ${{ github.event_name == 'release' }}
         run: |
-          md dist/DofusBatteriesIncluded
-          copy src/*/bin/Release/net6.0/DofusBatteriesIncluded*.dll dist/DofusBatteriesIncluded
+          ./pack.ps1 -configuration Release -output dist/DofusBatteriesIncluded
           cd dist
           7z a release.zip DofusBatteriesIncluded/
 
