@@ -46,8 +46,7 @@ public static class MapUtils
     }
 
     static bool TryGetAdjacentMap(long mapId, Direction direction, out long? nextMapId) =>
-        !CorePlugin.DontUseScrollActions && TryGetAdjacentMapFromScrollActions(mapId, direction, out nextMapId)
-        || TryGetAdjacentMapFromMapPositions(mapId, direction, out nextMapId);
+        CorePlugin.UseScrollActions && TryGetAdjacentMapFromScrollActions(mapId, direction, out nextMapId) || TryGetAdjacentMapFromMapPositions(mapId, direction, out nextMapId);
 
     static bool TryGetAdjacentMapFromScrollActions(long mapId, Direction direction, out long? nextMapId)
     {
