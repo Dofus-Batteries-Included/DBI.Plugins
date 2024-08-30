@@ -43,6 +43,7 @@ jobs:
           $Metadata=(Get-Content 'release/DofusBatteriesIncluded/metadata.json' | Out-String | ConvertFrom-Json)
           echo "Last release version: $(Metadata.GameVersion)." >> $Env:GITHUB_STEP_SUMMARY
           echo "version=$(Metadata.GameVersion)" >> $Env:GITHUB_OUTPUT
+          echo "last_release_name=$($Response.tag_name)" >> $Env:GITHUB_OUTPUT
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -145,6 +146,19 @@ jobs:
           echo "Last commit: $($Response.Sha)"
           echo "ref=$($Response.Sha)" >> $Env:GITHUB_OUTPUT
 
+      - name: Generate release notes
+        uses: octokit/request-action@v2.x
+        id: create_release_notes
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        with:
+          route: POST /repos/{repository}/releases/generate-notes
+          repository: ${{ github.repository }}
+          previous_tag_name: ${{ steps.fetch_last_release_version.outputs.last_release_name }}
+          tag_name: ${{ steps.bump_version.outputs.new_version }}
+          target_commitish: ${{ steps.fetch_last_commit_ref.outputs.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
+
       - name: Create release
         uses: octokit/request-action@v2.x
         id: create_release
@@ -156,8 +170,9 @@ jobs:
           target_commitish: ${{ steps.fetch_last_commit_ref.outputs.ref }}
           name: ${{ steps.bump_version.outputs.new_version }}
           body: |
-            "AUTO-GENERATED: This release has been triggered by the update of the game to version ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
-          generate_release_notes: true
+            AUTO-GENERATED: This release has been triggered by the update of the game to version ${{ steps.fetch_dofus_version.outputs.dofus_version }}.
+            
+            ${{ fromJSON(steps.create_release_notes.outputs.data).body }}
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
 
