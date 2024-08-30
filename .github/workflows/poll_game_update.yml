@@ -7,7 +7,7 @@ on:
 
 jobs:
   job:
-    name: Add tag if game has been updated
+    name: Create release if game has been updated
     runs-on: windows-latest
     concurrency: poll_game_update
     
