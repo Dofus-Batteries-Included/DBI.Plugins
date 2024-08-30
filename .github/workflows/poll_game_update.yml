@@ -36,12 +36,12 @@ jobs:
           $null=7z x $FileToDownload -orelease
           
           if (!(Test-Path 'release/DofusBatteriesIncluded/metadata.json')) {
-            $null=Write-Error "Could not find metadata file in last release." 
+            $null=Write-Output "::error file=release.zip,line=1::Could not find metadata file in last release." 
             exit 1
           }
           
           $Metadata=(Get-Content 'release/DofusBatteriesIncluded/metadata.json' | Out-String | ConvertFrom-Json)
-          echo "Last release version: $(Metadata.GameVersion)"
+          $null=Write-Output "::notice title=Last release version: $(Metadata.GameVersion)::"
           echo "version=$(Metadata.GameVersion)" >> $Env:GITHUB_OUTPUT
 
       - name: Setup Node
@@ -62,7 +62,7 @@ jobs:
         run: |
           $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
           $Version=$CytrusGameVersion.Split("_")[1]
-          echo "Current game version: $Version"
+          $null=Write-Output "::notice title=Current game version: $Version::"
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
       - name: Stop when versions match
