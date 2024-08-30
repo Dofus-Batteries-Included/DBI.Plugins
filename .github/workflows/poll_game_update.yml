@@ -7,7 +7,7 @@ on:
 
 jobs:
   job:
-    name: Add tag if game has been updated
+    name: Create release if game has been updated
     runs-on: windows-latest
     concurrency: poll_game_update
     
@@ -21,19 +21,28 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch VERSION file of last release
+      - name: Read version from metadata file of last release
         id: fetch_last_release_version
         run: |
+          $FileToDownload='release.zip'
           $ResponseString=@'
           ${{ steps.fetch_last_release.outputs.data }}
           '@
           $Response=($ResponseString | ConvertFrom-Json)
-          $VersionAsset=($Response.assets | Where-Object {$_.name -eq 'VERSION'})[0]
-          $Url=$VersionAsset.browser_download_url
-          echo "Last release VERSION file: $Url"
-          $Version=$(Invoke-WebRequest -Uri "$Url")
-          echo "Last release version: $Version"
-          echo "version=$Version" >> $Env:GITHUB_OUTPUT
+          $ReleaseAsset=($Response.assets | Where-Object {$_.name -eq $FileToDownload})[0]
+          $Url=$ReleaseAsset.browser_download_url
+          echo "Asset file: $Url"
+          $null=Invoke-WebRequest -Uri "$Url" -OutFile $FileToDownload
+          $null=7z x $FileToDownload -orelease
+          
+          if (!(Test-Path 'release/DofusBatteriesIncluded/metadata.json')) {
+            Write-Output "::error::Could not find metadata file in last release" 
+            exit 1
+          }
+          
+          $Metadata=(Get-Content 'release/DofusBatteriesIncluded/metadata.json' | Out-String | ConvertFrom-Json)
+          echo "Last release version: $(Metadata.GameVersion)." >> $Env:GITHUB_STEP_SUMMARY
+          echo "version=$(Metadata.GameVersion)" >> $Env:GITHUB_OUTPUT
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -53,7 +62,7 @@ jobs:
         run: |
           $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
           $Version=$CytrusGameVersion.Split("_")[1]
-          echo "Current game version: $Version"
+          echo "Current game version: $Version." >> $Env:GITHUB_STEP_SUMMARY
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
       - name: Stop when versions match
@@ -68,30 +77,32 @@ jobs:
 
       - name: Wait for workflow cancellation
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
-        run: while ($True) { echo "Waiting for job to be cancelled"; sleep 5; }
+        run: |
+          echo "Versions match, no release will be created." >> $Env:GITHUB_STEP_SUMMARY
+          while ($True) { echo "Waiting for job to be cancelled"; sleep 5; }
         
       - name: Continue when versions don't match
         id: continue_when_versions_match
         run: |
-          echo "Versions don't match: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}."
-          echo "Will add tag to last commit to trigger a new release."
-          echo "create_new_tag=true" >> $Env:GITHUB_OUTPUT
+          echo "Versions don't match: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}." >> $Env:GITHUB_STEP_SUMMARY
+          echo "A new release will be created automatically." >> $Env:GITHUB_STEP_SUMMARY
+          echo "create_release=true" >> $Env:GITHUB_OUTPUT
         if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
 
       - name: Checkout
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Get latest tag
         id: fetch_latest_tag
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
         uses: WyriHaximus/github-action-get-previous-tag@v1
 
       - name: Bump version
         id: bump_version
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
         run: |
           $Version="${{ steps.fetch_latest_tag.outputs.tag }}"
           $Regex="v(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)(?<prerelease>-.*)?"
@@ -114,7 +125,7 @@ jobs:
       - name: Get last commit
         uses: octokit/request-action@v2.x
         id: fetch_last_commit
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
         with:
           route: GET /repos/{repository}/commits
           repository: ${{ github.repository }}
@@ -125,7 +136,7 @@ jobs:
         
       - name: Get last commit ref
         id: fetch_last_commit_ref
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
         run: |
           $ResponseString=@'
           ${{ steps.fetch_last_commit.outputs.data }}
@@ -137,7 +148,7 @@ jobs:
       - name: Create release
         uses: octokit/request-action@v2.x
         id: create_release
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
+        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
         with:
           route: POST /repos/{repository}/releases
           repository: ${{ github.repository }}
@@ -150,18 +161,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_PAT }}
 
-      - name: Display response of create tag request
-        if: ${{ steps.continue_when_versions_match.outputs.create_new_tag }}
-        run: |
-          echo @'
-            Status: ${{ steps.create_release.outputs.status }}
-          
-            Headers:
-            ${{ steps.create_release.outputs.headers }}
-          
-            Data:
-            ${{ steps.create_release.outputs.data }}
-          '@
+      - name: Add to job summary
+        run: echo "The ${{ steps.bump_version.outputs.new_version }} release has been created." >> $Env:GITHUB_STEP_SUMMARY
 
 permissions:
   actions: write

@@ -71,6 +71,21 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         run: |
           ./pack.ps1 -configuration Release -output dist/DofusBatteriesIncluded
+
+      - name: Create metadata file
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          $Metadata = @{
+            GameBuildId = ${{ needs.fetch-game-files.outputs.game_build_id }}
+            GameVersion = ${{ needs.fetch-game-files.outputs.game_version }}
+          }
+          $MetadataJson = $Metadata | ConvertTo-Json
+          $null = Write-Host $MetadataJson
+          $null = $MetadataJson | Out-File -FilePath "dist/DofusBatteriesIncluded/metadata.json"
+
+      - name: Create release archive
+        if: ${{ github.event_name == 'release' }}
+        run: |
           cd dist
           7z a release.zip DofusBatteriesIncluded/
 
@@ -81,18 +96,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/release.zip
           asset_name: release.zip
-          tag: ${{ github.ref }}
-
-      - name: Write VERSION file that will be released
-        run: echo "${{ needs.fetch-game-files.outputs.game_version }}" >> VERSION
-
-      - name: Upload VERSION file to release
-        if: ${{ github.event_name == 'release' }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: VERSION
-          asset_name: VERSION
           tag: ${{ github.ref }}
 
 permissions:
