@@ -78,7 +78,7 @@ jobs:
           $ReleaseVersion="${{ steps.fetch_last_release_version.outputs.version }}"
           $GameVersion="${{ steps.fetch_dofus_version.outputs.dofus_version }}"
           
-          if ($ReleaseVersion -eq $GameVersion) {          
+          if ($ReleaseVersion -eq $GameVersion) {
             echo "Versions match, no release will be created." >> $Env:GITHUB_STEP_SUMMARY
           } else {
             echo "Versions match, no release will be created." >> $Env:GITHUB_STEP_SUMMARY
@@ -145,7 +145,7 @@ jobs:
           page: 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
       - name: Get last commit ref
         id: fetch_last_commit_ref
         if: ${{ steps.should_continue.outputs.create_release }}
