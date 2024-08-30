@@ -15,7 +15,6 @@ jobs:
     name: Build & Test
     needs: fetch-game-files
     runs-on: windows-latest
-    concurrency: release
 
     steps:
       - name: Display build information

@@ -3,11 +3,14 @@ name: Fetch game files
 on:
   workflow_call:
     outputs:
+      bepinex_version:
+        description: "Version of BepInEx"
+        value: "6.0.0-be.697"
       game_build_id:
-        description: "Game build id"
+        description: "Build ID of the game"
         value: ${{ jobs.fetch-game-files.outputs.game_build_id }}
       game_version:
-        description: "Game version"
+        description: "Version of the game"
         value: ${{ jobs.fetch-game-files.outputs.game_version }}
 
 jobs:
