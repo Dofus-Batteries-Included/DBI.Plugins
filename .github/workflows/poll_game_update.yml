@@ -35,7 +35,7 @@ jobs:
             exit 1
           }
           
-          $ReleaseAsset=()[0]
+          $ReleaseAsset=$AssetsNamedRelease[0]
           $Url=$ReleaseAsset.browser_download_url
           echo "Asset file: $Url"
           $null=Invoke-WebRequest -Uri "$Url" -OutFile release.zip
