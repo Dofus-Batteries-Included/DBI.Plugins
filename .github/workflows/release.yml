@@ -76,8 +76,8 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         run: |
           $Metadata = @{
-            BuildId = ${{ needs.fetch-game-files.outputs.game_build_id }}
-            Version = ${{ needs.fetch-game-files.outputs.game_version }}
+            GameBuildId = ${{ needs.fetch-game-files.outputs.game_build_id }}
+            GameVersion = ${{ needs.fetch-game-files.outputs.game_version }}
           }
           $MetadataJson = $Metadata | ConvertTo-Json
           $null = Write-Host $MetadataJson
