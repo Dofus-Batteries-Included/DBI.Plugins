@@ -24,16 +24,22 @@ jobs:
       - name: Read version from metadata file of last release
         id: fetch_last_release_version
         run: |
-          $FileToDownload='release.zip'
           $ResponseString=@'
           ${{ steps.fetch_last_release.outputs.data }}
           '@
-          $Response=($ResponseString | ConvertFrom-Json)
-          $ReleaseAsset=($Response.assets | Where-Object {$_.name -eq $FileToDownload})[0]
+          $Response=$ResponseString | ConvertFrom-Json
+          $AssetsNamedRelease=$Response.assets | Where-Object {$_.name -eq "release.zip"}
+          
+          if ($AssetsNamedRelease.Count -eq 0) {
+            Write-Output "::error::Could not find release archive in last release" 
+            exit 1
+          }
+          
+          $ReleaseAsset=()[0]
           $Url=$ReleaseAsset.browser_download_url
           echo "Asset file: $Url"
-          $null=Invoke-WebRequest -Uri "$Url" -OutFile $FileToDownload
-          $null=7z x $FileToDownload -orelease
+          $null=Invoke-WebRequest -Uri "$Url" -OutFile release.zip
+          $null=7z x release.zip -orelease
           
           if (!(Test-Path 'release/DofusBatteriesIncluded/metadata.json')) {
             Write-Output "::error::Could not find metadata file in last release" 
