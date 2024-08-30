@@ -53,7 +53,6 @@ jobs:
         run: cd src; dotnet build --configuration Release --no-restore -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
 
       - name: Pack
-        if: ${{ github.event_name == 'release' }}
         run: cd src; dotnet pack --configuration Release --no-build --output nuget/
 
       - name: Publish nugets
@@ -64,27 +63,24 @@ jobs:
           }
 
       - name: Publish
-        if: ${{ github.event_name == 'release' }}
         run: cd src; dotnet publish --configuration Release --no-build
 
       - name: Package release
-        if: ${{ github.event_name == 'release' }}
         run: |
           ./pack.ps1 -configuration Release -output dist/DofusBatteriesIncluded
 
       - name: Create metadata file
-        if: ${{ github.event_name == 'release' }}
         run: |
           $Metadata = @{
-            GameBuildId = ${{ needs.fetch-game-files.outputs.game_build_id }}
-            GameVersion = ${{ needs.fetch-game-files.outputs.game_version }}
+            BepInExVersion = "${{ needs.fetch-game-files.outputs.bepiex_version }}" 
+            GameBuildId = "${{ needs.fetch-game-files.outputs.game_build_id }}"
+            GameVersion = "${{ needs.fetch-game-files.outputs.game_version }}"
           }
           $MetadataJson = $Metadata | ConvertTo-Json
           $null = Write-Host $MetadataJson
           $null = $MetadataJson | Out-File -FilePath "dist/DofusBatteriesIncluded/metadata.json"
 
       - name: Create release archive
-        if: ${{ github.event_name == 'release' }}
         run: |
           cd dist
           7z a release.zip DofusBatteriesIncluded/
@@ -97,6 +93,14 @@ jobs:
           file: dist/release.zip
           asset_name: release.zip
           tag: ${{ github.ref }}
+
+      - name: Upload compiled library to artifacts
+        if: ${{ github.event_name != 'release' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release.zip
+          path: dist/release.zip
+          if-no-files-found: 'error'
 
 permissions:
   contents: write
