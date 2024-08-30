@@ -35,7 +35,7 @@ jobs:
           $null=Invoke-WebRequest -Uri "$Url" -OutFile $FileToDownload
           $null=7z x $FileToDownload -orelease
           
-          if (!Test-Path 'release/DofusBatteriesIncluded/metadata.json') {
+          if (!(Test-Path 'release/DofusBatteriesIncluded/metadata.json')) {
             $null=Write-Error "Could not find metadata file in last release." 
             exit 1
           }
