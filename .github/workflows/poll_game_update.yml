@@ -72,6 +72,20 @@ jobs:
           echo "Current game version: $Version." >> $Env:GITHUB_STEP_SUMMARY
           echo "dofus_version=$Version" >> $Env:GITHUB_OUTPUT
 
+      - name: Write job summary
+        id: should_continue
+        run: |
+          $ReleaseVersion="${{ steps.fetch_last_release_version.outputs.version }}"
+          $GameVersion="${{ steps.fetch_dofus_version.outputs.dofus_version }}"
+          
+          if ($ReleaseVersion -eq $GameVersion) {          
+            echo "Versions match, no release will be created." >> $Env:GITHUB_STEP_SUMMARY
+          } else {
+            echo "Versions match, no release will be created." >> $Env:GITHUB_STEP_SUMMARY
+            echo "A new release will be created automatically." >> $Env:GITHUB_STEP_SUMMARY
+            echo "create_release=true" >> $Env:GITHUB_OUTPUT
+          }
+
       - name: Stop when versions match
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
         uses: octokit/request-action@v2.x
@@ -85,31 +99,22 @@ jobs:
       - name: Wait for workflow cancellation
         if: ${{ steps.fetch_last_release_version.outputs.version == steps.fetch_dofus_version.outputs.dofus_version }}
         run: |
-          echo "Versions match, no release will be created." >> $Env:GITHUB_STEP_SUMMARY
           while ($True) { echo "Waiting for job to be cancelled"; sleep 5; }
-        
-      - name: Continue when versions don't match
-        id: continue_when_versions_match
-        run: |
-          echo "Versions don't match: ${{ steps.fetch_last_release_version.outputs.version }} != ${{ steps.fetch_dofus_version.outputs.dofus_version }}." >> $Env:GITHUB_STEP_SUMMARY
-          echo "A new release will be created automatically." >> $Env:GITHUB_STEP_SUMMARY
-          echo "create_release=true" >> $Env:GITHUB_OUTPUT
-        if: ${{ steps.fetch_last_release_version.outputs.version != steps.fetch_dofus_version.outputs.dofus_version }}
 
       - name: Checkout
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Get latest tag
         id: fetch_latest_tag
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         uses: WyriHaximus/github-action-get-previous-tag@v1
 
       - name: Bump version
         id: bump_version
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         run: |
           $Version="${{ steps.fetch_latest_tag.outputs.tag }}"
           $Regex="v(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)(?<prerelease>-.*)?"
@@ -132,7 +137,7 @@ jobs:
       - name: Get last commit
         uses: octokit/request-action@v2.x
         id: fetch_last_commit
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         with:
           route: GET /repos/{repository}/commits
           repository: ${{ github.repository }}
@@ -143,7 +148,7 @@ jobs:
         
       - name: Get last commit ref
         id: fetch_last_commit_ref
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         run: |
           $ResponseString=@'
           ${{ steps.fetch_last_commit.outputs.data }}
@@ -155,7 +160,7 @@ jobs:
       - name: Generate release notes
         uses: octokit/request-action@v2.x
         id: create_release_notes
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         with:
           route: POST /repos/{repository}/releases/generate-notes
           repository: ${{ github.repository }}
@@ -168,7 +173,7 @@ jobs:
       - name: Create release
         uses: octokit/request-action@v2.x
         id: create_release
-        if: ${{ steps.continue_when_versions_match.outputs.create_release }}
+        if: ${{ steps.should_continue.outputs.create_release }}
         with:
           route: POST /repos/{repository}/releases
           repository: ${{ github.repository }}
