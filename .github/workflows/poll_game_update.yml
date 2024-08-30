@@ -36,8 +36,7 @@ jobs:
           $null=7z x $FileToDownload -orelease
           
           if (!(Test-Path 'release/DofusBatteriesIncluded/metadata.json')) {
-            Write-Output "::error:: Could not find metadata file in last release" 
-            exit 1
+            Write-Output "::setFailed::Could not find metadata file in last release"
           }
           
           $Metadata=(Get-Content 'release/DofusBatteriesIncluded/metadata.json' | Out-String | ConvertFrom-Json)
