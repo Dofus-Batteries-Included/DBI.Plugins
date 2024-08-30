@@ -72,6 +72,7 @@ jobs:
       - name: Create metadata file
         run: |
           $Metadata = @{
+            BepInExVersion = "${{ needs.fetch-game-files.outputs.bepiex_version }}" 
             GameBuildId = "${{ needs.fetch-game-files.outputs.game_build_id }}"
             GameVersion = "${{ needs.fetch-game-files.outputs.game_version }}"
           }
