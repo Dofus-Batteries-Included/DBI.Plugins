@@ -10,10 +10,12 @@ namespace DofusBatteriesIncluded.TreasureSolver;
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]
 class TreasureHuntSolverPlugin : DBIPlugin
 {
-    protected override async Task StartAsync()
+    protected override Task StartAsync()
     {
         AddComponent<TreasureHuntManager>();
         DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
         DBI.Messaging.RegisterListener<SaveCluesOnDigAnswerEvent>();
+
+        return Task.CompletedTask;
     }
 }
