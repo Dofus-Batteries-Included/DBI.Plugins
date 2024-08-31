@@ -9,7 +9,7 @@ on:
 
 jobs:
   fetch-game-files:
-    uses: ./.github/workflows/fetch-game-files.job.yml
+    uses: Dofus-Batteries-Included/workflows/fetch-game-files.job.yml@main
   
   build-release:
     name: Build & Test
