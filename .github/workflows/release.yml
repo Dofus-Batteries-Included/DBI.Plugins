@@ -81,6 +81,7 @@ jobs:
           $null = $MetadataJson | Out-File -FilePath "dist/DofusBatteriesIncluded/metadata.json"
 
       - name: Create release archive
+        if: ${{ github.event_name == 'release' }}
         run: |
           cd dist
           7z a release.zip DofusBatteriesIncluded/
@@ -98,8 +99,8 @@ jobs:
         if: ${{ github.event_name != 'release' }}
         uses: actions/upload-artifact@v4
         with:
-          name: release.zip
-          path: dist/release.zip
+          name: release
+          path: dist
           if-no-files-found: 'error'
 
 permissions:
