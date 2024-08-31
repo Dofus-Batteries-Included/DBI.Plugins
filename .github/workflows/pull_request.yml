@@ -45,10 +45,10 @@ jobs:
         env:
           DofusBuildId: ${{ needs.fetch-game-files.outputs.game_build_id }}
           DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
-        run: cd src; dotnet pack --configuration Release --no-restore --output nuget/ -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
+        run: cd src; dotnet build --configuration Release --no-restore -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
 
       - name: Test
-        run: cd src; dotnet test --configuration Release --no-restore
+        run: cd src; dotnet test --configuration Release --no-build
 
 permissions:
   packages: read
