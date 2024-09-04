@@ -1,0 +1,16 @@
+﻿{
+  "runtime": "WinX64",
+  "documentGenerator": {
+    "fromDocument": {
+      "json": "$(Input)"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "{controller}Client",
+      "namespace": "TreasureSolver.Clients",
+      "injectHttpClient": false,
+      "output": "$(Output)"
+    }
+  }
+}

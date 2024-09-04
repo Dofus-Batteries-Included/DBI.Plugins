@@ -19,24 +19,29 @@
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
         <PackageReference Include="MinVer" Version="5.0.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="NSwag.MSBuild" Version="14.1.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Resources\dofuspourlesnoobs_clues.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="Resources\dofuspourlesnoobs_clues.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Core\Core.csproj" />
+        <ProjectReference Include="..\Core\Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -75,5 +80,13 @@
     <PropertyGroup>
         <MinVerTagPrefix>v</MinVerTagPrefix>
     </PropertyGroup>
-    
+
+    <Target Name="GenerateApiClient" BeforeTargets="BeforeCompile" Condition="Exists('Clients/treasure-solver-openapi.json')">
+        <PropertyGroup>
+            <GeneratedClientFileName>TreasureSolverClient.cs</GeneratedClientFileName>
+        </PropertyGroup>
+        <Message Text="Generating API client..."/>
+        <Exec Command="$(NSwagExe) run Clients/.nswag /variables:Input=Clients/treasure-solver-openapi.json,Output=$(GeneratedClientFileName)"/>
+    </Target>
+
 </Project>
