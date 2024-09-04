@@ -10,7 +10,6 @@ using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Coroutines;
 using DofusBatteriesIncluded.Core.Maps;
 using DofusBatteriesIncluded.Core.Maps.PathFinding;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
@@ -77,6 +76,7 @@ public class TreasureHuntManager : MonoBehaviour
 
         DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(); }; };
         CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(); };
+        TreasureSolver.CluesServiceChanged += (_, _) => { Refresh(); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
     }
 
@@ -156,7 +156,11 @@ public class TreasureHuntManager : MonoBehaviour
                         }
 
                         Task<long?> cluePositionTask = cluesService.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
-                        yield return CoroutineExtensions.WaitForCompletion(cluePositionTask);
+                        while (!cluePositionTask.IsCompleted)
+                        {
+                            MarkLoading(step);
+                            yield return new WaitForSecondsRealtime(0.5f);
+                        }
                         long? clueMapId = cluePositionTask.Result;
 
                         bool done = clueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, clueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
@@ -300,6 +304,21 @@ public class TreasureHuntManager : MonoBehaviour
         return foundMapInPath
             ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text)
             : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Player out of search area");
+    }
+
+    static int _loadingDots;
+
+    static bool MarkLoading(int step)
+    {
+        _loadingDots = _loadingDots % 3 + 1;
+        string dots = _loadingDots switch
+        {
+            1 => ".",
+            2 => "..",
+            _ => "..."
+        };
+
+        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, $"Loading{dots}");
     }
 
     static Direction? GetDirection(Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction direction) =>

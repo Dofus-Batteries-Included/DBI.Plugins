@@ -16,7 +16,8 @@ public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IM
 
     public Task HandleAsync(TreasureHuntDigAnswerEvent message)
     {
-        if (!TreasureSolver.TryGetCluesService(out ICluesService cluesService))
+        ICluesService cluesService = TreasureSolver.GetCluesService();
+        if (cluesService == null)
         {
             Log.LogWarning("Could not get clues service, skipping Treasure Hunt Event.");
             return Task.CompletedTask;

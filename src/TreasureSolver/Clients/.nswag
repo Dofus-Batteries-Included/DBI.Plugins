@@ -9,6 +9,7 @@
     "openApiToCSharpClient": {
       "className": "{controller}Client",
       "namespace": "TreasureSolver.Clients",
+      "jsonLibrary": "SystemTextJson",
       "injectHttpClient": false,
       "output": "$(Output)"
     }

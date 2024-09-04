@@ -27,16 +27,16 @@ public class MultiCluesService : ICluesService
             {
                 return await service.FindMapOfNextClue(startMapId, direction, clueId, cluesMaxDistance);
             }
-            catch (Exception ex)
+            catch (Exception exn)
             {
                 ICluesService next = index + 1 >= _cluesServices.Count ? null : _cluesServices[index + 1];
                 if (next == null)
                 {
-                    _logger.LogError(ex, "Could not find clue using {Service}. This was the last available service, will stop looking.", service);
+                    _logger.LogError(exn, "Could not find clue using {Service}. This was the last available service, will stop looking.", service);
                 }
                 else
                 {
-                    _logger.LogError(ex, "Could not find clue using {Service}, will fall back to next service {NextService}.", service, next);
+                    _logger.LogError(exn, "Could not find clue using {Service}, will fall back to next service {NextService}.", service, next);
                 }
             }
         }
@@ -44,5 +44,18 @@ public class MultiCluesService : ICluesService
         return null;
     }
 
-    public Task RegisterCluesAsync(long mapId, params ClueWithStatus[] clues) => throw new NotImplementedException();
+    public async Task RegisterCluesAsync(long mapId, params ClueWithStatus[] clues)
+    {
+        foreach (ICluesService service in _cluesServices)
+        {
+            try
+            {
+                await service.RegisterCluesAsync(mapId, clues);
+            }
+            catch (Exception exn)
+            {
+                _logger.LogError(exn, "Could not register clues using {Service}.", service);
+            }
+        }
+    }
 }
