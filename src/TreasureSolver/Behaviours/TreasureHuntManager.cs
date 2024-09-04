@@ -30,6 +30,9 @@ public class TreasureHuntManager : MonoBehaviour
     Coroutine _coroutine;
     readonly Dictionary<int, long> _knownNpcMapsIds = [];
     int? _lookingForNpcId;
+    int? _nextClueId;
+    bool _useCachedMapId;
+    long? _nextClueMapId;
 
     public static void SetLastEvent(TreasureHuntEvent lastEvent)
     {
@@ -55,7 +58,7 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    public static void Refresh()
+    public static void Refresh(bool clearCache)
     {
         if (!_instance)
         {
@@ -64,6 +67,11 @@ public class TreasureHuntManager : MonoBehaviour
 
         if (_instance._lastEvent != null)
         {
+            if (clearCache)
+            {
+                _instance._useCachedMapId = false;
+            }
+
             SetLastEvent(_instance._lastEvent);
         }
     }
@@ -74,9 +82,9 @@ public class TreasureHuntManager : MonoBehaviour
     {
         _instance = this;
 
-        DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(); }; };
-        CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(); };
-        TreasureSolver.CluesServiceChanged += (_, _) => { Refresh(); };
+        DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(false); }; };
+        CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(true); };
+        TreasureSolver.CluesServiceChanged += (_, _) => { Refresh(true); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
     }
 
@@ -100,7 +108,7 @@ public class TreasureHuntManager : MonoBehaviour
 
         if (foundLookingForNpc)
         {
-            Refresh();
+            Refresh(false);
         }
     }
 
@@ -148,6 +156,13 @@ public class TreasureHuntManager : MonoBehaviour
                         }
 
                         int poiId = nextStep.FollowDirectionToPoi.PoiLabelId;
+
+                        if (_nextClueId != poiId)
+                        {
+                            _nextClueId = poiId;
+                            _useCachedMapId = false;
+                        }
+
                         Direction? direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
                         if (!direction.HasValue)
                         {
@@ -155,15 +170,20 @@ public class TreasureHuntManager : MonoBehaviour
                             yield break;
                         }
 
-                        Task<long?> cluePositionTask = cluesService.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
-                        while (!cluePositionTask.IsCompleted)
+                        if (!_useCachedMapId)
                         {
-                            MarkLoading(step);
-                            yield return new WaitForSecondsRealtime(0.5f);
-                        }
-                        long? clueMapId = cluePositionTask.Result;
+                            Task<long?> cluePositionTask = cluesService.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
+                            while (!cluePositionTask.IsCompleted)
+                            {
+                                MarkLoading(step);
+                                yield return new WaitForSecondsRealtime(0.5f);
+                            }
 
-                        bool done = clueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, clueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
+                            _nextClueMapId = cluePositionTask.Result;
+                            _useCachedMapId = true;
+                        }
+
+                        bool done = _nextClueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, _nextClueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
                         if (done)
                         {
                             yield break;
