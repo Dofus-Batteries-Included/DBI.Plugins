@@ -29,14 +29,16 @@ namespace TreasureSolver.Clients
         private string _baseUrl;
         #pragma warning restore 8618
 
+        private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public CluesClient()
+        public CluesClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net";
+            _httpClient = httpClient;
             Initialize();
         }
 
@@ -81,8 +83,8 @@ namespace TreasureSolver.Clients
             if (mapId == null)
                 throw new System.ArgumentNullException("mapId");
 
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -164,8 +166,8 @@ namespace TreasureSolver.Clients
             if (posY == null)
                 throw new System.ArgumentNullException("posY");
 
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -243,8 +245,8 @@ namespace TreasureSolver.Clients
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<FileResponse> ExportCluesAsync(System.Threading.CancellationToken cancellationToken)
         {
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -283,7 +285,7 @@ namespace TreasureSolver.Clients
                         if (status_ == 200 || status_ == 206)
                         {
                             var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await response_.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, client_, response_);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
                             disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
                             return fileResponse_;
                         }
@@ -320,8 +322,8 @@ namespace TreasureSolver.Clients
             if (request == null)
                 throw new System.ArgumentNullException("request");
 
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -500,14 +502,16 @@ namespace TreasureSolver.Clients
         private string _baseUrl;
         #pragma warning restore 8618
 
+        private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public RegistrationClient()
+        public RegistrationClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net";
+            _httpClient = httpClient;
             Initialize();
         }
 
@@ -549,8 +553,8 @@ namespace TreasureSolver.Clients
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Guid> RegisterAsync(long? accountId, string accountName, System.Threading.CancellationToken cancellationToken)
         {
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -636,8 +640,8 @@ namespace TreasureSolver.Clients
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Guid> RefreshApiKeyAsync(System.Threading.CancellationToken cancellationToken)
         {
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -713,8 +717,8 @@ namespace TreasureSolver.Clients
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task RevokeAsync(System.Threading.CancellationToken cancellationToken)
         {
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -890,14 +894,16 @@ namespace TreasureSolver.Clients
         private string _baseUrl;
         #pragma warning restore 8618
 
+        private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
         private System.Text.Json.JsonSerializerOptions _instanceSettings;
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public TreasureSolverClient()
+        public TreasureSolverClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             BaseUrl = "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net";
+            _httpClient = httpClient;
             Initialize();
         }
 
@@ -948,8 +954,8 @@ namespace TreasureSolver.Clients
             if (clueId == null)
                 throw new System.ArgumentNullException("clueId");
 
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
@@ -1041,8 +1047,8 @@ namespace TreasureSolver.Clients
             if (clueId == null)
                 throw new System.ArgumentNullException("clueId");
 
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
+            var client_ = _httpClient;
+            var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())

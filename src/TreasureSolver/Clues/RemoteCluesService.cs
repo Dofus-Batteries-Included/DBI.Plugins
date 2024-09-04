@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using DofusBatteriesIncluded.Core;
 using Microsoft.Extensions.Logging;
@@ -10,17 +11,10 @@ namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 public class RemoteCluesService : ICluesService
 {
     readonly ILogger _logger = DBI.Logging.Create<RemoteCluesService>();
-    readonly TreasureSolverClient _treasureSolverClient;
-    readonly CluesClient _cluesClient;
-
-    public RemoteCluesService()
-    {
-        _treasureSolverClient = new TreasureSolverClient();
-        _cluesClient = new CluesClient();
-    }
 
     public async Task<long?> FindMapOfNextClue(long startMapId, Direction direction, int clueId, int cluesMaxDistance)
     {
+        TreasureSolverClient treasureSolverClient = new(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
         global::TreasureSolver.Clients.Direction mappedDirection = direction switch
         {
             Direction.Top => global::TreasureSolver.Clients.Direction.North,
@@ -30,12 +24,13 @@ public class RemoteCluesService : ICluesService
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
 
-        FindNextMapResponse result = await _treasureSolverClient.FindNextMapAsync(startMapId, mappedDirection, clueId);
+        FindNextMapResponse result = await treasureSolverClient.FindNextMapAsync(startMapId, mappedDirection, clueId);
         return result?.MapId;
     }
 
     public Task RegisterCluesAsync(long mapId, params ClueWithStatus[] clues)
     {
+        CluesClient cluesClient = new(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
         _logger.LogInformation("NOT IMPLEMENTED: register clues");
         return Task.CompletedTask;
     }
