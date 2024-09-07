@@ -8,6 +8,7 @@ using Google.Protobuf;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Microsoft.Extensions.Logging;
+using Event = Com.Ankama.Dofus.Server.Game.Protocol.Event;
 using Message = Com.Ankama.Dofus.Server.Game.Protocol.Message;
 
 namespace DofusBatteriesIncluded.Core.Protocol;
@@ -30,14 +31,14 @@ public static class Messaging
             {
                 string json = message.ToString();
                 JsonDocument obj = JsonDocument.Parse(json);
-
+                
                 if (obj.RootElement.TryGetProperty("event", out JsonElement eventElement))
                 {
                     HandleEventMessage(eventElement);
                 }
                 else
                 {
-                    Log.LogError($"Invalid event:\n{json}");
+                    Log.LogWarning($"Invalid event:\n{json}");
                 }
                 break;
             }
@@ -155,7 +156,7 @@ public static class Messaging
                 return;
         }
 
-        Log.LogWarning("Received response of type {Type}.", content.GetType());
+        Log.LogInformation("Received response of type {Type}.", content.GetType());
         MessageReceived?.Invoke(null, content);
     }
 }
