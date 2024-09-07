@@ -80,12 +80,4 @@
         <MinVerTagPrefix>v</MinVerTagPrefix>
     </PropertyGroup>
 
-    <Target Name="GenerateApiClient" BeforeTargets="BeforeCompile" Condition="Exists('Clients/treasure-solver-openapi.json')">
-        <PropertyGroup>
-            <GeneratedClientFileName>TreasureSolverClient.cs</GeneratedClientFileName>
-        </PropertyGroup>
-        <Message Text="Generating API client..."/>
-        <Exec Command="$(NSwagExe) run Clients/.nswag /variables:Input=Clients/treasure-solver-openapi.json,Output=$(GeneratedClientFileName)"/>
-    </Target>
-
 </Project>

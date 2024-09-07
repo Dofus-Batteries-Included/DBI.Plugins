@@ -1,5 +1,5 @@
 ﻿{
-  "runtime": "WinX64",
+  "runtime": "$(Runtime)",
   "documentGenerator": {
     "fromDocument": {
       "json": "$(Input)"
