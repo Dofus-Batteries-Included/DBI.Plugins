@@ -310,14 +310,20 @@ public class TreasureHuntManager : MonoBehaviour
 
     static bool TryMarkUnknownPosition(int step, long lastFlagMapId, Direction direction, string text = "Not found")
     {
+        Position? lastFlagMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(lastFlagMapId)?.GetPosition();
         Position playerPosition = DBI.Player.CurrentCharacter.CurrentMapPosition;
-        bool foundMapInPath = false;
-        foreach (long map in MapUtils.MoveInDirection(lastFlagMapId, direction).Take(CluesMaxDistance))
+        
+        bool foundMapInPath = lastFlagMapPosition.HasValue && playerPosition == lastFlagMapPosition.Value;
+        if (!foundMapInPath)
         {
-            Position? mapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(map)?.GetPosition();
-            if (mapPosition.HasValue && mapPosition.Value == playerPosition)
+            foreach (long map in MapUtils.MoveInDirection(lastFlagMapId, direction).Take(CluesMaxDistance))
             {
-                foundMapInPath = true;
+                Position? mapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(map)?.GetPosition();
+                if (mapPosition.HasValue && mapPosition.Value == playerPosition)
+                {
+                    foundMapInPath = true;
+                    break;
+                }
             }
         }
 
