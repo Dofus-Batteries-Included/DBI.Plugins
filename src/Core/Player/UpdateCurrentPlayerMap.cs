@@ -14,7 +14,7 @@ public class UpdateCurrentPlayerMap : IMessageListener<MapCurrentEvent>, IMessag
             return Task.CompletedTask;
         }
 
-        DBI.Player.State.SetCurrentMap(message.MapId);
+        DBI.Player.CurrentCharacter.SetCurrentMap(message.MapId);
 
         return Task.CompletedTask;
     }
@@ -26,11 +26,11 @@ public class UpdateCurrentPlayerMap : IMessageListener<MapCurrentEvent>, IMessag
             return Task.CompletedTask;
         }
 
-        DBI.Player.State.SetCurrentCellId(message.Cells.array.Last(c => c != default));
+        DBI.Player.CurrentCharacter.SetCurrentCellId(message.Cells.array.Last(c => c != default));
 
         return Task.CompletedTask;
     }
 
-    static bool IsMessageForCurrentPlayer(MapCurrentEvent message) => DBI.Player.State != null;
-    static bool IsMessageForCurrentPlayer(MapMovementEvent message) => DBI.Player.State != null && DBI.Player.State.CharacterId == message.CharacterId;
+    static bool IsMessageForCurrentPlayer(MapCurrentEvent message) => DBI.Player.CurrentCharacter != null;
+    static bool IsMessageForCurrentPlayer(MapMovementEvent message) => DBI.Player.CurrentCharacter != null && DBI.Player.CurrentCharacter.CharacterId == message.CharacterId;
 }

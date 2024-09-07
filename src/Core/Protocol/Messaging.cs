@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Com.Ankama.Dofus.Server.Game.Protocol;
+using Com.Ankama.Dofus.Server.Connection.Protocol;
 using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Google.Protobuf;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Microsoft.Extensions.Logging;
+using Message = Com.Ankama.Dofus.Server.Game.Protocol.Message;
 
 namespace DofusBatteriesIncluded.Core.Protocol;
 
@@ -22,17 +23,39 @@ public static class Messaging
     static void Patch(IMessage __result)
     {
         Message message = new(__result.Pointer);
-        string json = message.ToString();
-        JsonDocument obj = JsonDocument.Parse(json);
 
-        if (obj.RootElement.TryGetProperty("event", out JsonElement eventElement))
+        switch (message.ContentCase)
         {
-            HandleEventMessage(eventElement);
-        }
-        else
-        {
-            string indented = JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
-            Log.LogInformation("Message: {Message}", indented);
+            case Message.ContentOneofCase.Event:
+            {
+                string json = message.ToString();
+                JsonDocument obj = JsonDocument.Parse(json);
+
+                if (obj.RootElement.TryGetProperty("event", out JsonElement eventElement))
+                {
+                    HandleEventMessage(eventElement);
+                }
+                else
+                {
+                    Log.LogError($"Invalid event:\n{json}");
+                }
+                break;
+            }
+            case Message.ContentOneofCase.Response:
+            {
+                HandleResponseMessage(message);
+                break;
+            }
+            case Message.ContentOneofCase.None:
+            case Message.ContentOneofCase.Request:
+            default:
+            {
+                string json = message.ToString();
+                JsonDocument obj = JsonDocument.Parse(json);
+                string indented = JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
+                Log.LogInformation("Message: {Message}", indented);
+                break;
+            }
         }
     }
 
@@ -82,7 +105,7 @@ public static class Messaging
             stream.Dispose();
         }
 
-        Log.LogDebug("Received message of type {Type}", type);
+        Log.LogDebug("Received event of type {Type}.", type);
         MessageReceived?.Invoke(null, instance);
     }
 
@@ -99,5 +122,40 @@ public static class Messaging
         }
 
         return null;
+    }
+
+    static void HandleResponseMessage(Message message)
+    {
+        Response response = new(message.content_.Pointer);
+
+        object content;
+        switch (response.ContentCase)
+        {
+            case Response.ContentOneofCase.Identification:
+                content = response.Identification;
+                break;
+            case Response.ContentOneofCase.Pong:
+                content = response.Pong;
+                break;
+            case Response.ContentOneofCase.SelectServer:
+                content = response.SelectServer;
+                break;
+            case Response.ContentOneofCase.ForceAccount:
+                content = response.ForceAccount;
+                break;
+            case Response.ContentOneofCase.FriendList:
+                content = response.FriendList;
+                break;
+            case Response.ContentOneofCase.AcquaintanceServersResponse:
+                content = response.AcquaintanceServersResponse;
+                break;
+            case Response.ContentOneofCase.None:
+            default:
+                Log.LogError("Could not find type of response.");
+                return;
+        }
+
+        Log.LogWarning("Received response of type {Type}.", content.GetType());
+        MessageReceived?.Invoke(null, content);
     }
 }

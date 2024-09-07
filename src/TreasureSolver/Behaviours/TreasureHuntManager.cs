@@ -82,7 +82,7 @@ public class TreasureHuntManager : MonoBehaviour
     {
         _instance = this;
 
-        DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(false); }; };
+        DBI.Player.CurrentCharacterChangeStarted += (_, state) => { state.MapChanged += (_, _) => { Refresh(false); }; };
         CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(true); };
         TreasureSolver.CluesServiceChanged += (_, _) => { Refresh(true); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
@@ -283,10 +283,10 @@ public class TreasureHuntManager : MonoBehaviour
 
         string stepMessage = $"[{targetPosition.Value.X},{targetPosition.Value.Y}]";
 
-        if (DBI.Player.State != null)
+        if (DBI.Player.CurrentCharacter != null)
         {
-            long playerMapId = DBI.Player.State.CurrentMapId;
-            Position playerPosition = DBI.Player.State.CurrentMapPosition;
+            long playerMapId = DBI.Player.CurrentCharacter.CurrentMapId;
+            Position playerPosition = DBI.Player.CurrentCharacter.CurrentMapPosition;
             Position? targetMapPosition = mapPositionsRoot.GetMapPositionById(targetMapId)?.GetPosition();
             if (playerMapId == targetMapId || !CorePlugin.UseScrollActions && playerPosition == targetMapPosition)
             {
@@ -310,7 +310,7 @@ public class TreasureHuntManager : MonoBehaviour
 
     static bool TryMarkUnknownPosition(int step, long lastFlagMapId, Direction direction, string text = "Not found")
     {
-        Position playerPosition = DBI.Player.State.CurrentMapPosition;
+        Position playerPosition = DBI.Player.CurrentCharacter.CurrentMapPosition;
         bool foundMapInPath = false;
         foreach (long map in MapUtils.MoveInDirection(lastFlagMapId, direction).Take(CluesMaxDistance))
         {
