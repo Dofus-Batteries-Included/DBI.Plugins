@@ -4,11 +4,11 @@
   "info": {
     "title": "Treasure Solver - API",
     "description": "Dofus Treasure Hunt solver using data collected by the players.",
-    "version": "0.6.0+440f00a9da4381257ffaf73abbb13797e19a9d42"
+    "version": "0.16.0+f2cd7853473aa6b3c357e25913e40a16b50590cc"
   },
   "servers": [
     {
-      "url": "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net"
+      "url": "https://api.dofusbatteriesincluded.fr/treasure-solver"
     }
   ],
   "paths": {

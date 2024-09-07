@@ -37,7 +37,7 @@ namespace TreasureSolver.Clients
         public CluesClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net";
+            BaseUrl = "https://api.dofusbatteriesincluded.fr/treasure-solver";
             _httpClient = httpClient;
             Initialize();
         }
@@ -510,7 +510,7 @@ namespace TreasureSolver.Clients
         public RegistrationClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net";
+            BaseUrl = "https://api.dofusbatteriesincluded.fr/treasure-solver";
             _httpClient = httpClient;
             Initialize();
         }
@@ -902,7 +902,7 @@ namespace TreasureSolver.Clients
         public TreasureSolverClient(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = "https://treasuresolver-guf6a5ffd6amawh6.westeurope-01.azurewebsites.net";
+            BaseUrl = "https://api.dofusbatteriesincluded.fr/treasure-solver";
             _httpClient = httpClient;
             Initialize();
         }
