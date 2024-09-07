@@ -18,8 +18,8 @@ public class RemoteCluesService : ICluesService
         global::TreasureSolver.Clients.Direction mappedDirection = direction switch
         {
             Direction.Top => global::TreasureSolver.Clients.Direction.North,
-            Direction.Right => global::TreasureSolver.Clients.Direction.West,
-            Direction.Left => global::TreasureSolver.Clients.Direction.East,
+            Direction.Right => global::TreasureSolver.Clients.Direction.East,
+            Direction.Left => global::TreasureSolver.Clients.Direction.West,
             Direction.Bottom => global::TreasureSolver.Clients.Direction.South,
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
