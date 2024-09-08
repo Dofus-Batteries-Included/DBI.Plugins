@@ -37,7 +37,7 @@ public class RemoteCluesService : ICluesService
         }
         catch (ApiException exn)
         {
-            if (exn.StatusCode is 403)
+            if (exn.StatusCode is 401 or 403)
             {
                 _logger.LogWarning(exn, "Bad API token, will register again and retry.");
 
