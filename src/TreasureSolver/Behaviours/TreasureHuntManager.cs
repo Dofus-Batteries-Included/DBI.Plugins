@@ -30,6 +30,18 @@ public class TreasureHuntManager : MonoBehaviour
 
     void Awake()
     {
+        TreasureSolver.CluesServiceChanged += (_, _) =>
+        {
+            if (_hunt == null)
+            {
+                return;
+            }
+
+            ICluesService service = TreasureSolver.GetCluesService();
+            _hunt.SetCluesService(service);
+            _needUpdate = true;
+        };
+
         DBI.Messaging.GetListener<TreasureHuntEvent>().MessageReceived += (_, huntEvent) => HandleTreasureHuntEvent(huntEvent);
         DBI.Messaging.GetListener<TreasureHuntFinishedEvent>().MessageReceived += (_, _) => _hunt = null;
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapEvent) => HandleMapEvent(mapEvent);
