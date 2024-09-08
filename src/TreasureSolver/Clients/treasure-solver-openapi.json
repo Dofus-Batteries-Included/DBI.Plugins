@@ -4,15 +4,15 @@
   "info": {
     "title": "Treasure Solver - API",
     "description": "Dofus Treasure Hunt solver using data collected by the players.",
-    "version": "0.16.0+f2cd7853473aa6b3c357e25913e40a16b50590cc"
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://api.dofusbatteriesincluded.fr/treasure-solver"
+      "url": "https://api.dofusbatteriesincluded.fr"
     }
   ],
   "paths": {
-    "/clues/at-map/{mapId}": {
+    "/treasure-solver/clues/at-map/{mapId}": {
       "get": {
         "tags": [
           "Clues"
@@ -47,7 +47,7 @@
         }
       }
     },
-    "/clues/at-position/{posX}/{posY}": {
+    "/treasure-solver/clues/at-position/{posX}/{posY}": {
       "get": {
         "tags": [
           "Clues"
@@ -92,7 +92,7 @@
         }
       }
     },
-    "/clues/export": {
+    "/treasure-solver/clues/export": {
       "get": {
         "tags": [
           "Clues"
@@ -113,7 +113,7 @@
         }
       }
     },
-    "/clues": {
+    "/treasure-solver/clues": {
       "post": {
         "tags": [
           "Clues"
@@ -143,94 +143,10 @@
         ]
       }
     },
-    "/registration/register": {
-      "post": {
-        "tags": [
-          "Registration"
-        ],
-        "operationId": "Registration_Register",
-        "parameters": [
-          {
-            "name": "accountId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "accountName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "guid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/registration/refresh": {
-      "post": {
-        "tags": [
-          "Registration"
-        ],
-        "operationId": "Registration_RefreshApiKey",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "guid"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "API key": []
-          }
-        ]
-      }
-    },
-    "/registration/revoke": {
-      "post": {
-        "tags": [
-          "Registration"
-        ],
-        "operationId": "Registration_Revoke",
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "API key": []
-          }
-        ]
-      }
-    },
-    "/solver/{startMapId}/{direction}/{clueId}": {
+    "/treasure-solver/{startMapId}/{direction}/{clueId}": {
       "get": {
         "tags": [
-          "TreasureSolver"
+          "Treasure Solver"
         ],
         "operationId": "TreasureSolver_FindNextMap",
         "parameters": [
@@ -278,10 +194,10 @@
         }
       }
     },
-    "/solver/{posX}/{posY}/{direction}/{clueId}": {
+    "/treasure-solver/{posX}/{posY}/{direction}/{clueId}": {
       "get": {
         "tags": [
-          "TreasureSolver"
+          "Treasure Solver"
         ],
         "operationId": "TreasureSolver_FindNextPosition",
         "parameters": [
