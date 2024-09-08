@@ -13,7 +13,7 @@ This project has only been tested on windows computers.
 
 - Download and install [BepInEx Unity (IL2CPP)](https://docs.bepinex.dev/master/articles/user_guide/installation/index.html) in the Dofus game folder.
 - Download the [latest release](https://github.com/Dofus-Batteries-Included/DBI/releases/latest)
-- Move the `DofusBatteriesIncluded/` folder to the `BepInEx/plugins/` folder of your BepInEx install. The only plugin that is mandatory is `DofusBatteriesIncluded.Core`.
+- Move the `DofusBatteriesIncluded/` folder to the `BepInEx/plugins/` folder of your BepInEx install. The only plugin that is mandatory is `DofusBatteriesIncluded.Plugins.Core`.
 
 WARNING: A specific version of the plugins can only work for the specific version of the game that it was built against. Trying to use a plugin with another version of the game can lead to unexpected results, or even crashes of the game. The plugins have a built-in mechanism that prevents them from running if they have been built for another version of the game.
 
@@ -75,7 +75,7 @@ Finally, the `Core` plugin adds a new widget to the game, accessible using a new
 The widget has two tabs:
 - The General tab that lists the currently installed plugins\
 ![General tab](https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/img/general_tab.png)
-- The Settings tab that lists the settings of all the plugins (the one created using DBI.Configuration)\
+- The Settings tab that lists the settings of all the plugins (the one created using `DBI.Configuration`)\
 ![Settings tab](https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/img/settings_tab.png)
 
 #### Windows
@@ -115,12 +115,12 @@ Add the following to the csproj of your project
 </PropertyGroup>
 ```
 
-Then reference the BepInEx nugets and the DBI.Core project:
+Then reference the BepInEx nugets and the `DofusBatteriesIncluded.Plugins.Core` project:
 ```
 <ItemGroup>
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
-    <PackageReference Include="DBI.Core" Version="1.*"/>
+    <PackageReference Include="DofusBatteriesIncluded.Plugins.Core" Version="1.*"/>
 </ItemGroup>
 ```
 
@@ -138,7 +138,7 @@ class MyAwesomePlugin : DBIPlugin
 }
 ```
 
-Compile the project and move the `DofusBatteriesIncluded.Core.dll` assembly and the project assembly to the `BepInEx/plugins/` folder of the game. Run `Dofus.exe` and wait for the log message.\
+Compile the project and move the `DofusBatteriesIncluded.Plugins.Core.dll` assembly and the project assembly to the `BepInEx/plugins/` folder of the game. Run `Dofus.exe` and wait for the log message.\
 Congrats! 
 
 Assemblies from the `Interop/` folder can be referenced using a `<HintPath>`, for example:

@@ -6,9 +6,11 @@ The plugin solves treasure hunts using community data and integrates the result 
 
 ## Configuration
 
-- Clue Finder: 
-  - DofusPourLesNoobs: (offline) use the pre-packaged clues from [Dofus pour les noobs website](https://www.dofuspourlesnoobs.com/resolution-de-chasse-aux-tresors.html), see `Resources/dofuspourlesnoobs_clues.json`.\
-  This finder is offline: it will always use the pre-packaged file that is included. However the file is not embedded in the plugin so that it can be updated without rebuilding the whole plugin.
-  - Dofus Map Hunt: (online) use the [Dofus Map website](https://dofus-map.com/fr/hunt) to find clues.\
-  **NOTE**: doesn't work, don't use this.
-  - Treasure Solver: (online, WIP not available yet) I am planning to create my own treasure hunt solver service and use it instead. The main advantage is that the plugin can automatically report valid and invalid clues whenever the player confirms their clues.
+- Treasure Hunt - Solver: 
+  - __Remote__: (online) the [Treasure Solver API](https://api.dofusbatteriesincluded/treasure-solver) is used to find the position of the next clue.
+  - __Local__: (offline) use the pre-packaged clues from [Dofus pour les noobs website](https://www.dofuspourlesnoobs.com/resolution-de-chasse-aux-tresors.html) (see `Resources/dofuspourlesnoobs_clues.json`), and the local clues store that is updated every time clues are validated in the game. \
+  This finder is offline: it will always use local data, it will never call an remote API. 
+  The local data can still be updated:
+    - The Dofus pour les noobs file is not embedded in the plugin: it can be updated without rebuilding the whole plugin.
+    - The local store is updated continuously: if a clue is unknown, and is found by the player, its position will be saved and reused. If a clue has disappeared, a failed validation will mark it as removed so that it is not suggested again.
+   
