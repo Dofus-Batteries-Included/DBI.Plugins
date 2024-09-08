@@ -43,7 +43,6 @@ public class DBIStore
         ILocalStorage store = new JsonFileLocalStorage(path);
         _stores[name] = store;
 
-
         return store;
     }
 
@@ -58,7 +57,7 @@ public class DBIStore
         if (File.Exists(path))
         {
             Log.LogInformation("Found store {Name} at {Path}.", name, path);
-            CreateStore(name, path);
+            return CreateStore(name, path);
         }
 
         return null;
