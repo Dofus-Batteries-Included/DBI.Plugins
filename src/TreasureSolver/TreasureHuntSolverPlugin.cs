@@ -33,7 +33,6 @@ class TreasureHuntSolverPlugin : DBIPlugin
             .Bind();
 
         AddComponent<TreasureHuntManager>();
-        DBI.Messaging.RegisterListener<TreasureHuntEventListener>();
         DBI.Messaging.RegisterListener<SaveCluesOnDigAnswerEvent>();
 
         return Task.CompletedTask;
