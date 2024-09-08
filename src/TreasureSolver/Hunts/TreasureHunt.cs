@@ -51,6 +51,7 @@ public class TreasureHunt
         if (CurrentStepIndex == TotalSteps)
         {
             Log.LogInformation("Reached end of current checkpoint.");
+            CurrentStep = null;
             return;
         }
 
@@ -58,11 +59,12 @@ public class TreasureHunt
         {
             Log.LogInformation("Reached end of hunt.");
             IsOver = true;
+            CurrentStep = null;
             return;
         }
 
-        long lastMapId = evt.Flags.array.All(f => f == null) ? evt.StartMapId : evt.Flags.array.Last(f => f != null).MapId;
-        TreasureHuntEvent.Types.TreasureHuntStep nextStep = evt.KnownSteps.array.Last(s => s != null);
+        long lastMapId = evt.Flags.Count == 0 ? evt.StartMapId : evt.Flags.array[evt.Flags.Count - 1].MapId;
+        TreasureHuntEvent.Types.TreasureHuntStep nextStep = evt.KnownSteps.array[evt.KnownSteps.Count - 1];
 
         switch (nextStep.StepCase)
         {

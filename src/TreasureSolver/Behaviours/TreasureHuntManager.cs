@@ -42,6 +42,16 @@ public class TreasureHuntManager : MonoBehaviour
             _needUpdate = true;
         };
 
+        CorePlugin.UseScrollActionsChanged += (_, _) =>
+        {
+            if (_hunt == null)
+            {
+                return;
+            }
+
+            _needUpdate = true;
+        };
+
         DBI.Messaging.GetListener<TreasureHuntEvent>().MessageReceived += (_, huntEvent) => HandleTreasureHuntEvent(huntEvent);
         DBI.Messaging.GetListener<TreasureHuntFinishedEvent>().MessageReceived += (_, _) => _hunt = null;
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapEvent) => HandleMapEvent(mapEvent);
@@ -61,18 +71,19 @@ public class TreasureHuntManager : MonoBehaviour
         _needUpdate = true;
     }
 
-    void Refresh()
-    {
-        _hunt = null;
-        _needUpdate = true;
-    }
-
     IEnumerator UpdateCoroutine()
     {
         while (true)
         {
-            if (!_needUpdate || _lastHuntEvent == null)
+            if (!_needUpdate)
             {
+                yield return null;
+                continue;
+            }
+
+            if (_lastHuntEvent == null)
+            {
+                _needUpdate = false;
                 yield return null;
                 continue;
             }
@@ -92,32 +103,36 @@ public class TreasureHuntManager : MonoBehaviour
             _hunt.HandleTreasureHuntEvent(_lastHuntEvent);
             _hunt.HandleMapChangedEvent(_lastMapEvent);
 
-            int step = _hunt.CurrentStepIndex;
-            Task<long?> nextPositionTask = _hunt.GetNextMap();
-            while (!nextPositionTask.IsCompleted)
+            if (_hunt.CurrentStep != null)
             {
-                MarkLoading(step);
-                yield return null;
+                int step = _hunt.CurrentStepIndex;
+                Task<long?> nextPositionTask = _hunt.GetNextMap();
+                while (!nextPositionTask.IsCompleted)
+                {
+                    MarkLoading(step);
+                    yield return null;
+                }
+
+                long? nextPosition = nextPositionTask.Result;
+                bool ok;
+                int fuel = 100;
+                do
+                {
+                    ok = nextPosition.HasValue
+                        ? TryMarkNextPosition(step, _hunt.CurrentStep.LastMapId, _hunt.CurrentStep is TreasureHuntClueStep clueStep ? clueStep.ClueId : null, nextPosition.Value)
+                        : TryMarkUnknownPosition(
+                            step,
+                            _hunt.CurrentStep.LastMapId,
+                            _hunt.CurrentStep.Direction,
+                            _hunt.CurrentStep is TreasureHuntHintStep ? "Keep looking..." : "Not found."
+                        );
+                    fuel--;
+                    yield return null;
+                } while (!ok && fuel > 0);
             }
 
-            long? nextPosition = nextPositionTask.Result;
-            bool ok;
-            int fuel = 100;
-            do
-            {
-                ok = nextPosition.HasValue
-                    ? TryMarkNextPosition(step, _hunt.CurrentStep.LastMapId, _hunt.CurrentStep is TreasureHuntClueStep clueStep ? clueStep.ClueId : null, nextPosition.Value)
-                    : TryMarkUnknownPosition(
-                        step,
-                        _hunt.CurrentStep.LastMapId,
-                        _hunt.CurrentStep.Direction,
-                        _hunt.CurrentStep is TreasureHuntHintStep ? "Keep looking..." : "Not found."
-                    );
-                fuel--;
-                yield return null;
-            } while (!ok && fuel > 0);
-
             _needUpdate = false;
+            yield return null;
         }
     }
 
