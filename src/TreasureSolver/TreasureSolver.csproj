@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DofusBatteriesIncluded.TreasureSolver</AssemblyName>
-        <RootNamespace>DofusBatteriesIncluded.TreasureSolver</RootNamespace>
+        <AssemblyName>DofusBatteriesIncluded.Plugins.TreasureSolver</AssemblyName>
+        <RootNamespace>DofusBatteriesIncluded.Plugins.TreasureSolver</RootNamespace>
         <Title>Dofus Batteries Included - Treasure Solver</Title>
         <Product>DBI.TreasureSolver</Product>
         <Authors>Ismail Bennani</Authors>

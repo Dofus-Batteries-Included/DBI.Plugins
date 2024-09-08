@@ -6,17 +6,17 @@ using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
 using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Maps;
-using DofusBatteriesIncluded.Core.Maps.PathFinding;
-using DofusBatteriesIncluded.TreasureSolver.Clues;
-using DofusBatteriesIncluded.TreasureSolver.Hunts;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.Core.Maps;
+using DofusBatteriesIncluded.Plugins.Core.Maps.PathFinding;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Hunts;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
-using Direction = DofusBatteriesIncluded.Core.Maps.Direction;
+using Direction = DofusBatteriesIncluded.Plugins.Core.Maps.Direction;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Behaviours;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Behaviours;
 
 public class TreasureHuntManager : MonoBehaviour
 {

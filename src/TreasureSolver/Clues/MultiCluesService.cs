@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.Core.Maps;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 
 public class MultiCluesService : ICluesService
 {

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BepInEx;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.TreasureSolver.Behaviours;
-using DofusBatteriesIncluded.TreasureSolver.Clues.Listeners;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Behaviours;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clues.Listeners;
 
-namespace DofusBatteriesIncluded.TreasureSolver;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInDependency(Core.MyPluginInfo.PLUGIN_GUID)]

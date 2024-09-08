@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBIPlugins

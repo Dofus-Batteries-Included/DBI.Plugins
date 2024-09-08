@@ -1,11 +1,11 @@
 ﻿using System;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.TreasureSolver.Clues;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 using EventArgs = System.EventArgs;
 using EventHandler = System.EventHandler;
 
-namespace DofusBatteriesIncluded.TreasureSolver;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver;
 
 static class TreasureSolver
 {
@@ -18,6 +18,7 @@ static class TreasureSolver
     public static event EventHandler CluesServiceChanged;
 
     public static ICluesService TryGetCluesService() => _cluesService;
+
     public static ICluesService GetCluesService()
     {
         if (_cluesService == null)

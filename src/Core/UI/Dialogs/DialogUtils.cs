@@ -1,8 +1,8 @@
 ﻿using System;
-using DofusBatteriesIncluded.Core.Behaviours;
+using DofusBatteriesIncluded.Plugins.Core.Behaviours;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core.UI.Dialogs;
+namespace DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
 
 public static class DialogUtils
 {

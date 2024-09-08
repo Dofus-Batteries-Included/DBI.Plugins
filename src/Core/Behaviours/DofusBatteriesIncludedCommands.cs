@@ -4,7 +4,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Input = UnityEngine.Input;
 using KeyCode = UnityEngine.KeyCode;
 
-namespace DofusBatteriesIncluded.Core.Behaviours;
+namespace DofusBatteriesIncluded.Plugins.Core.Behaviours;
 
 public class DofusBatteriesIncludedCommands : MonoBehaviour
 {

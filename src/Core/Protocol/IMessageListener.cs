@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DofusBatteriesIncluded.Core.Protocol;
+namespace DofusBatteriesIncluded.Plugins.Core.Protocol;
 
 public interface IMessageListener
 {

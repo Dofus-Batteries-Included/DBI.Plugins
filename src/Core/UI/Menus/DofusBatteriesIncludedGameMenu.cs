@@ -5,14 +5,14 @@ using System.Reflection;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Components.Tooltips;
 using Core.UILogic.Components.Tooltips.Builder;
-using DofusBatteriesIncluded.Core.Behaviours;
+using DofusBatteriesIncluded.Plugins.Core.Behaviours;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
 using CancellationToken = Il2CppSystem.Threading.CancellationToken;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Core.UI.Menus;
+namespace DofusBatteriesIncluded.Plugins.Core.UI.Menus;
 
 public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 {

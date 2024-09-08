@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DofusBatteriesIncluded.Core</AssemblyName>
-        <RootNamespace>DofusBatteriesIncluded.Core</RootNamespace>
+        <AssemblyName>DofusBatteriesIncluded.Plugins.Core</AssemblyName>
+        <RootNamespace>DofusBatteriesIncluded.Plugins.Core</RootNamespace>
         <Title>Dofus Batteries Included - Core</Title>
         <Product>DBI.Core</Product>
         <Authors>Ismail Bennani</Authors>

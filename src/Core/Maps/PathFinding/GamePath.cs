@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DofusBatteriesIncluded.Core.Maps.PathFinding;
+namespace DofusBatteriesIncluded.Plugins.Core.Maps.PathFinding;
 
 public class GamePath : IReadOnlyList<GamePathStep>
 {

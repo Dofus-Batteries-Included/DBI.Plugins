@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using DofusBatteriesIncluded.Core.Maps.PathFinding;
+using DofusBatteriesIncluded.Plugins.Core.Maps.PathFinding;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBIPathFinder

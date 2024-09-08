@@ -1,6 +1,6 @@
 ﻿using Core.UILogic.UIConsts;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 public class DofusUiConstants
 {

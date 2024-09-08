@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Path = Il2CppSystem.IO.Path;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues.Data;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues.Data;
 
 public class JsonFileCluesDataSource : ICluesDataSource
 {

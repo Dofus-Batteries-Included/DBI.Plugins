@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
-using DofusBatteriesIncluded.Core.Configuration;
+using DofusBatteriesIncluded.Plugins.Core.Configuration;
 using Il2CppSystem.IO;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBIConfiguration

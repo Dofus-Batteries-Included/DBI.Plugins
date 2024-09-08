@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Protocol;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.Core.Protocol;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues.Listeners;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues.Listeners;
 
 public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IMessageListener<TreasureHuntDigAnswerEvent>
 {

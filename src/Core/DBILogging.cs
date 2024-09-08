@@ -1,8 +1,8 @@
 ﻿using System;
-using DofusBatteriesIncluded.Core.Logging;
+using DofusBatteriesIncluded.Plugins.Core.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBILogging

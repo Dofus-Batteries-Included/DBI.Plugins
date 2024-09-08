@@ -4,7 +4,7 @@ using Core.DataCenter.Metadata.World;
 using Microsoft.Extensions.Logging;
 using Enumerable = System.Linq.Enumerable;
 
-namespace DofusBatteriesIncluded.Core.Maps.PathFinding;
+namespace DofusBatteriesIncluded.Plugins.Core.Maps.PathFinding;
 
 class AStar
 {

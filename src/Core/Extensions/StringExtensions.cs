@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace DofusBatteriesIncluded.Core.Extensions;
+namespace DofusBatteriesIncluded.Plugins.Core.Extensions;
 
 public static class StringExtensions
 {

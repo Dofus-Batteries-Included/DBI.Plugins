@@ -2,11 +2,11 @@
 using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
-using DofusBatteriesIncluded.Core.Metadata;
+using DofusBatteriesIncluded.Plugins.Core.Metadata;
 using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 [BepInProcess("Dofus.exe")]
 // ReSharper disable once InconsistentNaming

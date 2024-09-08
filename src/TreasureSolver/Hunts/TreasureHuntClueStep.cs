@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.TreasureSolver.Clues;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
-using Direction = DofusBatteriesIncluded.Core.Maps.Direction;
+using Direction = DofusBatteriesIncluded.Plugins.Core.Maps.Direction;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Hunts;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Hunts;
 
 public class TreasureHuntClueStep : ITreasureHuntClueStep
 {

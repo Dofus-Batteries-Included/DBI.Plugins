@@ -2,10 +2,10 @@
 using Com.Ankama.Dofus.Server.Game.Protocol.Common;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
-using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.Plugins.Core.Maps;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core.Player;
+namespace DofusBatteriesIncluded.Plugins.Core.Player;
 
 public class CurrentPlayerState
 {

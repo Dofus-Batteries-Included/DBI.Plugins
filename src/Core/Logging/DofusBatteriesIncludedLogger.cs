@@ -3,7 +3,7 @@ using BepInEx.Logging;
 using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace DofusBatteriesIncluded.Core.Logging;
+namespace DofusBatteriesIncluded.Plugins.Core.Logging;
 
 public class DofusBatteriesIncludedLogger : ILogger
 {

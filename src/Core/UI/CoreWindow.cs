@@ -7,8 +7,8 @@ using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
 using Core.UILogic.Config.OptionElement;
-using DofusBatteriesIncluded.Core.UI.Dialogs;
-using DofusBatteriesIncluded.Core.UI.Windows;
+using DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
+using DofusBatteriesIncluded.Plugins.Core.UI.Windows;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,7 +17,7 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using Enum = System.Enum;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Core.UI;
+namespace DofusBatteriesIncluded.Plugins.Core.UI;
 
 public class CoreWindow : DofusBatteriesIncludedWindow
 {

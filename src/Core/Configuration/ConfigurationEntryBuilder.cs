@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DofusBatteriesIncluded.Core.Configuration;
+namespace DofusBatteriesIncluded.Plugins.Core.Configuration;
 
 public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
 {

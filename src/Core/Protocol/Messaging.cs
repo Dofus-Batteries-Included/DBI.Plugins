@@ -8,10 +8,9 @@ using Google.Protobuf;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Microsoft.Extensions.Logging;
-using Event = Com.Ankama.Dofus.Server.Game.Protocol.Event;
 using Message = Com.Ankama.Dofus.Server.Game.Protocol.Message;
 
-namespace DofusBatteriesIncluded.Core.Protocol;
+namespace DofusBatteriesIncluded.Plugins.Core.Protocol;
 
 public static class Messaging
 {
@@ -31,7 +30,7 @@ public static class Messaging
             {
                 string json = message.ToString();
                 JsonDocument obj = JsonDocument.Parse(json);
-                
+
                 if (obj.RootElement.TryGetProperty("event", out JsonElement eventElement))
                 {
                     HandleEventMessage(eventElement);

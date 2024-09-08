@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DofusBatteriesIncluded.Core.Maps;
+namespace DofusBatteriesIncluded.Plugins.Core.Maps;
 
 public enum Direction
 {

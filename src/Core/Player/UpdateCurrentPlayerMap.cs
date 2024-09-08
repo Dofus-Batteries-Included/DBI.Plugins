@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
-using DofusBatteriesIncluded.Core.Protocol;
+using DofusBatteriesIncluded.Plugins.Core.Protocol;
 
-namespace DofusBatteriesIncluded.Core.Player;
+namespace DofusBatteriesIncluded.Plugins.Core.Player;
 
 public class UpdateCurrentPlayerMap : IMessageListener<MapCurrentEvent>, IMessageListener<MapMovementEvent>
 {
