@@ -10,7 +10,8 @@
       "className": "{controller}Client",
       "namespace": "DofusBatteriesIncluded.Plugins.TreasureSolver.Clients",
       "jsonLibrary": "SystemTextJson",
-      "output": "$(Output)"
+      "generateExceptionClasses": false,
+      "output": "$(Output)",
     }
   }
 }
