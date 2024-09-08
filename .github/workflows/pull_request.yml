@@ -39,10 +39,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Build
-        env:
-          DofusBuildId: ${{ needs.fetch-game-files.outputs.game_build_id }}
-          DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
-        run: cd src; dotnet clean; dotnet build --configuration Release -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
+        run: cd src; dotnet build --configuration Release -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
 
       - name: Test
         run: cd src; dotnet test --configuration Release
