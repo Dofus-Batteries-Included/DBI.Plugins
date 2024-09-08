@@ -10,7 +10,7 @@ namespace DofusBatteriesIncluded.TreasureSolver.Clues.Listeners;
 
 public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IMessageListener<TreasureHuntDigAnswerEvent>
 {
-    static readonly ILogger Log = DBI.Logging.Create<LocalCluesService>();
+    static readonly ILogger Log = DBI.Logging.Create<SaveCluesOnDigAnswerEvent>();
     int? _currentCheckpoint;
     List<ClueAtPosition> _clues = [];
 
@@ -33,7 +33,7 @@ public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IM
                 }
 
                 await cluesService.RegisterCluesAsync(clue.MapId, new ClueWithStatus(clue.ClueId.Value, true));
-                Log.LogInformation("Clue {Clue} was found in map {MapId}...", clue.ClueId.Value, clue.MapId);
+                Log.LogInformation("Register clue {Clue} found in map {MapId}...", clue.ClueId.Value, clue.MapId);
             }
         }
         else if (message.Result is TreasureHuntDigAnswerEvent.Types.DigResult.Wrong or TreasureHuntDigAnswerEvent.Types.DigResult.WrongAndYouKnowIt
@@ -50,7 +50,7 @@ public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IM
                 if (clue.ValidationState.HasValue)
                 {
                     await cluesService.RegisterCluesAsync(clue.MapId, new ClueWithStatus(clue.ClueId.Value, clue.ValidationState.Value));
-                    Log.LogInformation("Clue {Clue} was {FoundOrNot} in map {MapId}...", clue.ClueId.Value, clue.ValidationState.Value ? "found" : "absent", clue.MapId);
+                    Log.LogInformation("Register clue {Clue} {FoundOrNot} in map {MapId}...", clue.ClueId.Value, clue.ValidationState.Value ? "found" : "absent", clue.MapId);
                 }
             }
         }
