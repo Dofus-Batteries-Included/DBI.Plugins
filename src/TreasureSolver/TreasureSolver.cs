@@ -17,6 +17,7 @@ static class TreasureSolver
     static ICluesService _cluesService;
     public static event EventHandler CluesServiceChanged;
 
+    public static ICluesService TryGetCluesService() => _cluesService;
     public static ICluesService GetCluesService()
     {
         if (_cluesService == null)

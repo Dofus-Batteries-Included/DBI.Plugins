@@ -14,16 +14,16 @@ public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IM
     int? _currentCheckpoint;
     List<ClueAtPosition> _clues = [];
 
-    public Task HandleAsync(TreasureHuntDigAnswerEvent message)
+    public async Task HandleAsync(TreasureHuntDigAnswerEvent message)
     {
-        ICluesService cluesService = TreasureSolver.GetCluesService();
+        ICluesService cluesService = TreasureSolver.TryGetCluesService();
         if (cluesService == null)
         {
             Log.LogWarning("Could not get clues service, skipping Treasure Hunt Event.");
-            return Task.CompletedTask;
+            return;
         }
 
-        if (message.Result is TreasureHuntDigAnswerEvent.Types.DigResult.NewHint or TreasureHuntDigAnswerEvent.Types.DigResult.Finished)
+        if (message.Result is TreasureHuntDigAnswerEvent.Types.DigResult.NewHint)
         {
             foreach (ClueAtPosition clue in _clues)
             {
@@ -32,7 +32,8 @@ public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IM
                     continue;
                 }
 
-                cluesService.RegisterCluesAsync(clue.MapId, new ClueWithStatus(clue.ClueId.Value, true));
+                await cluesService.RegisterCluesAsync(clue.MapId, new ClueWithStatus(clue.ClueId.Value, true));
+                Log.LogInformation("Clue {Clue} was found in map {MapId}...", clue.ClueId.Value, clue.MapId);
             }
         }
         else if (message.Result is TreasureHuntDigAnswerEvent.Types.DigResult.Wrong or TreasureHuntDigAnswerEvent.Types.DigResult.WrongAndYouKnowIt
@@ -48,14 +49,14 @@ public class SaveCluesOnDigAnswerEvent : IMessageListener<TreasureHuntEvent>, IM
 
                 if (clue.ValidationState.HasValue)
                 {
-                    cluesService.RegisterCluesAsync(clue.MapId, new ClueWithStatus(clue.ClueId.Value, clue.ValidationState.Value));
+                    await cluesService.RegisterCluesAsync(clue.MapId, new ClueWithStatus(clue.ClueId.Value, clue.ValidationState.Value));
+                    Log.LogInformation("Clue {Clue} was {FoundOrNot} in map {MapId}...", clue.ClueId.Value, clue.ValidationState.Value ? "found" : "absent", clue.MapId);
                 }
             }
         }
 
         _currentCheckpoint = null;
 
-        return Task.CompletedTask;
     }
 
     public Task HandleAsync(TreasureHuntEvent message)

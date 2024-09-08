@@ -43,18 +43,6 @@ public class LocalCluesService : ICluesService
 
     public Task RegisterCluesAsync(long mapId, params ClueWithStatus[] clues)
     {
-        ClueWithStatus[] found = clues.Where(c => c.IsPresent).ToArray();
-        if (found.Length > 0)
-        {
-            Log.LogInformation("Clue(s) {Clues} were found in map {MapId}...", string.Join(", ", found.Select(f => f.ClueId)), mapId);
-        }
-
-        ClueWithStatus[] notFound = clues.Where(c => !c.IsPresent).ToArray();
-        if (notFound.Length > 0)
-        {
-            Log.LogInformation("Clue(s) {Clues} were not found in map {MapId}...", string.Join(", ", notFound.Select(f => f.ClueId)), mapId);
-        }
-
         DateTime now = DateTime.Now;
         _localSource.AddRecords(mapId, clues.Select(x => new ClueRecord { ClueId = x.ClueId, WasFound = x.IsPresent, RecordDate = now }).ToArray());
 

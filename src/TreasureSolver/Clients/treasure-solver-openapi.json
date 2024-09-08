@@ -497,7 +497,7 @@
       "API key": {
         "type": "apiKey",
         "description": "Please enter your API key.",
-        "name": "Authorizaton",
+        "name": "Authorization",
         "in": "header"
       }
     }

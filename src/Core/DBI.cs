@@ -29,6 +29,7 @@ public static class DBI
     public static Guid? DofusBuildId { get; internal set; }
     public static DBIConfiguration Configuration { get; } = new();
     public static DBILogging Logging { get; } = new();
+    public static DBIStore Store { get; } = new();
 
     public static DBIGameClientInformation GameClientInformation { get; } = new();
     public static DBIPlugins Plugins { get; } = new();

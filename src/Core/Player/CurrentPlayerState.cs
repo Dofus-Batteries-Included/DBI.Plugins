@@ -9,7 +9,7 @@ namespace DofusBatteriesIncluded.Core.Player;
 
 public class CurrentPlayerState
 {
-    static readonly ILogger Log = DBI.Logging.Create<UpdateCurrentPlayerMap>();
+    static readonly ILogger Log = DBI.Logging.Create<CurrentPlayerState>();
 
     public CurrentPlayerState(Character character)
     {
