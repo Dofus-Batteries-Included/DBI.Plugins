@@ -110,7 +110,7 @@ public class TreasureHuntManager : MonoBehaviour
                 while (!nextPositionTask.IsCompleted)
                 {
                     MarkLoading(step);
-                    yield return null;
+                    yield return new WaitForSecondsRealtime(0.5f);
                 }
 
                 long? nextPosition = nextPositionTask.Result;
