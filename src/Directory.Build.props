@@ -12,15 +12,15 @@
 
     <Target Name="DisplayDofusBuildId" BeforeTargets="CoreCompile">
         <Message Importance="high" Text="Dofus build ID: $(DOFUSBUILDID)"/>
-        <Message Importance="high" Text="Dofus version: $(OFUSVERSION)"/>
+        <Message Importance="high" Text="Dofus version: $(DOFUSVERSION)"/>
     </Target>
     
     <ItemGroup>
         <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusBuildIdAttribute" Condition="'$(DOFUSBUILDID)' != ''">
             <_Parameter1>$(DOFUSBUILDID)</_Parameter1>
         </AssemblyAttribute>
-        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusVersionAttribute" Condition="'$(OFUSVERSION)' != ''">
-            <_Parameter1>$(OFUSVERSION)</_Parameter1>
+        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusVersionAttribute" Condition="'$(DOFUSVERSION)' != ''">
+            <_Parameter1>$(DOFUSVERSION)</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 </Project>
