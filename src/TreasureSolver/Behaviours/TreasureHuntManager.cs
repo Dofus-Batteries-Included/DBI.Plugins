@@ -30,7 +30,7 @@ public class TreasureHuntManager : MonoBehaviour
     Coroutine _coroutine;
     readonly Dictionary<int, long> _knownNpcMapsIds = [];
     int? _lookingForNpcId;
-    int _currentStep;
+    int? _currentStep;
     bool _useCachedMapId;
     long? _nextClueMapId;
 
