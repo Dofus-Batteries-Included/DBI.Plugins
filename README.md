@@ -45,6 +45,12 @@ WARNING: A specific version of the plugins can only work for the specific versio
 
 DBI provides integration with Microsoft loggers: simply call one of the `DBI.Logging.Create` methods to get an `ILogger` that outputs to the `BepInEx` console window.
 
+#### Persistent storage
+
+DBI provides persistent key-value stores. They can be used to store application data without making it a setting that can be configured by the user:
+- `Task<string> DBI.Store.GetValueAsync(string storeName, string key)`
+- `Task DBI.Store.SetValueAsync(string storeName, string key, string value)`
+
 #### Settings
 
 DBI uses the configuration system provided by BepInEx and store the configuration of all plugins in the `BepInEx/config/DofusBatteriesIncluded.cfg` file.
