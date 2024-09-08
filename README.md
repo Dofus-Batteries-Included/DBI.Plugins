@@ -1,7 +1,10 @@
-# Dofus Batteries Included (DBI)
+# Dofus Batteries Included (DBI) - Plugins
 
 DBI is first and foremost a tool that helps writing plugins for the Unity version of the game Dofus.
 It is built upon [BepInEx](https://github.com/BepInEx/BepInEx).
+
+This repository contains the `Core` plugin that is mandatory and define the common tools that can be used by the other plugins. 
+It also contains the `TreasureSolver` plugin that is both an example of what a DBI plugin looks like, but also an awesome tool to get treasure hunts clues without constantly swapping between the game window and the browser.  
 
 This project has only been tested on windows computers.
 
