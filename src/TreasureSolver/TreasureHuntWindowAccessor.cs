@@ -16,6 +16,7 @@ public static class TreasureHuntWindowAccessor
     const string AdditionalTextContainerName = "DBI_TreasureSolver_AdditionalText";
     static VisualElement _treasureHuntWindow;
 
+    public static bool Ready => FetchWindow();
     public static bool TrySetStepAdditionalText(int stepIndex, string text) => SetStepAdditionalTextImpl(stepIndex, text);
     public static bool TryHideStepAdditionalText(int stepIndex) => SetStepAdditionalTextImpl(stepIndex, null);
     public static bool TryClear() => ClearImpl();
