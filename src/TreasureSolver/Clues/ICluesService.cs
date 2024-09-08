@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.Plugins.Core.Maps;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 
 public interface ICluesService
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DofusBatteriesIncluded.Core.Metadata;
+namespace DofusBatteriesIncluded.Plugins.Core.Metadata;
 
 [AttributeUsage(AttributeTargets.Assembly)]
 public sealed class ExpectedDofusVersionAttribute : Attribute

@@ -16,10 +16,10 @@
     </Target>
     
     <ItemGroup>
-        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusBuildIdAttribute" Condition="'$(DOFUSBUILDID)' != ''">
+        <AssemblyAttribute Include="DofusBatteriesIncluded.Plugins.Core.Metadata.ExpectedDofusBuildIdAttribute" Condition="'$(DOFUSBUILDID)' != ''">
             <_Parameter1>$(DOFUSBUILDID)</_Parameter1>
         </AssemblyAttribute>
-        <AssemblyAttribute Include="DofusBatteriesIncluded.Core.Metadata.ExpectedDofusVersionAttribute" Condition="'$(DOFUSVERSION)' != ''">
+        <AssemblyAttribute Include="DofusBatteriesIncluded.Plugins.Core.Metadata.ExpectedDofusVersionAttribute" Condition="'$(DOFUSVERSION)' != ''">
             <_Parameter1>$(DOFUSVERSION)</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>

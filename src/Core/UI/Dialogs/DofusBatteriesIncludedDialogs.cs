@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DofusBatteriesIncluded.Core.UI.Dialogs;
+namespace DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
 
 public class DofusBatteriesIncludedDialogs : MonoBehaviour
 {

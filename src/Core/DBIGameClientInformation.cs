@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBIGameClientInformation

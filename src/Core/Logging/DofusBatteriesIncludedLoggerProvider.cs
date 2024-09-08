@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core.Logging;
+namespace DofusBatteriesIncluded.Plugins.Core.Logging;
 
 public class DofusBatteriesIncludedLoggerProvider : ILoggerProvider
 {

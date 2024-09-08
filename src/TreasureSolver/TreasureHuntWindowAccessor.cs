@@ -2,13 +2,13 @@
 using System.Linq;
 using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Behaviours;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.Core.Behaviours;
 using Il2CppSystem.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using UnityEngine.UIElements;
 
-namespace DofusBatteriesIncluded.TreasureSolver;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver;
 
 public static class TreasureHuntWindowAccessor
 {

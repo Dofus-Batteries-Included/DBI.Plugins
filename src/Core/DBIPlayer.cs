@@ -1,10 +1,10 @@
 ﻿using System;
 using Com.Ankama.Dofus.Server.Connection.Protocol;
 using Com.Ankama.Dofus.Server.Game.Protocol.Common;
-using DofusBatteriesIncluded.Core.Player;
+using DofusBatteriesIncluded.Plugins.Core.Player;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBIPlayer

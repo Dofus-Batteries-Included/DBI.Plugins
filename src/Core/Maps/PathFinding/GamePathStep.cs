@@ -1,4 +1,4 @@
-﻿namespace DofusBatteriesIncluded.Core.Maps.PathFinding;
+﻿namespace DofusBatteriesIncluded.Plugins.Core.Maps.PathFinding;
 
 public abstract class GamePathStep
 {

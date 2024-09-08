@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DofusBatteriesIncluded.Core;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clients;
 using Microsoft.Extensions.Logging;
-using TreasureSolver.Clients;
-using Direction = DofusBatteriesIncluded.Core.Maps.Direction;
+using Direction = DofusBatteriesIncluded.Plugins.Core.Maps.Direction;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 
 public class RemoteCluesService : ICluesService
 {
@@ -16,16 +16,21 @@ public class RemoteCluesService : ICluesService
     public async Task<long?> FindMapOfNextClue(long startMapId, Direction direction, int clueId, int cluesMaxDistance)
     {
         TreasureSolverClient treasureSolverClient = new(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
-        global::TreasureSolver.Clients.Direction mappedDirection = direction switch
+        Clients.Direction? mappedDirection = direction switch
         {
-            Direction.Top => global::TreasureSolver.Clients.Direction.North,
-            Direction.Right => global::TreasureSolver.Clients.Direction.East,
-            Direction.Left => global::TreasureSolver.Clients.Direction.West,
-            Direction.Bottom => global::TreasureSolver.Clients.Direction.South,
-            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+            Direction.Top => Clients.Direction.North,
+            Direction.Right => Clients.Direction.East,
+            Direction.Left => Clients.Direction.West,
+            Direction.Bottom => Clients.Direction.South,
+            _ => null
         };
 
-        FindNextMapResponse result = await treasureSolverClient.FindNextMapAsync(startMapId, mappedDirection, clueId);
+        if (!mappedDirection.HasValue)
+        {
+            return null;
+        }
+
+        FindNextMapResponse result = await treasureSolverClient.FindNextMapAsync(startMapId, mappedDirection.Value, clueId);
         return result?.MapId;
     }
 

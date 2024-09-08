@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using DofusBatteriesIncluded.Core.Stores;
+using DofusBatteriesIncluded.Plugins.Core.Stores;
 using Il2CppSystem;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public class DBIStore

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Path = Il2CppSystem.IO.Path;
 
-namespace DofusBatteriesIncluded.Core.Stores;
+namespace DofusBatteriesIncluded.Plugins.Core.Stores;
 
 public class JsonFileLocalStorage : ILocalStorage
 {

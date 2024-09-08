@@ -4,7 +4,7 @@ using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core.Maps;
+namespace DofusBatteriesIncluded.Plugins.Core.Maps;
 
 public static class MapPositionsExtensions
 {

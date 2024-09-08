@@ -8,7 +8,7 @@
   "codeGenerators": {
     "openApiToCSharpClient": {
       "className": "{controller}Client",
-      "namespace": "TreasureSolver.Clients",
+      "namespace": "DofusBatteriesIncluded.Plugins.TreasureSolver.Clients",
       "jsonLibrary": "SystemTextJson",
       "output": "$(Output)"
     }

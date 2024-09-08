@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 // ReSharper disable once InconsistentNaming
 public static class DBI

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using UnityEngine;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 public static class ApplicationHelpers
 {

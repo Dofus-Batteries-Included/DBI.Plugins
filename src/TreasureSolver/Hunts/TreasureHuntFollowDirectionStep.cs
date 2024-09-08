@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
-using DofusBatteriesIncluded.Core.Maps;
+using DofusBatteriesIncluded.Plugins.Core.Maps;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Hunts;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Hunts;
 
 public class TreasureHuntFollowDirectionStep : ITreasureHuntClueStep
 {

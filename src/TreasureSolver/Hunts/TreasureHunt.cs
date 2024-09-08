@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Com.Ankama.Dofus.Server.Game.Protocol.Gamemap;
 using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Maps;
-using DofusBatteriesIncluded.TreasureSolver.Clues;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.Core.Maps;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Hunts;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Hunts;
 
 public class TreasureHunt
 {

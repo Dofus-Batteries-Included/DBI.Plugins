@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DofusBatteriesIncluded.Core.Maps.PathFinding;
+namespace DofusBatteriesIncluded.Plugins.Core.Maps.PathFinding;
 
 public static class GamePathUtils
 {

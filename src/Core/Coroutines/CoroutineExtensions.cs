@@ -3,7 +3,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppSystem.Collections;
 using Task = System.Threading.Tasks.Task;
 
-namespace DofusBatteriesIncluded.Core.Coroutines;
+namespace DofusBatteriesIncluded.Plugins.Core.Coroutines;
 
 public static class CoroutineExtensions
 {

@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DofusBatteriesIncluded.TreasureSolver</AssemblyName>
-        <RootNamespace>DofusBatteriesIncluded.TreasureSolver</RootNamespace>
+        <AssemblyName>DofusBatteriesIncluded.Plugins.TreasureSolver</AssemblyName>
+        <RootNamespace>DofusBatteriesIncluded.Plugins.TreasureSolver</RootNamespace>
         <Title>Dofus Batteries Included - Treasure Solver</Title>
         <Product>DBI.TreasureSolver</Product>
         <Authors>Ismail Bennani</Authors>
         <Description>Display treasure hunt solutions on screen.</Description>
-        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI</RepositoryUrl>
-        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/LICENSE</PackageLicense>
+        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</RepositoryUrl>
+        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI.Plugins/main/LICENSE</PackageLicense>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -17,7 +17,7 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
 
-namespace TreasureSolver.Clients
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
 {
     using System = global::System;
 

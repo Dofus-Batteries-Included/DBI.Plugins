@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BepInEx;
-using DofusBatteriesIncluded.Core.Behaviours;
-using DofusBatteriesIncluded.Core.Player;
-using DofusBatteriesIncluded.Core.Protocol;
-using DofusBatteriesIncluded.Core.UI;
-using DofusBatteriesIncluded.Core.UI.Dialogs;
-using DofusBatteriesIncluded.Core.UI.Menus;
-using DofusBatteriesIncluded.Core.UI.Windows;
+using DofusBatteriesIncluded.Plugins.Core.Behaviours;
+using DofusBatteriesIncluded.Plugins.Core.Player;
+using DofusBatteriesIncluded.Plugins.Core.Protocol;
+using DofusBatteriesIncluded.Plugins.Core.UI;
+using DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
+using DofusBatteriesIncluded.Plugins.Core.UI.Menus;
+using DofusBatteriesIncluded.Plugins.Core.UI.Windows;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 
-namespace DofusBatteriesIncluded.Core;
+namespace DofusBatteriesIncluded.Plugins.Core;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class CorePlugin : DBIPlugin

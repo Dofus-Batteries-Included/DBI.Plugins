@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DofusBatteriesIncluded.Core</AssemblyName>
-        <RootNamespace>DofusBatteriesIncluded.Core</RootNamespace>
+        <AssemblyName>DofusBatteriesIncluded.Plugins.Core</AssemblyName>
+        <RootNamespace>DofusBatteriesIncluded.Plugins.Core</RootNamespace>
         <Title>Dofus Batteries Included - Core</Title>
         <Product>DBI.Core</Product>
         <Authors>Ismail Bennani</Authors>
         <Description>Base plugin necessary for all Dofus Batteries Included plugins.</Description>
-        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI</RepositoryUrl>
-        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI/main/LICENSE</PackageLicense>
+        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</RepositoryUrl>
+        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI.Plugins/main/LICENSE</PackageLicense>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageReadmeFile>README.md</PackageReadmeFile>

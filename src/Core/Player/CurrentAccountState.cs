@@ -1,6 +1,6 @@
 ﻿using Com.Ankama.Dofus.Server.Connection.Protocol;
 
-namespace DofusBatteriesIncluded.Core.Player;
+namespace DofusBatteriesIncluded.Plugins.Core.Player;
 
 public class CurrentAccountState
 {

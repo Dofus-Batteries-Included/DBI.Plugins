@@ -6,13 +6,13 @@ using System.Text.Json;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
-using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Extensions;
-using DofusBatteriesIncluded.TreasureSolver.Clues.Data;
+using DofusBatteriesIncluded.Plugins.Core;
+using DofusBatteriesIncluded.Plugins.Core.Extensions;
+using DofusBatteriesIncluded.Plugins.TreasureSolver.Clues.Data;
 using Microsoft.Extensions.Logging;
 using MapCoordinates = Core.DataCenter.Metadata.World.MapCoordinates;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues;
 
 public static class DofusPourLesNoobsCluesLoader
 {
@@ -46,8 +46,6 @@ public static class DofusPourLesNoobsCluesLoader
             dplbClueToGameClueMapping[dplbClue.ClueId] = id;
         }
 
-        int cluesCount = 0;
-        int mapsCount = 0;
         CluesDataSource result = new();
         MapCoordinatesRoot coordinates = DataCenterModule.GetDataRoot<MapCoordinatesRoot>();
         MapPositionsRoot positions = DataCenterModule.GetDataRoot<MapPositionsRoot>();
@@ -67,9 +65,6 @@ public static class DofusPourLesNoobsCluesLoader
                     }
 
                     result.AddRecords(position.id, clueIds.Select(clueId => new ClueRecord { ClueId = clueId, WasFound = true, RecordDate = fileDate }).ToArray());
-
-                    cluesCount += clueIds.Length;
-                    mapsCount++;
                 }
             }
         }

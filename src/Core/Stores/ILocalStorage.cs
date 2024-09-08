@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CancellationToken = System.Threading.CancellationToken;
 
-namespace DofusBatteriesIncluded.Core.Stores;
+namespace DofusBatteriesIncluded.Plugins.Core.Stores;
 
 public interface ILocalStorage
 {

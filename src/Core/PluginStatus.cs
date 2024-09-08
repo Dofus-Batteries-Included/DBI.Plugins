@@ -1,4 +1,4 @@
-﻿namespace DofusBatteriesIncluded.Core;
+﻿namespace DofusBatteriesIncluded.Plugins.Core;
 
 public enum PluginStatus
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DofusBatteriesIncluded.TreasureSolver.Clues.Data;
+namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clues.Data;
 
 public class CluesDataSource : ICluesDataSource
 {

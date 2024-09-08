@@ -1,10 +1,10 @@
 ﻿using System;
 using Ankama.AddressableUtilities.Runtime;
 using Core.UILogic.Components.Figma;
-using DofusBatteriesIncluded.Core.UI.Windows;
+using DofusBatteriesIncluded.Plugins.Core.UI.Windows;
 using UnityEngine.UIElements;
 
-namespace DofusBatteriesIncluded.Core.UI.Dialogs;
+namespace DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
 
 public class DofusBatteriesIncludedConfirmationDialog : DofusBatteriesIncludedWindow
 {
