@@ -43,14 +43,11 @@ jobs:
       - name: Configure Github Nuget repository
         run: dotnet nuget add source --username ismailbennani --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Dofus-Batteries-Included/index.json"
 
-      - name: Restore dependencies
-        run: cd src/; dotnet restore
-
       - name: Build
         env:
           DofusBuildId: ${{ needs.fetch-game-files.outputs.game_build_id }}
           DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
-        run: cd src; dotnet build --configuration Release --no-restore -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
+        run: cd src; dotnet clean; dotnet build --configuration Release --no-restore -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
 
       - name: Pack
         run: cd src; dotnet pack --configuration Release --no-build --output nuget/

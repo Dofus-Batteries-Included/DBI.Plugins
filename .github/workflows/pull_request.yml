@@ -38,17 +38,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: cd src/; dotnet restore
-
       - name: Build
         env:
           DofusBuildId: ${{ needs.fetch-game-files.outputs.game_build_id }}
           DofusVersion: ${{ needs.fetch-game-files.outputs.game_version }}
-        run: cd src; dotnet build --configuration Release --no-restore -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
+        run: cd src; dotnet clean; dotnet build --configuration Release -p:DofusBuildId=${{ needs.fetch-game-files.outputs.game_build_id }} -p:DofusVersion=${{ needs.fetch-game-files.outputs.game_version }}
 
       - name: Test
-        run: cd src; dotnet test --configuration Release --no-build
+        run: cd src; dotnet test --configuration Release
 
 permissions:
   packages: read
