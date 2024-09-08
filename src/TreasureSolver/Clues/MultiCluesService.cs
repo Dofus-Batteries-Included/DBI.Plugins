@@ -10,7 +10,7 @@ namespace DofusBatteriesIncluded.TreasureSolver.Clues;
 
 public class MultiCluesService : ICluesService
 {
-    readonly ILogger _logger = DBI.Logging.Create<RemoteCluesService>();
+    readonly ILogger _logger = DBI.Logging.Create<MultiCluesService>();
     readonly List<ICluesService> _cluesServices;
 
     public MultiCluesService(IEnumerable<ICluesService> cluesServices)
