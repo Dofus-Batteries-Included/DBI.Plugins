@@ -30,7 +30,7 @@ public class TreasureHuntManager : MonoBehaviour
     Coroutine _coroutine;
     readonly Dictionary<int, long> _knownNpcMapsIds = [];
     int? _lookingForNpcId;
-    int? _nextClueId;
+    int? _currentStep;
     bool _useCachedMapId;
     long? _nextClueMapId;
 
@@ -157,9 +157,9 @@ public class TreasureHuntManager : MonoBehaviour
 
                         int poiId = nextStep.FollowDirectionToPoi.PoiLabelId;
 
-                        if (_nextClueId != poiId)
+                        if (_currentStep != step)
                         {
-                            _nextClueId = poiId;
+                            _currentStep = step;
                             _useCachedMapId = false;
                         }
 
@@ -183,7 +183,7 @@ public class TreasureHuntManager : MonoBehaviour
                             _useCachedMapId = true;
                         }
 
-                        bool done = _nextClueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, _nextClueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
+                        bool done = _nextClueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, poiId, _nextClueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
                         if (done)
                         {
                             yield break;
@@ -210,7 +210,7 @@ public class TreasureHuntManager : MonoBehaviour
                         _lookingForNpcId = npcId;
 
                         bool done = _knownNpcMapsIds.TryGetValue(npcId, out long npcMapId)
-                            ? TryMarkNextPosition(step, lastMapId, npcMapId)
+                            ? TryMarkNextPosition(step, lastMapId, null, npcMapId)
                             : TryMarkUnknownPosition(step, lastMapId, direction.Value, "Keep looking...");
                         if (done)
                         {
@@ -244,7 +244,7 @@ public class TreasureHuntManager : MonoBehaviour
                         }
                         else
                         {
-                            if (TryMarkNextPosition(step, lastMapId, targetMapId))
+                            if (TryMarkNextPosition(step, lastMapId, null, targetMapId))
                             {
                                 yield break;
                             }
@@ -268,7 +268,7 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    static bool TryMarkNextPosition(int step, long lastMapId, long targetMapId)
+    static bool TryMarkNextPosition(int step, long lastMapId, long? nextClueId, long targetMapId)
     {
         MapPositionsRoot mapPositionsRoot = DataCenterModule.GetDataRoot<MapPositionsRoot>();
         Position? targetPosition = mapPositionsRoot.GetMapPositionById(targetMapId)?.GetPosition();
@@ -279,7 +279,14 @@ public class TreasureHuntManager : MonoBehaviour
 
         Position? lastPosition = mapPositionsRoot.GetMapPositionById(lastMapId)?.GetPosition();
 
-        Log.LogInformation("Found next clue at {Position}.", targetPosition);
+        if (nextClueId.HasValue)
+        {
+            Log.LogInformation("Found next clue {ClueId} at {Position}.", nextClueId.Value, targetPosition);
+        }
+        else
+        {
+            Log.LogInformation("Found next position: {Position}.", targetPosition);
+        }
 
         string stepMessage = $"[{targetPosition.Value.X},{targetPosition.Value.Y}]";
 
@@ -312,7 +319,7 @@ public class TreasureHuntManager : MonoBehaviour
     {
         Position? lastFlagMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(lastFlagMapId)?.GetPosition();
         Position playerPosition = DBI.Player.CurrentCharacter.CurrentMapPosition;
-        
+
         bool foundMapInPath = lastFlagMapPosition.HasValue && playerPosition == lastFlagMapPosition.Value;
         if (!foundMapInPath)
         {
