@@ -20,7 +20,6 @@ public static class DofusPourLesNoobsCluesLoader
 
     public static ICluesDataSource LoadClues(string dplbFilePath)
     {
-        // IMPORTANT: do this before the first await, it MUST be performed in the main thread.
         List<(int Id, string Name)> gamePois = GetGamePois();
 
         DPLBFile parsedFile;

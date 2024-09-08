@@ -1,0 +1,16 @@
+﻿{
+  "runtime": "$(Runtime)",
+  "documentGenerator": {
+    "fromDocument": {
+      "json": "$(Input)"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "{controller}Client",
+      "namespace": "TreasureSolver.Clients",
+      "jsonLibrary": "SystemTextJson",
+      "output": "$(Output)"
+    }
+  }
+}

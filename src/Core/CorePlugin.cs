@@ -51,6 +51,7 @@ public class CorePlugin : DBIPlugin
 
         Harmony.CreateAndPatchAll(typeof(Messaging));
 
+        DBI.Messaging.RegisterListener<UpdateCurrentAccount>();
         DBI.Messaging.RegisterListener<UpdateCurrentPlayer>();
         DBI.Messaging.RegisterListener<UpdateCurrentPlayerMap>();
 

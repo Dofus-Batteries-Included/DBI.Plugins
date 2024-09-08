@@ -59,7 +59,7 @@ public class DofusBatteriesIncludedGameMenu : MonoBehaviour
             Log.LogWarning("Could not find method to assign builder to Tooltip Root. Tooltips won't work.");
         }
 
-        DBI.Player.PlayerChanged += (_, _) => _widgetManagerNeedsRepositioning = true;
+        DBI.Player.CurrentCharacterChangeStarted += (_, _) => _widgetManagerNeedsRepositioning = true;
     }
 
     void Update()

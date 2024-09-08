@@ -51,6 +51,9 @@
         <Reference Include="Ankama.Dofus.Protocol.Game">
             <HintPath>..\Interop\Ankama.Dofus.Protocol.Game.dll</HintPath>
         </Reference>
+        <Reference Include="Ankama.Dofus.Protocol.Connection">
+            <HintPath>..\Interop\Ankama.Dofus.Protocol.Connection.dll</HintPath>
+        </Reference>
         <Reference Include="Ankama.Dofus.Core.DataCenter">
             <HintPath>..\Interop\Ankama.Dofus.Core.DataCenter.dll</HintPath>
         </Reference>

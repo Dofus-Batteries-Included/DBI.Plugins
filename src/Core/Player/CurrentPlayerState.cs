@@ -1,4 +1,5 @@
 ﻿using System;
+using Com.Ankama.Dofus.Server.Game.Protocol.Common;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core.Maps;
@@ -8,13 +9,13 @@ namespace DofusBatteriesIncluded.Core.Player;
 
 public class CurrentPlayerState
 {
-    static readonly ILogger Log = DBI.Logging.Create<UpdateCurrentPlayerMap>();
+    static readonly ILogger Log = DBI.Logging.Create<CurrentPlayerState>();
 
-    public CurrentPlayerState(long characterId, string name, int level)
+    public CurrentPlayerState(Character character)
     {
-        CharacterId = characterId;
-        Name = name;
-        Level = level;
+        CharacterId = character.Id;
+        Name = character.CharacterBasicInformation.Name;
+        Level = character.CharacterBasicInformation.Level;
     }
 
     public long CharacterId { get; }
@@ -31,7 +32,7 @@ public class CurrentPlayerState
         CurrentMapId = mapId;
         CurrentMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(mapId).GetPosition();
 
-        Log.LogDebug("Current player changed map: {Position}", DBI.Player.State.CurrentMapPosition);
+        Log.LogDebug("Current player changed map: {Position}", DBI.Player.CurrentCharacter.CurrentMapPosition);
         MapChanged?.Invoke(this, CurrentMapPosition);
     }
 
@@ -39,6 +40,6 @@ public class CurrentPlayerState
     {
         CurrentCellId = cellId;
 
-        Log.LogDebug("Current player moved, new cell: {Position}", DBI.Player.State.CurrentCellId);
+        Log.LogDebug("Current player moved, new cell: {Position}", DBI.Player.CurrentCharacter.CurrentCellId);
     }
 }

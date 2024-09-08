@@ -13,11 +13,7 @@ public class UpdateCurrentPlayer : IMessageListener<CharacterSelectionEvent>, IM
             return Task.CompletedTask;
         }
 
-        DBI.Player.SetCurrentPlayer(
-            message.Success.Character.Id, 
-            message.Success.Character.CharacterBasicInformation.Name,
-            message.Success.Character.CharacterBasicInformation.Level
-        );
+        DBI.Player.SetCurrentCharacter(message.Success.Character);
         return Task.CompletedTask;
     }
 

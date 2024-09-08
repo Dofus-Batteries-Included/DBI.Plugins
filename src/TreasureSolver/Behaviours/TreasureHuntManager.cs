@@ -10,7 +10,6 @@ using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Core;
-using DofusBatteriesIncluded.Core.Coroutines;
 using DofusBatteriesIncluded.Core.Maps;
 using DofusBatteriesIncluded.Core.Maps.PathFinding;
 using DofusBatteriesIncluded.TreasureSolver.Clues;
@@ -31,6 +30,9 @@ public class TreasureHuntManager : MonoBehaviour
     Coroutine _coroutine;
     readonly Dictionary<int, long> _knownNpcMapsIds = [];
     int? _lookingForNpcId;
+    int? _nextClueId;
+    bool _useCachedMapId;
+    long? _nextClueMapId;
 
     public static void SetLastEvent(TreasureHuntEvent lastEvent)
     {
@@ -56,7 +58,7 @@ public class TreasureHuntManager : MonoBehaviour
         }
     }
 
-    public static void Refresh()
+    public static void Refresh(bool clearCache)
     {
         if (!_instance)
         {
@@ -65,6 +67,11 @@ public class TreasureHuntManager : MonoBehaviour
 
         if (_instance._lastEvent != null)
         {
+            if (clearCache)
+            {
+                _instance._useCachedMapId = false;
+            }
+
             SetLastEvent(_instance._lastEvent);
         }
     }
@@ -75,8 +82,9 @@ public class TreasureHuntManager : MonoBehaviour
     {
         _instance = this;
 
-        DBI.Player.PlayerChanged += (_, state) => { state.MapChanged += (_, _) => { Refresh(); }; };
-        CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(); };
+        DBI.Player.CurrentCharacterChangeStarted += (_, state) => { state.MapChanged += (_, _) => { Refresh(false); }; };
+        CorePlugin.UseScrollActionsChanged += (_, _) => { Refresh(true); };
+        TreasureSolver.CluesServiceChanged += (_, _) => { Refresh(true); };
         DBI.Messaging.GetListener<MapComplementaryInformationEvent>().MessageReceived += (_, mapCurrent) => OnMapChanged(mapCurrent);
     }
 
@@ -100,7 +108,7 @@ public class TreasureHuntManager : MonoBehaviour
 
         if (foundLookingForNpc)
         {
-            Refresh();
+            Refresh(false);
         }
     }
 
@@ -148,6 +156,13 @@ public class TreasureHuntManager : MonoBehaviour
                         }
 
                         int poiId = nextStep.FollowDirectionToPoi.PoiLabelId;
+
+                        if (_nextClueId != poiId)
+                        {
+                            _nextClueId = poiId;
+                            _useCachedMapId = false;
+                        }
+
                         Direction? direction = GetDirection(nextStep.FollowDirectionToPoi.Direction);
                         if (!direction.HasValue)
                         {
@@ -155,11 +170,20 @@ public class TreasureHuntManager : MonoBehaviour
                             yield break;
                         }
 
-                        Task<long?> cluePositionTask = cluesService.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
-                        yield return CoroutineExtensions.WaitForCompletion(cluePositionTask);
-                        long? clueMapId = cluePositionTask.Result;
+                        if (!_useCachedMapId)
+                        {
+                            Task<long?> cluePositionTask = cluesService.FindMapOfNextClue(lastMapId, direction.Value, poiId, CluesMaxDistance);
+                            while (!cluePositionTask.IsCompleted)
+                            {
+                                MarkLoading(step);
+                                yield return new WaitForSecondsRealtime(0.5f);
+                            }
 
-                        bool done = clueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, clueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
+                            _nextClueMapId = cluePositionTask.Result;
+                            _useCachedMapId = true;
+                        }
+
+                        bool done = _nextClueMapId.HasValue ? TryMarkNextPosition(step, lastMapId, _nextClueMapId.Value) : TryMarkUnknownPosition(step, lastMapId, direction.Value);
                         if (done)
                         {
                             yield break;
@@ -259,10 +283,10 @@ public class TreasureHuntManager : MonoBehaviour
 
         string stepMessage = $"[{targetPosition.Value.X},{targetPosition.Value.Y}]";
 
-        if (DBI.Player.State != null)
+        if (DBI.Player.CurrentCharacter != null)
         {
-            long playerMapId = DBI.Player.State.CurrentMapId;
-            Position playerPosition = DBI.Player.State.CurrentMapPosition;
+            long playerMapId = DBI.Player.CurrentCharacter.CurrentMapId;
+            Position playerPosition = DBI.Player.CurrentCharacter.CurrentMapPosition;
             Position? targetMapPosition = mapPositionsRoot.GetMapPositionById(targetMapId)?.GetPosition();
             if (playerMapId == targetMapId || !CorePlugin.UseScrollActions && playerPosition == targetMapPosition)
             {
@@ -286,20 +310,41 @@ public class TreasureHuntManager : MonoBehaviour
 
     static bool TryMarkUnknownPosition(int step, long lastFlagMapId, Direction direction, string text = "Not found")
     {
-        Position playerPosition = DBI.Player.State.CurrentMapPosition;
-        bool foundMapInPath = false;
-        foreach (long map in MapUtils.MoveInDirection(lastFlagMapId, direction).Take(CluesMaxDistance))
+        Position? lastFlagMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(lastFlagMapId)?.GetPosition();
+        Position playerPosition = DBI.Player.CurrentCharacter.CurrentMapPosition;
+        
+        bool foundMapInPath = lastFlagMapPosition.HasValue && playerPosition == lastFlagMapPosition.Value;
+        if (!foundMapInPath)
         {
-            Position? mapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(map)?.GetPosition();
-            if (mapPosition.HasValue && mapPosition.Value == playerPosition)
+            foreach (long map in MapUtils.MoveInDirection(lastFlagMapId, direction).Take(CluesMaxDistance))
             {
-                foundMapInPath = true;
+                Position? mapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(map)?.GetPosition();
+                if (mapPosition.HasValue && mapPosition.Value == playerPosition)
+                {
+                    foundMapInPath = true;
+                    break;
+                }
             }
         }
 
         return foundMapInPath
             ? TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, text)
             : TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, "Player out of search area");
+    }
+
+    static int _loadingDots;
+
+    static bool MarkLoading(int step)
+    {
+        _loadingDots = _loadingDots % 3 + 1;
+        string dots = _loadingDots switch
+        {
+            1 => ".",
+            2 => "..",
+            _ => "..."
+        };
+
+        return TreasureHuntWindowAccessor.TrySetStepAdditionalText(step, $"Loading{dots}");
     }
 
     static Direction? GetDirection(Com.Ankama.Dofus.Server.Game.Protocol.Common.Direction direction) =>
