@@ -34,7 +34,7 @@ foreach ($Project in $Projects)
     echo "Packing project $Project..."
 
     $OtherProjects = $Projects | Where-Object { $_ -ne $Project }
-    $OtherProjectsDll = $OtherProjects | % { "DofusBatteriesIncluded.$_.dll" }
+    $OtherProjectsDll = $OtherProjects | % { "DofusBatteriesIncluded.Plugins.$_.dll" }
 
     $Dir = Join-Path $Output $Project
     $null = MkDir $Dir -Force
