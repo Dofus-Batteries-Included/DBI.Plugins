@@ -32,7 +32,7 @@ public class CurrentPlayerState
         CurrentMapId = mapId;
         CurrentMapPosition = DataCenterModule.GetDataRoot<MapPositionsRoot>().GetMapPositionById(mapId).GetPosition();
 
-        Log.LogDebug("Current player changed map: {Position}", DBI.Player.CurrentCharacter.CurrentMapPosition);
+        Log.LogDebug("Current player changed map: map {MapId} at {Position}", DBI.Player.CurrentCharacter.CurrentMapId, DBI.Player.CurrentCharacter.CurrentMapPosition);
         MapChanged?.Invoke(this, CurrentMapPosition);
     }
 
