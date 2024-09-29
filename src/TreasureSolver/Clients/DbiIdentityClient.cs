@@ -65,6 +65,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
+        /// <summary>
+        /// Register account
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Guid> RegisterAsync(long? accountId, string accountName)
         {
@@ -72,6 +75,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Register account
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Guid> RegisterAsync(long? accountId, string accountName, System.Threading.CancellationToken cancellationToken)
         {
@@ -152,6 +158,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
             }
         }
 
+        /// <summary>
+        /// Refresh API key
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Guid> RefreshApiKeyAsync()
         {
@@ -159,6 +168,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Refresh API key
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Guid> RefreshApiKeyAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -229,6 +241,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
             }
         }
 
+        /// <summary>
+        /// Revoke registration
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task RevokeAsync()
         {
@@ -236,6 +251,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Revoke registration
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task RevokeAsync(System.Threading.CancellationToken cancellationToken)
         {
