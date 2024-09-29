@@ -65,6 +65,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
+        /// <summary>
+        /// Find clues in map
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Clue>> FindCluesInMapAsync(long mapId)
         {
@@ -72,6 +75,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find clues in map
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Clue>> FindCluesInMapAsync(long mapId, System.Threading.CancellationToken cancellationToken)
         {
@@ -145,6 +151,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
             }
         }
 
+        /// <summary>
+        /// Find clues at position
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Clue>> FindCluesAtPositionAsync(int posX, int posY)
         {
@@ -152,6 +161,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find clues at position
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Clue>> FindCluesAtPositionAsync(int posX, int posY, System.Threading.CancellationToken cancellationToken)
         {
@@ -230,6 +242,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
             }
         }
 
+        /// <summary>
+        /// Export clues
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<FileResponse> ExportCluesAsync()
         {
@@ -237,6 +252,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Export clues
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<FileResponse> ExportCluesAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -304,6 +322,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
             }
         }
 
+        /// <summary>
+        /// Register clues
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task RegisterCluesAsync(RegisterCluesRequest request)
         {
@@ -311,6 +332,9 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Register clues
+        /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task RegisterCluesAsync(RegisterCluesRequest request, System.Threading.CancellationToken cancellationToken)
         {
@@ -534,24 +558,30 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
+        /// <summary>
+        /// Find nodes
+        /// </summary>
+        /// <remarks>
+        /// The endpoint is mostly used to understand how FindNodeRequests work. The actual clue search is performed by FindNextClue.
+        /// </remarks>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<FindNextMapResponse> FindNextMapAsync(long startMapId, Direction direction, int clueId)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MapNodeWithPosition>> FindNodesAsync(FindNodeRequest request)
         {
-            return FindNextMapAsync(startMapId, direction, clueId, System.Threading.CancellationToken.None);
+            return FindNodesAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find nodes
+        /// </summary>
+        /// <remarks>
+        /// The endpoint is mostly used to understand how FindNodeRequests work. The actual clue search is performed by FindNextClue.
+        /// </remarks>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FindNextMapResponse> FindNextMapAsync(long startMapId, Direction direction, int clueId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MapNodeWithPosition>> FindNodesAsync(FindNodeRequest request, System.Threading.CancellationToken cancellationToken)
         {
-            if (startMapId == null)
-                throw new System.ArgumentNullException("startMapId");
-
-            if (direction == null)
-                throw new System.ArgumentNullException("direction");
-
-            if (clueId == null)
-                throw new System.ArgumentNullException("clueId");
+            if (request == null)
+                throw new System.ArgumentNullException("request");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -559,18 +589,106 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(request, _settings.Value);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "treasure-solver/{startMapId}/{direction}/{clueId}"
-                    urlBuilder_.Append("treasure-solver/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(startMapId, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(clueId, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "treasure-solver/find-nodes"
+                    urlBuilder_.Append("treasure-solver/find-nodes");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MapNodeWithPosition>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Find next clue
+        /// </summary>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<FindNextMapResponse> FindNextClueAsync(FindNextClueRequest request)
+        {
+            return FindNextClueAsync(request, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find next clue
+        /// </summary>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FindNextMapResponse> FindNextClueAsync(FindNextClueRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(request, _settings.Value);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "treasure-solver/find-next-clue"
+                    urlBuilder_.Append("treasure-solver/find-next-clue");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -598,101 +716,6 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<FindNextMapResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<FindNextPositionResponse> FindNextPositionAsync(int posX, int posY, Direction direction, int clueId)
-        {
-            return FindNextPositionAsync(posX, posY, direction, clueId, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FindNextPositionResponse> FindNextPositionAsync(int posX, int posY, Direction direction, int clueId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (posX == null)
-                throw new System.ArgumentNullException("posX");
-
-            if (posY == null)
-                throw new System.ArgumentNullException("posY");
-
-            if (direction == null)
-                throw new System.ArgumentNullException("direction");
-
-            if (clueId == null)
-                throw new System.ArgumentNullException("clueId");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "treasure-solver/{posX}/{posY}/{direction}/{clueId}"
-                    urlBuilder_.Append("treasure-solver/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(posX, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(posY, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(clueId, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<FindNextPositionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -828,43 +851,91 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
         }
     }
 
+    /// <summary>
+    /// A clue.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Clue
     {
+        /// <summary>
+        /// The unique ID of the clue.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("clueId")]
         public int ClueId { get; set; }
 
+        /// <summary>
+        /// The name of the clue, in all the supported languages.
+        /// <br/>            
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public LocalizedText Name { get; set; } = new LocalizedText();
+        public LocalizedText Name { get; set; }
 
     }
 
+    /// <summary>
+    /// A piece of text in all supported languages.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class LocalizedText
     {
+        /// <summary>
+        /// Text in french.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("french")]
         public string French { get; set; }
 
+        /// <summary>
+        /// Text in english.
+        /// <br/>            
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("english")]
         public string English { get; set; }
+
+        /// <summary>
+        /// Text in spanish.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("spanish")]
         public string Spanish { get; set; }
 
+        /// <summary>
+        /// Text in german.
+        /// <br/>            
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("german")]
         public string German { get; set; }
+
+        /// <summary>
+        /// Text in portuguese.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("portuguese")]
         public string Portuguese { get; set; }
 
     }
 
+    /// <summary>
+    /// Register clues.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class RegisterCluesRequest
     {
+        /// <summary>
+        /// The clues to register.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("clues")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -872,76 +943,414 @@ namespace DofusBatteriesIncluded.Plugins.TreasureSolver.Clients
 
     }
 
+    /// <summary>
+    /// A clue to register.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class RegisterClueRequest
     {
+        /// <summary>
+        /// The unique ID of the map.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("mapId")]
         public long MapId { get; set; }
 
+        /// <summary>
+        /// The unique ID of the clue.
+        /// <br/>            
+        /// </summary>
+
         [System.Text.Json.Serialization.JsonPropertyName("clueId")]
         public int ClueId { get; set; }
+
+        /// <summary>
+        /// Has the clue been found in the given map, or not.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("found")]
         public bool Found { get; set; }
 
     }
 
+    /// <summary>
+    /// A node in a map with its position in the world.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FindNextMapResponse
+    public partial class MapNodeWithPosition : MapNode
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("found")]
-        public bool Found { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("mapId")]
-        public long? MapId { get; set; }
+        /// <summary>
+        /// The coordinates of the corresponding map.
+        /// <br/>            
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("mapPosition")]
         public Position MapPosition { get; set; }
 
     }
 
+    /// <summary>
+    /// 2D position.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Position
     {
+        /// <summary>
+        /// The horizontal coordinate.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("x")]
         public int X { get; set; }
+
+        /// <summary>
+        /// The vertical coordinate.
+        /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("y")]
         public int Y { get; set; }
 
     }
 
+    /// <summary>
+    /// A node in a map.
+    /// <br/>            
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MapNode
+    {
+        /// <summary>
+        /// The unique ID of the node in the world graph.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("nodeId")]
+        public long NodeId { get; set; }
+
+        /// <summary>
+        /// The unique ID of the containing map.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("mapId")]
+        public long MapId { get; set; }
+
+        /// <summary>
+        /// The ID of the zone in the map.
+        /// <br/>Multiple nodes in the same map are identified by their zone ID.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneId")]
+        public int ZoneId { get; set; }
+
+    }
+
+    /// <summary>
+    /// Base class for requests to find a node.
+    /// <br/>            
+    /// </summary>
+    [JsonInheritanceConverter(typeof(FindNodeRequest), "search")]
+    [JsonInheritanceAttribute("by-id", typeof(FindNodeById))]
+    [JsonInheritanceAttribute("by-map", typeof(FindNodeByMap))]
+    [JsonInheritanceAttribute("at-position", typeof(FindNodeAtPosition))]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public abstract partial class FindNodeRequest
+    {
+
+    }
+
+    /// <summary>
+    /// Search for a node by its unique ID.
+    /// <br/>            
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FindNodeById : FindNodeRequest
+    {
+        /// <summary>
+        /// The unique ID of the node.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("nodeId")]
+        public long NodeId { get; set; }
+
+    }
+
+    /// <summary>
+    /// Search for a node in a map.
+    /// <br/>            
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FindNodeByMap : FindNodeRequest
+    {
+        /// <summary>
+        /// The unique ID of the node.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("mapId")]
+        public long MapId { get; set; }
+
+        /// <summary>
+        /// The number of the cell that should be linked to the node.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("cellNumber")]
+        public int? CellNumber { get; set; }
+
+    }
+
+    /// <summary>
+    /// Search for a node at a given position.
+    /// <br/>            
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FindNodeAtPosition : FindNodeRequest
+    {
+        /// <summary>
+        /// The position at which the node should be.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("position")]
+        public Position Position { get; set; }
+
+        /// <summary>
+        /// The number of the cell that should be linked to the node.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("cellNumber")]
+        public int? CellNumber { get; set; }
+
+    }
+
+    /// <summary>
+    /// The map containing the next clue.
+    /// <br/>            
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FindNextMapResponse
+    {
+        /// <summary>
+        /// Has the next map been found.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("found")]
+        public bool Found { get; set; }
+
+        /// <summary>
+        /// The map in which the clue has been found, if any.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("map")]
+        public MapNodeWithPosition Map { get; set; }
+
+        /// <summary>
+        /// The number of maps to traverse to reach the destination.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("distance")]
+        public int? Distance { get; set; }
+
+    }
+
+    /// <summary>
+    /// Search for the next clue in a treasure hunt.
+    /// <br/>            
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FindNextClueRequest
+    {
+        /// <summary>
+        /// The request for the start node.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("start")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public FindNodeRequest Start { get; set; }
+
+        /// <summary>
+        /// The direction in which to look for.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public Direction Direction { get; set; }
+
+        /// <summary>
+        /// The clue to look for.
+        /// <br/>            
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("clueId")]
+        public int ClueId { get; set; }
+
+    }
+
+    /// <summary>
+    /// 2D direction.
+    /// <br/>            
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Direction
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"North")]
+        [System.Runtime.Serialization.EnumMember(Value = @"north")]
         North = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"South")]
+        [System.Runtime.Serialization.EnumMember(Value = @"south")]
         South = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"East")]
+        [System.Runtime.Serialization.EnumMember(Value = @"east")]
         East = 2,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"West")]
+        [System.Runtime.Serialization.EnumMember(Value = @"west")]
         West = 3,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FindNextPositionResponse
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface, AllowMultiple = true)]
+    internal class JsonInheritanceAttribute : System.Attribute
     {
+        public JsonInheritanceAttribute(string key, System.Type type)
+        {
+            Key = key;
+            Type = type;
+        }
 
-        [System.Text.Json.Serialization.JsonPropertyName("found")]
-        public bool Found { get; set; }
+        public string Key { get; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("mapPosition")]
-        public Position MapPosition { get; set; }
+        public System.Type Type { get; }
+    }
 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    internal class JsonInheritanceConverterAttribute : System.Text.Json.Serialization.JsonConverterAttribute
+    {
+        public string DiscriminatorName { get; }
+
+        public JsonInheritanceConverterAttribute(System.Type baseType, string discriminatorName = "discriminator")
+            : base(typeof(JsonInheritanceConverter<>).MakeGenericType(baseType))
+        {
+            DiscriminatorName = discriminatorName;
+        }
+    }
+
+    public class JsonInheritanceConverter<TBase> : System.Text.Json.Serialization.JsonConverter<TBase>
+    {
+        private readonly string _discriminatorName;
+
+        public JsonInheritanceConverter()
+        {
+            var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<JsonInheritanceConverterAttribute>(typeof(TBase));
+            _discriminatorName = attribute?.DiscriminatorName ?? "discriminator";
+        }
+
+        public JsonInheritanceConverter(string discriminatorName)
+        {
+            _discriminatorName = discriminatorName;
+        }
+
+        public string DiscriminatorName { get { return _discriminatorName; } }
+
+        public override TBase Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+        {
+            var document = System.Text.Json.JsonDocument.ParseValue(ref reader);
+            var hasDiscriminator = document.RootElement.TryGetProperty(_discriminatorName, out var discriminator);
+            var subtype = GetDiscriminatorType(document.RootElement, typeToConvert, hasDiscriminator ? discriminator.GetString() : null);
+
+            var bufferWriter = new System.IO.MemoryStream();
+            using (var writer = new System.Text.Json.Utf8JsonWriter(bufferWriter))
+            {
+                document.RootElement.WriteTo(writer);
+            }
+
+            return (TBase)System.Text.Json.JsonSerializer.Deserialize(bufferWriter.ToArray(), subtype, options);
+        }
+
+        public override void Write(System.Text.Json.Utf8JsonWriter writer, TBase value, System.Text.Json.JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+            writer.WriteString(_discriminatorName, GetDiscriminatorValue(value.GetType()));
+
+            var bytes = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes((object)value, options);
+            var document = System.Text.Json.JsonDocument.Parse(bytes);
+            foreach (var property in document.RootElement.EnumerateObject())
+            {
+                property.WriteTo(writer);
+            }
+
+            writer.WriteEndObject();
+        }
+
+        public string GetDiscriminatorValue(System.Type type)
+        {
+            var jsonInheritanceAttributeDiscriminator = GetSubtypeDiscriminator(type);
+            if (jsonInheritanceAttributeDiscriminator != null)
+            {
+                return jsonInheritanceAttributeDiscriminator;
+            }
+
+            return type.Name;
+        }
+
+        protected System.Type GetDiscriminatorType(System.Text.Json.JsonElement jObject, System.Type objectType, string discriminatorValue)
+        {
+            var jsonInheritanceAttributeSubtype = GetObjectSubtype(objectType, discriminatorValue);
+            if (jsonInheritanceAttributeSubtype != null)
+            {
+                return jsonInheritanceAttributeSubtype;
+            }
+
+            if (objectType.Name == discriminatorValue)
+            {
+                return objectType;
+            }
+
+            var typeName = objectType.Namespace + "." + discriminatorValue;
+            var subtype = System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType).Assembly.GetType(typeName);
+            if (subtype != null)
+            {
+                return subtype;
+            }
+
+            throw new System.InvalidOperationException("Could not find subtype of '" + objectType.Name + "' with discriminator '" + discriminatorValue + "'.");
+        }
+
+        private System.Type GetObjectSubtype(System.Type objectType, string discriminator)
+        {
+            foreach (var attribute in System.Reflection.CustomAttributeExtensions.GetCustomAttributes<JsonInheritanceAttribute>(System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType), true))
+            {
+                if (attribute.Key == discriminator)
+                    return attribute.Type;
+            }
+
+            return objectType;
+        }
+
+        private string GetSubtypeDiscriminator(System.Type objectType)
+        {
+            foreach (var attribute in System.Reflection.CustomAttributeExtensions.GetCustomAttributes<JsonInheritanceAttribute>(System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType), true))
+            {
+                if (attribute.Type == objectType)
+                    return attribute.Key;
+            }
+
+            return objectType.Name;
+        }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]

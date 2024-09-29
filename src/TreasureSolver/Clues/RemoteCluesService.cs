@@ -30,8 +30,10 @@ public class RemoteCluesService : ICluesService
             return null;
         }
 
-        FindNextMapResponse result = await treasureSolverClient.FindNextMapAsync(startMapId, mappedDirection.Value, clueId);
-        return result?.MapId;
+        FindNextMapResponse result = await treasureSolverClient.FindNextClueAsync(
+            new FindNextClueRequest { Start = new FindNodeByMap { MapId = startMapId }, Direction = mappedDirection.Value, ClueId = clueId }
+        );
+        return result.Found ? result.Map.MapId : null;
     }
 
     public async Task RegisterCluesAsync(long mapId, params ClueWithStatus[] clues)
