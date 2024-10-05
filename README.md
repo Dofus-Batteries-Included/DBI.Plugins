@@ -1,3 +1,5 @@
+[![Discord](https://img.shields.io/discord/1279846081550618696?label=discord)](https://discord.gg/sNEtjhVMzQ)
+
 # Dofus Batteries Included (DBI) - Plugins
 
 DBI is first and foremost a tool that helps writing plugins for the Unity version of the game Dofus.
