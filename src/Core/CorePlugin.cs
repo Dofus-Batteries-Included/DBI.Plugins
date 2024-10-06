@@ -54,6 +54,7 @@ public class CorePlugin : DBIPlugin
         DBI.Messaging.RegisterListener<UpdateCurrentAccount>();
         DBI.Messaging.RegisterListener<UpdateCurrentPlayer>();
         DBI.Messaging.RegisterListener<UpdateCurrentPlayerMap>();
+        DBI.Messaging.RegisterListener<UpdateCurrentPlayerInventory>();
 
         return Task.CompletedTask;
     }

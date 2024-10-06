@@ -16,11 +16,13 @@ public class CurrentPlayerState
         CharacterId = character.Id;
         Name = character.CharacterBasicInformation.Name;
         Level = character.CharacterBasicInformation.Level;
+        Inventory = new CurrentPlayerInventory();
     }
 
     public long CharacterId { get; }
     public string Name { get; }
     public int Level { get; }
+    public CurrentPlayerInventory Inventory { get; }
     public long CurrentMapId { get; private set; }
     public Position CurrentMapPosition { get; private set; }
     public long CurrentCellId { get; private set; }
