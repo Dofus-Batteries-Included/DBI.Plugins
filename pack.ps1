@@ -46,11 +46,6 @@ foreach ($Project in $Projects)
             continue;
         }
 
-        if ( $OtherProjectsDll.Contains($Filename))
-        {
-            continue;
-        }
-
         echo "Copying $File to $Dir..."
         copy $File $Dir
     }
