@@ -10,7 +10,7 @@ if ($Help)
     exit 0
 }
 
-$Projects = "Core", "TreasureSolver";
+$Projects = @("Core");
 
 echo "> Packing projects: $Projects"
 echo "> Output path: $Output"
