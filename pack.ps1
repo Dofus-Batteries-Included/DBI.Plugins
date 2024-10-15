@@ -10,7 +10,7 @@ if ($Help)
     exit 0
 }
 
-$Projects = "Core", "TreasureSolver";
+$Projects = @("Core");
 
 echo "> Packing projects: $Projects"
 echo "> Output path: $Output"
@@ -42,11 +42,6 @@ foreach ($Project in $Projects)
     {
         $Filename = Split-Path $File -leaf
         if ( $InteropDlls.Contains($Filename))
-        {
-            continue;
-        }
-
-        if ( $OtherProjectsDll.Contains($Filename))
         {
             continue;
         }

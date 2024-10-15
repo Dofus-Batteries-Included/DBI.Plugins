@@ -2,13 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Com.Ankama.Dofus.Server.Connection.Protocol;
-using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
+using DofusBatteriesIncluded.Plugins.Core.Deobfuscation.Protocol;
 using Google.Protobuf;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Microsoft.Extensions.Logging;
-using Message = Com.Ankama.Dofus.Server.Game.Protocol.Message;
 
 namespace DofusBatteriesIncluded.Plugins.Core.Protocol;
 
@@ -18,15 +16,18 @@ public static class Messaging
 
     public static event EventHandler<object> MessageReceived;
 
+    static readonly ObfuscatedMessageReader MessageReader = new();
+    static readonly ObfuscatedResponseReader ResponseReader = new();
+
     [HarmonyPatch(typeof(MessageParser), nameof(MessageParser.ParseFrom), typeof(CodedInputStream))]
     [HarmonyPostfix]
     static void Patch(IMessage __result)
     {
-        Message message = new(__result.Pointer);
+        ObfuscatedMessage message = MessageReader.GetMessage(__result);
 
-        switch (message.ContentCase)
+        switch (message.ContentOneOfCase)
         {
-            case Message.ContentOneofCase.Event:
+            case ObfuscatedMessageContentOneOfCase.Event:
             {
                 string json = message.ToString();
                 JsonDocument obj = JsonDocument.Parse(json);
@@ -41,13 +42,13 @@ public static class Messaging
                 }
                 break;
             }
-            case Message.ContentOneofCase.Response:
+            case ObfuscatedMessageContentOneOfCase.Response:
             {
                 HandleResponseMessage(message);
                 break;
             }
-            case Message.ContentOneofCase.None:
-            case Message.ContentOneofCase.Request:
+            case ObfuscatedMessageContentOneOfCase.None:
+            case ObfuscatedMessageContentOneOfCase.Request:
             default:
             {
                 string json = message.ToString();
@@ -124,38 +125,60 @@ public static class Messaging
         return null;
     }
 
-    static void HandleResponseMessage(Message message)
+    static void HandleResponseMessage(ObfuscatedMessage message)
     {
-        Response response = new(message.content_.Pointer);
+        IntPtr? pointer = message.ContentPointer;
+        if (!pointer.HasValue)
+        {
+            Log.LogError("Could not find content of response message.\n{Response}.", message);
+            return;
+        }
+
+        ObfuscatedResponse response = ResponseReader.GetResponse(pointer.Value);
+        if (response == null)
+        {
+            Log.LogError("Could not read response.\n{Response}", message);
+            return;
+        }
 
         object content;
-        switch (response.ContentCase)
+        switch (response.GetContentOneOfCaseInResponse)
         {
-            case Response.ContentOneofCase.Identification:
+            case ObfuscatedResponseContentOneOfCase.Identification:
                 content = response.Identification;
                 break;
-            case Response.ContentOneofCase.Pong:
+            case ObfuscatedResponseContentOneOfCase.Pong:
                 content = response.Pong;
                 break;
-            case Response.ContentOneofCase.SelectServer:
+            case ObfuscatedResponseContentOneOfCase.SelectServer:
                 content = response.SelectServer;
                 break;
-            case Response.ContentOneofCase.ForceAccount:
+            case ObfuscatedResponseContentOneOfCase.ForceAccount:
                 content = response.ForceAccount;
                 break;
-            case Response.ContentOneofCase.FriendList:
+            case ObfuscatedResponseContentOneOfCase.FriendList:
                 content = response.FriendList;
                 break;
-            case Response.ContentOneofCase.AcquaintanceServersResponse:
+            case ObfuscatedResponseContentOneOfCase.AcquaintanceServersResponse:
                 content = response.AcquaintanceServersResponse;
                 break;
-            case Response.ContentOneofCase.None:
+            case ObfuscatedResponseContentOneOfCase.None:
             default:
                 Log.LogError("Could not find type of response.");
                 return;
         }
 
+        if (content == null)
+        {
+            Log.LogError("Response content is null.\n{Response}.", response);
+            return;
+        }
+
         Log.LogInformation("Received response of type {Type}.", content.GetType());
         MessageReceived?.Invoke(null, content);
     }
+}
+
+class TreasureHuntEvent
+{
 }

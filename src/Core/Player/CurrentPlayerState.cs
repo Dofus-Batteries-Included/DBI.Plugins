@@ -1,5 +1,4 @@
 ﻿using System;
-using Com.Ankama.Dofus.Server.Game.Protocol.Common;
 using Core.DataCenter;
 using Core.DataCenter.Metadata.World;
 using DofusBatteriesIncluded.Plugins.Core.Maps;
@@ -14,8 +13,8 @@ public class CurrentPlayerState
     public CurrentPlayerState(Character character)
     {
         CharacterId = character.Id;
-        Name = character.CharacterBasicInformation.Name;
-        Level = character.CharacterBasicInformation.Level;
+        Name = character.Name;
+        Level = character.Level;
     }
 
     public long CharacterId { get; }
