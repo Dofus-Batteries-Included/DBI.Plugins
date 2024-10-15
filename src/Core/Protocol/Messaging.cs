@@ -2,13 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Com.Ankama.Dofus.Server.Connection.Protocol;
-using Com.Ankama.Dofus.Server.Game.Protocol.Treasure.Hunt;
 using Google.Protobuf;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Microsoft.Extensions.Logging;
-using Message = Com.Ankama.Dofus.Server.Game.Protocol.Message;
 
 namespace DofusBatteriesIncluded.Plugins.Core.Protocol;
 
@@ -158,4 +156,44 @@ public static class Messaging
         Log.LogInformation("Received response of type {Type}.", content.GetType());
         MessageReceived?.Invoke(null, content);
     }
+}
+
+class TreasureHuntEvent
+{
+}
+
+class Response(IntPtr contentPointer)
+{
+    public enum ContentOneofCase
+    {
+        Identification,
+        Pong,
+        SelectServer,
+        ForceAccount,
+        FriendList,
+        AcquaintanceServersResponse,
+        None
+    }
+
+    public ContentOneofCase ContentCase { get; set; }
+    public object Identification { get; set; }
+    public object Pong { get; set; }
+    public object SelectServer { get; set; }
+    public object ForceAccount { get; set; }
+    public object FriendList { get; set; }
+    public object AcquaintanceServersResponse { get; set; }
+}
+
+class Message(IntPtr pointer)
+{
+    public enum ContentOneofCase
+    {
+        Event,
+        Response,
+        None,
+        Request
+    }
+
+    public ContentOneofCase ContentCase { get; set; }
+    public Il2CppObjectBase content_;
 }

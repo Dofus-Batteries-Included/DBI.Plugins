@@ -1,6 +1,4 @@
 ﻿using System;
-using Com.Ankama.Dofus.Server.Connection.Protocol;
-using Com.Ankama.Dofus.Server.Game.Protocol.Common;
 using DofusBatteriesIncluded.Plugins.Core.Player;
 using Microsoft.Extensions.Logging;
 
@@ -41,4 +39,24 @@ public class DBIPlayer
     }
 
     internal void OnPlayerChangeCompleted() => CurrentCharacterChangeCompleted?.Invoke(this, CurrentCharacter);
+}
+
+public class IdentificationResponse
+{
+    public ResultOneofCase ResultCase { get; set; }
+    public Types.Success Success { get; set; }
+
+    public enum ResultOneofCase
+    {
+        Success
+    }
+
+    public class Types
+    {
+        public class Success
+        {
+            public long AccountId { get; set; }
+            public string AccountNickname { get; set; }
+        }
+    }
 }
