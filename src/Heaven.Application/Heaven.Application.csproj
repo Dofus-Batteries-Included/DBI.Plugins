@@ -36,15 +36,14 @@
 
     <ItemGroup>
         <Protobuf Include="../protos/*.proto" GrpcServices="Server"/>
+        <Protobuf Update="..\protos\plugins.proto">
+          <Link>protos\plugins.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Heaven.Abstractions\Heaven.Abstractions.csproj" />
       <ProjectReference Include="..\TestPlugin\TestPlugin.csproj" />
     </ItemGroup>
-
-    <PropertyGroup>
-        <MinVerTagPrefix>v</MinVerTagPrefix>
-    </PropertyGroup>
 
 </Project>

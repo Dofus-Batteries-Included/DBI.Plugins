@@ -28,8 +28,4 @@
       </PackageReference>
     </ItemGroup>
 
-    <PropertyGroup>
-        <MinVerTagPrefix>v</MinVerTagPrefix>
-    </PropertyGroup>
-
 </Project>

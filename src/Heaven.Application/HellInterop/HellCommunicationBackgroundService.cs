@@ -1,8 +1,6 @@
 ﻿using System.IO.Pipes;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace DBI.Heaven.HellInterop;
+namespace DBI.Heaven.Application.HellInterop;
 
 public class HellCommunicationBackgroundService : BackgroundService
 {

@@ -1,6 +1,6 @@
 ﻿namespace DBI.Heaven.Application.Configuration;
 
-public class RuntimeConfigurationEntry(string name)
+public abstract class PluginConfigurationEntry(string name)
 {
     /// <summary>
     ///     The name of the entry
@@ -18,7 +18,7 @@ public class RuntimeConfigurationEntry(string name)
     public bool Hidden { get; init; }
 }
 
-public class RuntimeConfigurationEntry<T>(string name) : RuntimeConfigurationEntry(name)
+public class PluginConfigurationEntry<T>(string name) : PluginConfigurationEntry(name)
 {
     /// <summary>
     ///     The possible values of this entry.

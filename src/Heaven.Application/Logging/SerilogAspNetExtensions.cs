@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Events;
 
-namespace DBI.Heaven.Logging;
+namespace DBI.Heaven.Application.Logging;
 
 static class SerilogAspNetExtensions
 {

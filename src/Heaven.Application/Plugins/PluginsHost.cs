@@ -14,10 +14,10 @@ class PluginsHost(IOptions<PluginsOptions> pluginsOptions, PluginInstancesServic
         {
             DbiPlugin plugin = InstantiatePlugin(_scope.ServiceProvider, pluginType);
 
-            RuntimeConfigurationBuilder configurationBuilder = new();
+            PluginConfigurationBuilder configurationBuilder = new();
             plugin.SetupConfiguration(configurationBuilder);
 
-            RuntimeConfiguration configuration = configurationBuilder.Build();
+            PluginConfiguration configuration = configurationBuilder.Build();
             PluginInstance instance = new(plugin, configuration);
 
             pluginInstances.RegisterInstance(instance);

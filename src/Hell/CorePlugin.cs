@@ -4,6 +4,7 @@ using DBI.Hell.Configuration;
 using DBI.Hell.HeavenInterop;
 using DBI.Hell.Helpers;
 using DBI.Hell.Logging;
+using DBI.Hell.Plugins;
 using DBI.Hell.UI;
 using DBI.Hell.UI.Dialogs;
 using DBI.Hell.UI.Menus;
@@ -22,6 +23,8 @@ class CorePlugin : BasePlugin
     public static Guid? DofusBuildId { get; private set; }
     public static CoreLogging Logging { get; private set; } = new();
     public static GameClientInformation GameClientInformation { get; private set; } = GameClientInformation.CreateFromOwnProcess();
+    public static HeavenHandle Heaven { get; private set; } = new();
+    public static CorePlugins Plugins { get; private set; } = new();
     public static CoreConfiguration Configuration { get; private set; } = new();
 
     public override void Load()
@@ -29,32 +32,8 @@ class CorePlugin : BasePlugin
         ILogger logger = Logging.Create<CorePlugin>();
 
         Enabled = Configuration.Configure("General", "Enabled", true).WithDescription("Enable or disable all Dofus Batteries Included plugins.").Hide().Bind();
-
-        DofusBuildId = BuildMetadataHelpers.ReadDofusBuildId(logger);
-        if (!DofusBuildId.HasValue)
-        {
-            logger.LogWarning("Could not determine actual build ID.");
-        }
-        else
-        {
-            logger.LogDebug("Found actual build ID: {Actual}.", DofusBuildId.Value);
-        }
-
-        Guid? expectedBuildId = BuildMetadataHelpers.GetExpectedBuildIdFromAssemblyAttribute<CorePlugin>();
-        if (!expectedBuildId.HasValue)
-        {
-            logger.LogWarning("Expected build ID was not provided, the plugin will run even if it has not been built against to correct game files.");
-        }
-        else
-        {
-            logger.LogDebug("Found expected build ID: {Expected}.", expectedBuildId.Value);
-        }
-
-        string expectedVersion = BuildMetadataHelpers.GetExpectedVersionFromAssemblyAttribute<CorePlugin>();
-        if (!string.IsNullOrWhiteSpace(expectedVersion))
-        {
-            logger.LogDebug("Found expected version: {Expected}.", expectedVersion);
-        }
+        DofusBuildId = ReadDofusBuildId(logger);
+        Guid? expectedBuildId = ReadExpectedBuildId(logger);
 
         if (expectedBuildId.HasValue && DofusBuildId.HasValue && expectedBuildId.Value != DofusBuildId.Value)
         {
@@ -73,6 +52,58 @@ class CorePlugin : BasePlugin
             return;
         }
 
+        InitializeCoreComponents();
+        LoadAsync().GetAwaiter().GetResult();
+    }
+
+    async Task LoadAsync()
+    {
+        if (!await Heaven.ConnectToHeavenAsync())
+        {
+            return;
+        }
+
+        await Plugins.LoadFromHeavenAsync();
+    }
+
+    static Guid? ReadExpectedBuildId(ILogger logger)
+    {
+        Guid? expectedBuildId = BuildMetadataHelpers.GetExpectedBuildIdFromAssemblyAttribute<CorePlugin>();
+        if (!expectedBuildId.HasValue)
+        {
+            logger.LogWarning("Expected build ID was not provided, the plugin will run even if it has not been built against to correct game files.");
+        }
+        else
+        {
+            logger.LogDebug("Found expected build ID: {Expected}.", expectedBuildId.Value);
+        }
+
+        string expectedVersion = BuildMetadataHelpers.GetExpectedVersionFromAssemblyAttribute<CorePlugin>();
+        if (!string.IsNullOrWhiteSpace(expectedVersion))
+        {
+            logger.LogDebug("Found expected version: {Expected}.", expectedVersion);
+        }
+
+        return expectedBuildId;
+    }
+
+    static Guid? ReadDofusBuildId(ILogger logger)
+    {
+        Guid? value = BuildMetadataHelpers.ReadDofusBuildId(logger);
+        if (!DofusBuildId.HasValue)
+        {
+            logger.LogWarning("Could not determine actual build ID.");
+        }
+        else
+        {
+            logger.LogDebug("Found actual build ID: {Actual}.", DofusBuildId.Value);
+        }
+
+        return value;
+    }
+
+    void InitializeCoreComponents()
+    {
         ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedConfirmationDialog>();
         ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();
 
@@ -81,14 +112,5 @@ class CorePlugin : BasePlugin
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
         menu.AddButton("Dofus Batteries Included", _ => window.Toggle());
-
-        logger.LogInformation("Starting Heaven...");
-        if (!HeavenInteroperability.StartHeaven().GetAwaiter().GetResult())
-        {
-            logger.LogInformation("Could not start Heaven.");
-            return;
-        }
-
-        logger.LogInformation("Heaven started successfully.");
     }
 }

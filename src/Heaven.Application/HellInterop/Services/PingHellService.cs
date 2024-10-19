@@ -1,7 +1,7 @@
 ﻿using DBI.Hell.HeavenInterop;
 using Grpc.Core;
 
-namespace DBI.Heaven.HellInterop.Services;
+namespace DBI.Heaven.Application.HellInterop.Services;
 
 public class PingHellService : Ping.PingBase
 {

@@ -3,8 +3,8 @@ using Heaven.Abstractions;
 
 namespace DBI.Heaven.Application.Plugins;
 
-class PluginInstance(DbiPlugin plugin, RuntimeConfiguration configuration)
+class PluginInstance(DbiPlugin plugin, PluginConfiguration configuration)
 {
     public DbiPlugin Plugin { get; } = plugin;
-    public RuntimeConfiguration Configuration { get; } = configuration;
+    public PluginConfiguration Configuration { get; } = configuration;
 }

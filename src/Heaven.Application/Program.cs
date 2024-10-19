@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
+using DBI.Heaven.Application.HellInterop.Services;
+using DBI.Heaven.Application.Logging;
 using DBI.Heaven.Application.Plugins;
-using DBI.Heaven.HellInterop.Services;
-using DBI.Heaven.Logging;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -36,6 +36,7 @@ try
     WebApplication app = builder.Build();
 
     app.MapGrpcService<PingHellService>();
+    app.MapGrpcService<PluginsHellService>();
 
     ILogger logger = app.Services.GetRequiredService<ILogger<Program>>();
 

@@ -96,8 +96,4 @@
         />
     </Target>
 
-    <PropertyGroup>
-        <MinVerTagPrefix>v</MinVerTagPrefix>
-    </PropertyGroup>
-
 </Project>

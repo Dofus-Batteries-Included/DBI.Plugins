@@ -39,7 +39,7 @@ public abstract class DbiPlugin
         await OnStopAsync(cancellationToken);
     }
 
-    public virtual void SetupConfiguration(IRuntimeConfigurationBuilder configurationBuilder) { }
+    public virtual void SetupConfiguration(IPluginConfigurationBuilder configurationBuilder) { }
     protected virtual Task OnStartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     protected virtual Task OnStopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

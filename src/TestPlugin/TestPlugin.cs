@@ -16,12 +16,12 @@ public class TestPlugin : DbiPlugin
         _logger = logger;
     }
 
-    public override void SetupConfiguration(IRuntimeConfigurationBuilder configurationBuilder)
+    public override void SetupConfiguration(IPluginConfigurationBuilder configurationBuilder)
     {
-        IRuntimeConfigurationCategoryBuilder maCategorie = configurationBuilder.AddCategory("Ma catégorie");
+        IPluginConfigurationCategoryBuilder maCategorie = configurationBuilder.AddCategory("Ma catégorie");
         maCategorie.AddEntry<bool>("Mon entrée").WithDescription("Ma super entrée!").WithDefaultValue(true);
 
-        IRuntimeConfigurationCategoryBuilder monAutreCategorie = configurationBuilder.AddCategory("Mon autre catégorie");
+        IPluginConfigurationCategoryBuilder monAutreCategorie = configurationBuilder.AddCategory("Mon autre catégorie");
     }
 
     protected override Task OnStartAsync(CancellationToken cancellationToken)
