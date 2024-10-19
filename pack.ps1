@@ -10,7 +10,7 @@ if ($Help)
     exit 0
 }
 
-$Projects = "Core", "TreasureSolver";
+$Projects = "Hell";
 
 echo "> Packing projects: $Projects"
 echo "> Output path: $Output"
@@ -46,7 +46,7 @@ foreach ($Project in $Projects)
             continue;
         }
 
-        if ( $OtherProjectsDll.Contains($Filename))
+        if ( -not $OtherProjectsDll -eq $Null -and $OtherProjectsDll.Contains($Filename))
         {
             continue;
         }
