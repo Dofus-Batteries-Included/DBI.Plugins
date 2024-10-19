@@ -73,31 +73,22 @@ class CorePlugin : BasePlugin
             return;
         }
 
-        LoadAsync(logger).ConfigureAwait(false);
-    }
+        ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedConfirmationDialog>();
+        ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();
 
-    async Task LoadAsync(ILogger logger)
-    {
+        AddComponent<DofusBatteriesIncludedDialogs>();
+        CoreWindow window = AddComponent<CoreWindow>();
+        DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
+
+        menu.AddButton("Dofus Batteries Included", _ => window.Toggle());
+
         logger.LogInformation("Starting Heaven...");
-        if (!await HeavenInteroperability.StartHeaven())
+        if (!HeavenInteroperability.StartHeaven().GetAwaiter().GetResult())
         {
             logger.LogInformation("Could not start Heaven.");
             return;
         }
 
         logger.LogInformation("Heaven started successfully.");
-
-        // for whatever reason, we need to wait a bit to avoid crashes
-        await Task.Delay(1000);
-
-        ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedConfirmationDialog>();
-        AddComponent<DofusBatteriesIncludedDialogs>();
-
-        ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();
-        CoreWindow window = AddComponent<CoreWindow>();
-
-        DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
-
-        menu.AddButton("Dofus Batteries Included", _ => window.Toggle());
     }
 }

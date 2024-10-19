@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Heaven", "Heaven", "{4A5E8B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hell", "Hell\Hell.csproj", "{482D42BB-AFAD-4364-B40A-DC79151AAE57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heaven", "Heaven\Heaven.csproj", "{7857FF38-0206-429C-8456-72CF5A2CD1F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heaven.Application", "Heaven.Application\Heaven.Application.csproj", "{7857FF38-0206-429C-8456-72CF5A2CD1F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heaven.Launcher", "Heaven.Launcher\Heaven.Launcher.csproj", "{B57C54D8-FDEE-4EB5-8E2E-BE142F8F56D5}"
 EndProject

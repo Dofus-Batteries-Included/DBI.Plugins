@@ -50,7 +50,7 @@ echo "Done packing Hell."
 echo ""
 echo "- Packing Heaven..."
 
-$SourceHeavenDir = "src/Heaven/bin/$Configuration/net8.0/publish"
+$SourceHeavenDir = "src/Heaven.Application/bin/$Configuration/net8.0/publish"
 echo "Copying $SourceHeavenDir to $Output..."
 copy "$SourceHeavenDir/*" "$Output" -Recurse -Force
 
