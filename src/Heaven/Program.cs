@@ -8,14 +8,15 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 Log.Logger = new LoggerConfiguration().ConfigureSerilog().CreateBootstrapLogger();
 
-if (AnotherInstanceIsRunning())
-{
-    Log.Logger.Warning("Another instance of Heaven has been detected, this instance will exit.");
-    return;
-}
 
 try
 {
+    if (AnotherInstanceIsRunning())
+    {
+        Log.Logger.Warning("Another instance of Heaven has been detected, this instance will exit.");
+        return;
+    }
+
     HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
     builder.Services.AddSerilog(opt => { opt.ConfigureSerilog().ReadFrom.Configuration(builder.Configuration); });

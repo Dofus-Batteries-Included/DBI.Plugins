@@ -22,7 +22,7 @@ static class SerilogAspNetExtensions
         string logFile = Path.Join(thisAssemblyDirectory, "log", "Heaven.log");
 
         return configuration.WriteTo.Console(outputTemplate: ConsoleTemplate)
-            .WriteTo.File(logFile, outputTemplate: FileTemplate)
+            .WriteTo.File(logFile, outputTemplate: FileTemplate, shared: true)
             .Enrich.WithProperty("SourceContext", "Bootstrap")
             .MinimumLevel.Is(DefaultLoggingLevel)
             .MinimumLevel.Override("System.Net.Http.HttpClient", InfrastructureLoggingLevel)
