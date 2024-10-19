@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DBI.Hell.Logging;
 
-public class DofusBatteriesIncludedLoggerProvider : ILoggerProvider
+class DofusBatteriesIncludedLoggerProvider : ILoggerProvider
 {
     readonly ManualLogSource _log = Logger.CreateLogSource("DBI");
 

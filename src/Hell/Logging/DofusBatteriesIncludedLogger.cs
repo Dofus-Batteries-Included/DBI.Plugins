@@ -4,7 +4,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace DBI.Hell.Logging;
 
-public class DofusBatteriesIncludedLogger : ILogger
+class DofusBatteriesIncludedLogger : ILogger
 {
     readonly ManualLogSource _log;
     readonly string _name;
