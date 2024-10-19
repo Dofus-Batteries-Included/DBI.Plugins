@@ -17,7 +17,7 @@ namespace DBI.Hell;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Dofus.exe")]
-class CorePlugin : BasePlugin
+class Hell : BasePlugin
 {
     public static bool Enabled { get; private set; }
     public static Guid? DofusBuildId { get; private set; }
@@ -29,7 +29,7 @@ class CorePlugin : BasePlugin
 
     public override void Load()
     {
-        ILogger logger = Logging.Create<CorePlugin>();
+        ILogger logger = Logging.Create<Hell>();
 
         Enabled = Configuration.Configure("General", "Enabled", true).WithDescription("Enable or disable all Dofus Batteries Included plugins.").Hide().Bind();
         DofusBuildId = ReadDofusBuildId(logger);
@@ -68,7 +68,7 @@ class CorePlugin : BasePlugin
 
     static Guid? ReadExpectedBuildId(ILogger logger)
     {
-        Guid? expectedBuildId = BuildMetadataHelpers.GetExpectedBuildIdFromAssemblyAttribute<CorePlugin>();
+        Guid? expectedBuildId = BuildMetadataHelpers.GetExpectedBuildIdFromAssemblyAttribute<Hell>();
         if (!expectedBuildId.HasValue)
         {
             logger.LogWarning("Expected build ID was not provided, the plugin will run even if it has not been built against to correct game files.");
@@ -78,7 +78,7 @@ class CorePlugin : BasePlugin
             logger.LogDebug("Found expected build ID: {Expected}.", expectedBuildId.Value);
         }
 
-        string expectedVersion = BuildMetadataHelpers.GetExpectedVersionFromAssemblyAttribute<CorePlugin>();
+        string expectedVersion = BuildMetadataHelpers.GetExpectedVersionFromAssemblyAttribute<Hell>();
         if (!string.IsNullOrWhiteSpace(expectedVersion))
         {
             logger.LogDebug("Found expected version: {Expected}.", expectedVersion);

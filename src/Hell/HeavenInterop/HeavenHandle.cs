@@ -9,7 +9,7 @@ class HeavenHandle
 {
     const string HeavenLauncherExecutableName = "Heaven Launcher.exe";
 
-    readonly ILogger _logger = CorePlugin.Logging.Create("HeavenHandle");
+    readonly ILogger _logger = Hell.Logging.Create("HeavenHandle");
     public GrpcChannel Channel { get; private set; }
 
     public async Task<bool> ConnectToHeavenAsync()
@@ -18,7 +18,7 @@ class HeavenHandle
 
         AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
-        string thisAssemblyPath = typeof(CorePlugin).Assembly.Location;
+        string thisAssemblyPath = typeof(Hell).Assembly.Location;
         string thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
         string heavenLauncherPath = Path.Join(thisAssemblyDirectory, HeavenLauncherExecutableName);
 

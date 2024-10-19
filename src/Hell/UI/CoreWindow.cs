@@ -18,7 +18,7 @@ namespace DBI.Hell.UI;
 
 public class CoreWindow : DofusBatteriesIncludedWindow
 {
-    static readonly ILogger Log = CorePlugin.Logging.Create<DofusBatteriesIncludedWindow>();
+    static readonly ILogger Log = Hell.Logging.Create<DofusBatteriesIncludedWindow>();
     protected override string Name => "Dofus Batteries Included";
 
     readonly Dictionary<Category, CategorySummaryItem> _items = [];
@@ -144,11 +144,11 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         };
         visualElement.Add(label);
 
-        foreach (Plugin plugin in CorePlugin.Plugins.GetPlugins())
+        foreach (Plugin plugin in Hell.Plugins.GetPlugins())
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            CoreConfiguration.Entry<bool> enabledConfigurationEntry = CorePlugin.Configuration.Get<bool>(plugin.Info.Name, "Enabled");
+            CoreConfiguration.Entry<bool> enabledConfigurationEntry = Hell.Configuration.Get<bool>(plugin.Info.Name, "Enabled");
             if (enabledConfigurationEntry != null)
             {
                 BoolOption data = CreateOptionData(enabledConfigurationEntry);
@@ -181,7 +181,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             }
         };
 
-        CoreConfiguration.Entry[] entries = CorePlugin.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
+        CoreConfiguration.Entry[] entries = Hell.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
         IEnumerable<string> categories = entries.Select(e => e.Category).Distinct();
 
         foreach (string category in categories)

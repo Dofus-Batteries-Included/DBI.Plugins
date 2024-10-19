@@ -11,7 +11,7 @@ namespace DBI.Hell.UI.Windows;
 
 public class DofusBatteriesIncludedWindow : MonoBehaviour
 {
-    static readonly ILogger Log = CorePlugin.Logging.Create<DofusBatteriesIncludedWindow>();
+    static readonly ILogger Log = Hell.Logging.Create<DofusBatteriesIncludedWindow>();
 
     UIDocument _uiDocument;
     VisualElement _container;

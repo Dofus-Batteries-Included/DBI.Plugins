@@ -7,16 +7,16 @@ namespace DBI.Hell.Helpers;
 
 public static class ApplicationHelpers
 {
-    static readonly ILogger Log = CorePlugin.Logging.Create(typeof(ApplicationHelpers));
+    static readonly ILogger Log = Hell.Logging.Create(typeof(ApplicationHelpers));
 
     public static void RestartAllClients()
     {
-        Process[] clients = Process.GetProcessesByName("Dofus").Where(p => p.MainModule?.FileName == CorePlugin.GameClientInformation.ExecutablePath).ToArray();
+        Process[] clients = Process.GetProcessesByName("Dofus").Where(p => p.MainModule?.FileName == Hell.GameClientInformation.ExecutablePath).ToArray();
         Log.LogInformation("All the game clients will be closed: {Clients}.", string.Join(", ", clients.Select(c => c.MainWindowTitle)));
 
-        if (!string.IsNullOrWhiteSpace(CorePlugin.GameClientInformation.LauncherPath))
+        if (!string.IsNullOrWhiteSpace(Hell.GameClientInformation.LauncherPath))
         {
-            Process.Start(CorePlugin.GameClientInformation.LauncherPath);
+            Process.Start(Hell.GameClientInformation.LauncherPath);
         }
         else
         {
@@ -25,7 +25,7 @@ public static class ApplicationHelpers
 
         foreach (Process client in clients)
         {
-            if (client.Id == CorePlugin.GameClientInformation.ProcessId)
+            if (client.Id == Hell.GameClientInformation.ProcessId)
             {
                 continue;
             }

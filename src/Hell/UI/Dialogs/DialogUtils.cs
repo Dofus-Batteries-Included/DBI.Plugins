@@ -5,7 +5,7 @@ namespace DBI.Hell.UI.Dialogs;
 
 public static class DialogUtils
 {
-    static readonly ILogger Log = CorePlugin.Logging.Create(typeof(DialogUtils));
+    static readonly ILogger Log = Hell.Logging.Create(typeof(DialogUtils));
 
     public static void OpenConfirmationDialog(Action<ConfirmationDialogConfiguration> configure = null)
     {

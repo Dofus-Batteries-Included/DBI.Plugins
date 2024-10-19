@@ -41,7 +41,7 @@ public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
         return this;
     }
 
-    public T Bind() => CorePlugin.Configuration.Bind(this);
+    public T Bind() => Hell.Configuration.Bind(this);
 
     public class Callback
     {

@@ -13,7 +13,7 @@ namespace DBI.Hell.UI.Menus;
 
 public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 {
-    static readonly ILogger Log = CorePlugin.Logging.Create<DofusBatteriesIncludedGameMenu>();
+    static readonly ILogger Log = Hell.Logging.Create<DofusBatteriesIncludedGameMenu>();
     readonly MethodInfo _tooltipRootUseBuilderMethod = typeof(TooltipRoot).GetProperty(nameof(TooltipRoot.m_tooltipService), BindingFlags.Instance | BindingFlags.Public)
         ?.PropertyType.GetMethods()
         .FirstOrDefault(

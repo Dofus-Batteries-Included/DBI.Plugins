@@ -7,7 +7,7 @@ namespace DBI.Hell;
 // ReSharper disable once InconsistentNaming
 public class GameClientInformation
 {
-    static readonly ILogger Log = CorePlugin.Logging.Create(typeof(ApplicationHelpers));
+    static readonly ILogger Log = Hell.Logging.Create(typeof(ApplicationHelpers));
 
     GameClientInformation(Process process, string launcherPath)
     {

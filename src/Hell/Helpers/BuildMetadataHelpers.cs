@@ -48,7 +48,7 @@ public class BuildMetadataHelpers
 
     static string FindDofusExePath()
     {
-        string current = Path.GetDirectoryName(Path.GetFullPath(typeof(CorePlugin).Assembly.Location));
+        string current = Path.GetDirectoryName(Path.GetFullPath(typeof(Hell).Assembly.Location));
         while (current != null && !File.Exists(Path.Join(current, "Dofus.exe")))
         {
             current = Path.GetDirectoryName(current);
