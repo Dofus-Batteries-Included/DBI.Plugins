@@ -1,30 +1,40 @@
 ﻿using System.Diagnostics;
+using DBI.Heaven.HellInterop.Services;
 using DBI.Heaven.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 Log.Logger = new LoggerConfiguration().ConfigureSerilog().CreateBootstrapLogger();
 
-
 try
 {
-    if (AnotherInstanceIsRunning())
+    Process? alreadyRunningMainInstance = FindAlreadyRunningMainInstance();
+    if (alreadyRunningMainInstance != null)
     {
-        Log.Logger.Warning("Another instance of Heaven has been detected, this instance will exit.");
+        await Console.Error.WriteLineAsync($"main:{alreadyRunningMainInstance.Id}");
+
+        Log.Logger.Warning("Another instance of Heaven has been detected: {Process}.", alreadyRunningMainInstance);
+        Log.Logger.Warning("Exitting...");
         return;
     }
 
-    HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+    Process currentProcess = Process.GetCurrentProcess();
+    string socketPath = Path.Combine(Path.GetTempPath(), $"dbi_server_socket_{currentProcess.Id}.tmp");
+
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSerilog(opt => { opt.ConfigureSerilog().ReadFrom.Configuration(builder.Configuration); });
 
-    IHost app = builder.Build();
+    builder.WebHost.ConfigureKestrel(serverOptions => { serverOptions.ListenUnixSocket(socketPath, listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; }); });
+
+    builder.Services.AddGrpc();
+
+    WebApplication app = builder.Build();
+
+    app.MapGrpcService<PingHellService>();
 
     ILogger logger = app.Services.GetRequiredService<ILogger<Program>>();
-
 
     logger.LogInformation("Hello!");
     await app.RunAsync();
@@ -41,10 +51,10 @@ finally
 
 return;
 
-bool AnotherInstanceIsRunning()
+Process? FindAlreadyRunningMainInstance()
 {
     Process currentProcess = Process.GetCurrentProcess();
     string currentProcessName = currentProcess.ProcessName;
-    Process[] processes = Process.GetProcessesByName(currentProcessName).Where(p => p.Id != currentProcess.Id).ToArray();
-    return processes.Length > 0;
+    IEnumerable<Process> processes = Process.GetProcessesByName(currentProcessName).Where(p => p.Id != currentProcess.Id);
+    return processes.FirstOrDefault();
 }

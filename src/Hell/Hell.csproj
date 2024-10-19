@@ -18,10 +18,24 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+        <PackageReference Include="Google.Protobuf" Version="3.27.0"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.66.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.66.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="ILRepack" Version="2.0.35">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="MinVer" Version="5.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -66,6 +80,22 @@
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
         </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="HeavenInterop/Protos/*.proto" GrpcServices="Client"/>
+    </ItemGroup>
+
+    <Target Name="ILMerge" AfterTargets="Publish">
+        <Exec WorkingDirectory="$(ProjectDir)$(PublishDir)"
+              Command="$(ILRepack) --union --parallel --out:DBI.Hell.merged.dll ^
+                        DBI.Hell.dll ^
+                        Grpc.Core.Api.dll ^
+                        Grpc.Net.Client.dll ^
+                        Grpc.Net.Common.dll ^
+                        Microsoft.Extensions.Logging.Abstractions.dll ^
+                      "
+        />
+    </Target>
 
     <PropertyGroup>
         <MinVerTagPrefix>v</MinVerTagPrefix>

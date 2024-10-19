@@ -13,15 +13,18 @@ class CorePlugin : BasePlugin
 {
     public static readonly CoreLogging Logging = new();
 
-    static HeavenHandle? _heavenHandle;
-    public static HeavenHandle Handle => _heavenHandle ?? throw new InvalidOperationException("Heaven not started yet.");
-
     public override void Load()
     {
         ILogger logger = Logging.Create<CorePlugin>();
 
-        logger.LogInformation("Starting heaven...");
-        _heavenHandle = HeavenInteroperability.StartHeaven();
-        logger.LogInformation("Heaven started successfully.");
+        logger.LogInformation("Starting Heaven...");
+        if (HeavenInteroperability.StartHeaven().GetAwaiter().GetResult())
+        {
+            logger.LogInformation("Heaven started successfully.");
+        }
+        else
+        {
+            logger.LogInformation("Could not start Heaven.");
+        }
     }
 }
