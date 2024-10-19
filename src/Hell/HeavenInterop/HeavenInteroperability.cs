@@ -25,21 +25,61 @@ static class HeavenInteroperability
             throw new InvalidOperationException($"Could not find heaven launcher at {heavenLauncherPath}.");
         }
 
-        Process heavenLauncherProcess = new();
-        heavenLauncherProcess.StartInfo.FileName = heavenLauncherPath;
-        heavenLauncherProcess.StartInfo.CreateNoWindow = true;
-        heavenLauncherProcess.StartInfo.ErrorDialog = true;
-        heavenLauncherProcess.StartInfo.RedirectStandardOutput = true;
-        heavenLauncherProcess.StartInfo.RedirectStandardError = true;
-        heavenLauncherProcess.ErrorDataReceived += (_, args) => { Logger.LogError("Heaven Launcher: {Error}", args.Data); };
-
-        if (!heavenLauncherProcess.Start())
+        if (!StartHeavenLauncher(heavenLauncherPath, out Process heavenLauncherProcess))
         {
             throw new InvalidOperationException($"Could not start heaven launcher executable at {heavenLauncherPath}.");
         }
 
-        heavenLauncherProcess.BeginErrorReadLine();
+        int? heavenProcessId = await ReadHeavenProcessId(heavenLauncherProcess);
+        if (!heavenProcessId.HasValue)
+        {
+            return false;
+        }
 
+        string socketPath = Path.Combine(Path.GetTempPath(), $"dbi_server_socket_{heavenProcessId}.tmp");
+        _channel = CreateChannel(socketPath);
+        Logger.LogInformation("Heaven interoperability socket configured: {Socket}.", socketPath);
+
+        const int maxAttempts = 3;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                await SendPingAsync();
+                return true;
+            }
+            catch (Exception exn)
+            {
+                Logger.LogError(exn, "Error when trying to contact Heaven (attempt {Attempt}/{MaxAttempt}).", attempt, maxAttempts);
+                await Task.Delay(1000);
+            }
+        }
+
+        return false;
+    }
+
+    static bool StartHeavenLauncher(string path, out Process process)
+    {
+        process = new Process();
+        process.StartInfo.FileName = path;
+        process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.ErrorDialog = true;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
+        process.ErrorDataReceived += (_, args) => { Logger.LogError("Heaven Launcher: {Error}", args.Data); };
+
+        bool started = process.Start();
+
+        if (started)
+        {
+            process.BeginErrorReadLine();
+        }
+
+        return started;
+    }
+
+    static async Task<int?> ReadHeavenProcessId(Process heavenLauncherProcess)
+    {
         int? heavenProcessId = null;
         do
         {
@@ -80,27 +120,7 @@ static class HeavenInteroperability
         } while (!heavenLauncherProcess.HasExited);
 
         Logger.LogInformation("Heaven Launcher has exited with code {ExitCode}.", heavenLauncherProcess.ExitCode);
-
-        if (!heavenProcessId.HasValue)
-        {
-            return false;
-        }
-
-        string socketPath = Path.Combine(Path.GetTempPath(), $"dbi_server_socket_{heavenProcessId}.tmp");
-        _channel = CreateChannel(socketPath);
-        Logger.LogInformation("Heaven interoperability socket configured: {Socket}.", socketPath);
-
-        try
-        {
-            SendPing().GetAwaiter().GetResult();
-        }
-        catch (Exception exn)
-        {
-            Logger.LogError(exn, "Error when trying to contact Heaven.");
-            return false;
-        }
-
-        return true;
+        return heavenProcessId;
     }
 
     static GrpcChannel CreateChannel(string socketPath)
@@ -121,7 +141,7 @@ static class HeavenInteroperability
         );
     }
 
-    static async Task SendPing()
+    static async Task SendPingAsync()
     {
         if (_channel == null)
         {
