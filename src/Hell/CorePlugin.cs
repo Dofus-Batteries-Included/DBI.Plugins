@@ -87,6 +87,9 @@ class CorePlugin : BasePlugin
 
         logger.LogInformation("Heaven started successfully.");
 
+        // for whatever reason, we need to wait a bit to avoid crashes
+        await Task.Delay(1000);
+
         ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedConfirmationDialog>();
         AddComponent<DofusBatteriesIncludedDialogs>();
 
