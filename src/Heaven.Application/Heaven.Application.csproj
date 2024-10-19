@@ -6,10 +6,10 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>DBI.Heaven</AssemblyName>
-        <RootNamespace>DBI.Heaven</RootNamespace>
+        <AssemblyName>DBI.Heaven.Application</AssemblyName>
+        <RootNamespace>DBI.Heaven.Application</RootNamespace>
         <Title>Dofus Batteries Included - Heaven</Title>
-        <Product>DBI.Heaven</Product>
+        <Product>Heaven</Product>
         <Authors>Ismail Bennani</Authors>
         <Description>Application hosting all the Dofus Batteries Included plugins.</Description>
         <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</PackageProjectUrl>

@@ -8,6 +8,17 @@
         <Nullable>enable</Nullable>
         <AssemblyName>DBI.Heaven.Launcher</AssemblyName>
         <RootNamespace>DBI.Heaven.Launcher</RootNamespace>
+        <Title>Dofus Batteries Included - Heaven Launcher</Title>
+        <Product>Heaven Launcher</Product>
+        <Authors>Ismail Bennani</Authors>
+        <Description>Launcher for Heaven, the Dofus Batteries Included that hosts all the plugins.</Description>
+        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</RepositoryUrl>
+        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI.Plugins/main/LICENSE</PackageLicense>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
 </Project>
