@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using BepInEx;
 using DofusBatteriesIncluded.Plugins.Core.Behaviours;
-using DofusBatteriesIncluded.Plugins.Core.Player;
 using DofusBatteriesIncluded.Plugins.Core.Protocol;
 using DofusBatteriesIncluded.Plugins.Core.UI;
 using DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
@@ -48,12 +47,6 @@ public class CorePlugin : DBIPlugin
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
         menu.AddButton("Dofus Batteries Included", evt => window.Toggle());
-
-        Harmony.CreateAndPatchAll(typeof(Messaging));
-
-        DBI.Messaging.RegisterListener<UpdateCurrentAccount>();
-        DBI.Messaging.RegisterListener<UpdateCurrentPlayer>();
-        DBI.Messaging.RegisterListener<UpdateCurrentPlayerMap>();
 
         return Task.CompletedTask;
     }
