@@ -4,7 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace DBI.Heaven.Application.Plugins;
 
-class PluginsHost(IOptions<PluginsOptions> pluginsOptions, PluginInstancesService pluginInstances, IServiceScopeFactory scopeFactory) : IHostedService, IDisposable
+class PluginsHost(
+    IOptions<PluginsOptions> pluginsOptions,
+    PluginInstancesService pluginInstances,
+    IServiceScopeFactory scopeFactory,
+    ILogger<PluginsHost> logger
+) : IHostedService, IDisposable
 {
     readonly IServiceScope _scope = scopeFactory.CreateScope();
 
@@ -22,7 +27,21 @@ class PluginsHost(IOptions<PluginsOptions> pluginsOptions, PluginInstancesServic
 
             pluginInstances.RegisterInstance(instance);
 
-            await plugin.StartAsync(cancellationToken);
+            try
+            {
+                instance.Started = true;
+                instance.FailedToStart = false;
+                instance.FailedToStartReason = null;
+
+                await plugin.StartAsync(cancellationToken);
+            }
+            catch (Exception exn)
+            {
+                logger.LogError(exn, "Could not start plugin {Plugin}.", plugin);
+                instance.Started = false;
+                instance.FailedToStart = true;
+                instance.FailedToStartReason = exn.Message;
+            }
         }
     }
 
@@ -30,6 +49,7 @@ class PluginsHost(IOptions<PluginsOptions> pluginsOptions, PluginInstancesServic
     {
         foreach (PluginInstance instance in pluginInstances.GetInstances())
         {
+            instance.Started = false;
             await instance.Plugin.StopAsync(cancellationToken);
         }
     }

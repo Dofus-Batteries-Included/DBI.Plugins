@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+import "Plugin.proto";
+
+message GetPluginsResponse {
+  repeated Plugin plugins = 1;
+}

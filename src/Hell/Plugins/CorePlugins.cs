@@ -1,4 +1,4 @@
-﻿using DBI.Hell.HeavenInterop;
+﻿using DBI.HellHeavenInterop;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +12,7 @@ public class CorePlugins
 
     public async Task LoadFromHeavenAsync()
     {
-        HeavenInterop.Plugins.PluginsClient client = new(CorePlugin.Heaven.Channel);
+        HellHeavenInterop.Plugins.PluginsClient client = new(CorePlugin.Heaven.Channel);
         GetPluginsResponse plugins = await client.GetPluginsAsync(new Empty());
 
         _plugins.Clear();
@@ -23,4 +23,6 @@ public class CorePlugins
             Logger.LogInformation("Found plugin {DisplayName} ({Name}).", plugin.Info.DisplayName, plugin.Info.Name);
         }
     }
+
+    public IEnumerable<Plugin> GetPlugins() => _plugins.Values;
 }

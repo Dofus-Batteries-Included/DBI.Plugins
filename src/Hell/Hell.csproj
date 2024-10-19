@@ -81,7 +81,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="../protos/*.proto" GrpcServices="Client"/>
+        <Protobuf Include="../protos/**/*.proto" AdditionalImportDirs="../protos/models;../protos/requests;../protos/responses" GrpcServices="Client"/>
     </ItemGroup>
 
     <Target Name="ILMerge" AfterTargets="Publish">

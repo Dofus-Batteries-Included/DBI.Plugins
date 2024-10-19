@@ -6,6 +6,7 @@ using Core.UILogic.Config.OptionElement;
 using DBI.Hell.Configuration;
 using DBI.Hell.UI.Dialogs;
 using DBI.Hell.UI.Windows;
+using DBI.HellHeavenInterop;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -143,11 +144,11 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         };
         visualElement.Add(label);
 
-        /*foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        foreach (Plugin plugin in CorePlugin.Plugins.GetPlugins())
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            CoreConfiguration.Entry<bool> enabledConfigurationEntry = DBI.Configuration.Get<bool>(plugin.Name, "Enabled");
+            CoreConfiguration.Entry<bool> enabledConfigurationEntry = CorePlugin.Configuration.Get<bool>(plugin.Info.Name, "Enabled");
             if (enabledConfigurationEntry != null)
             {
                 BoolOption data = CreateOptionData(enabledConfigurationEntry);
@@ -158,14 +159,14 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             category.Init(
                 new CategoryData
                 {
-                    name = $"{plugin.Name} v{plugin.Version}", options = options, canBeOpened = false, notResettable = options.Count == 0, noAccountNeeded = true
+                    name = $"{plugin.Info.DisplayName} v{plugin.Info.Version}", options = options, canBeOpened = false, notResettable = options.Count == 0, noAccountNeeded = true
                 },
                 true
             );
             visualElement.Add(category);
 
             AddStatusLineToCategory(plugin, category);
-        }*/
+        }
 
         return visualElement;
     }
@@ -388,25 +389,31 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         container.Add(element);
     }
 
-    /*static void AddStatusLineToCategory(DBIPlugin plugin, OptionCategory category)
+    static void AddStatusLineToCategory(Plugin plugin, OptionCategory category)
     {
         VisualElement container = category.Q("ctr_categoryContent");
-        switch (plugin.Status)
+        switch (plugin.Status.State)
         {
-            case PluginStatus.Running:
+            case PluginState.Running:
                 AddLine(container, FigmaIcons.radioOn, Color.green, "Running", DofusUiConstants.TextWhite100);
                 break;
-            case PluginStatus.FailedToStart:
-                AddLine(container, FigmaIcons.circleCross, Color.red, "Failed to start", DofusUiConstants.TextLightRed100);
+            case PluginState.FailedToStart:
+                AddLine(
+                    container,
+                    FigmaIcons.circleCross,
+                    Color.red,
+                    string.IsNullOrWhiteSpace(plugin.Status.FailedToStartReason) ? "Failed to start." : $"Failed to start: {plugin.Status.FailedToStartReason}",
+                    DofusUiConstants.TextLightRed100
+                );
                 break;
-            case PluginStatus.NotStarted:
+            case PluginState.NotStarted:
                 AddLine(container, FigmaIcons.radioOff, Color.gray, "Not started", DofusUiConstants.TextWhite65);
                 break;
             default:
                 AddLine(container, FigmaIcons.questionMark, "Unknown status");
                 break;
         }
-    }*/
+    }
 
     public enum Category
     {

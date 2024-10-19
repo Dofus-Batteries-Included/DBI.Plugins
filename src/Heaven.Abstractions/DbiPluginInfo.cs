@@ -48,4 +48,6 @@ public class DbiPluginInfo
     ///     This value is informational and indicates to the user the game version corresponding to the build ID.
     /// </summary>
     public string? ExpectedGameVersion { get; init; }
+
+    public override string ToString() => $"{DisplayName} ({Name})";
 }

@@ -35,10 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="../protos/*.proto" GrpcServices="Server"/>
-        <Protobuf Update="..\protos\plugins.proto">
-          <Link>protos\plugins.proto</Link>
-        </Protobuf>
+        <Protobuf Include="../protos/**/*.proto" AdditionalImportDirs="../protos/models;../protos/requests;../protos/responses" GrpcServices="Server"/>
     </ItemGroup>
 
     <ItemGroup>

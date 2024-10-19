@@ -1,0 +1,14 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+import "google/protobuf/empty.proto";
+import "PluginStatus.proto";
+import "ConfigurePluginRequest.proto";
+import "GetPluginsResponse.proto";
+
+service Plugins {
+  rpc GetPlugins (google.protobuf.Empty) returns (GetPluginsResponse);
+  rpc ConfigurePlugin (ConfigurePluginRequest) returns (google.protobuf.Empty);
+}

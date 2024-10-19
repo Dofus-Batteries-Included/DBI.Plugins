@@ -1,16 +1,16 @@
 ﻿using DBI.Heaven.Application.Configuration;
 using DBI.Heaven.Application.Plugins;
-using DBI.Hell.HeavenInterop;
+using DBI.HellHeavenInterop;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Heaven.Abstractions;
-using PluginConfiguration = DBI.Hell.HeavenInterop.PluginConfiguration;
+using PluginConfiguration = DBI.HellHeavenInterop.PluginConfiguration;
 using PluginConfigurationCategory = DBI.Heaven.Application.Configuration.PluginConfigurationCategory;
 using PluginConfigurationEntry = DBI.Heaven.Application.Configuration.PluginConfigurationEntry;
 
 namespace DBI.Heaven.Application.HellInterop.Services;
 
-class PluginsHellService(PluginInstancesService plugins) : Hell.HeavenInterop.Plugins.PluginsBase
+class PluginsHellService(PluginInstancesService plugins) : HellHeavenInterop.Plugins.PluginsBase
 {
     public override Task<GetPluginsResponse> GetPlugins(Empty request, ServerCallContext context)
     {
@@ -24,12 +24,29 @@ class PluginsHellService(PluginInstancesService plugins) : Hell.HeavenInterop.Pl
         return Task.FromResult(result);
     }
 
-    static Plugin ConvertPlugin(PluginInstance instance) => new() { Info = ConvertInfo(instance.Plugin.Info), Configuration = ConvertConfiguration(instance.Configuration) };
+    static Plugin ConvertPlugin(PluginInstance instance) =>
+        new()
+        {
+            Info = ConvertInfo(instance.Plugin.Info),
+            Status = ConvertStatus(instance),
+            Configuration = ConvertConfiguration(instance.Configuration)
+        };
 
     static PluginInfo ConvertInfo(DbiPluginInfo pluginInfo) =>
         new()
         {
             Name = pluginInfo.Name, DisplayName = pluginInfo.DisplayName, Version = pluginInfo.Version.ToString()
+        };
+
+    static PluginStatus ConvertStatus(PluginInstance instance) =>
+        new()
+        {
+            State = instance.FailedToStart
+                ? PluginState.FailedToStart
+                : instance.Started
+                    ? PluginState.Running
+                    : PluginState.NotStarted,
+            FailedToStartReason = instance.FailedToStartReason ?? ""
         };
 
     static PluginConfiguration ConvertConfiguration(Configuration.PluginConfiguration configuration)
@@ -44,9 +61,9 @@ class PluginsHellService(PluginInstancesService plugins) : Hell.HeavenInterop.Pl
         return result;
     }
 
-    static Hell.HeavenInterop.PluginConfigurationCategory ConvertConfigurationCategory(PluginConfigurationCategory category)
+    static HellHeavenInterop.PluginConfigurationCategory ConvertConfigurationCategory(PluginConfigurationCategory category)
     {
-        Hell.HeavenInterop.PluginConfigurationCategory result = new() { Name = category.Name };
+        HellHeavenInterop.PluginConfigurationCategory result = new() { Name = category.Name };
 
         foreach (PluginConfigurationEntry entry in category.GetEntries())
         {
@@ -56,19 +73,19 @@ class PluginsHellService(PluginInstancesService plugins) : Hell.HeavenInterop.Pl
         return result;
     }
 
-    static Hell.HeavenInterop.PluginConfigurationEntry ConvertConfigurationEntry(PluginConfigurationEntry entry) =>
+    static HellHeavenInterop.PluginConfigurationEntry ConvertConfigurationEntry(PluginConfigurationEntry entry) =>
         entry switch
         {
-            PluginConfigurationEntry<bool> boolEntry => new Hell.HeavenInterop.PluginConfigurationEntry
+            PluginConfigurationEntry<bool> boolEntry => new HellHeavenInterop.PluginConfigurationEntry
             {
                 Name = entry.Name, Description = entry.Description, BoolEntry = new PluginConfigurationBoolEntry { DefaultValue = boolEntry.DefaultValue }
             },
-            PluginConfigurationEntry<string> stringEntry => new Hell.HeavenInterop.PluginConfigurationEntry
+            PluginConfigurationEntry<string> stringEntry => new HellHeavenInterop.PluginConfigurationEntry
             {
                 Name = entry.Name,
                 Description = entry.Description,
                 StringEntry = new PluginConfigurationStringEntry { DefaultValue = stringEntry.DefaultValue, PossibleValues = { stringEntry.PossibleValues } }
             },
-            _ => new Hell.HeavenInterop.PluginConfigurationEntry { Name = entry.Name, Description = entry.Description }
+            _ => new HellHeavenInterop.PluginConfigurationEntry { Name = entry.Name, Description = entry.Description }
         };
 }

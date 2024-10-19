@@ -19,7 +19,7 @@ public abstract class DbiPlugin
     {
         if (Started)
         {
-            Logger.LogInformation("Plugin {DisplayName} ({Name}) is already started.", Info.DisplayName, Info.Name);
+            Logger.LogInformation("Plugin {Info} is already started.", Info);
             return;
         }
 
@@ -31,7 +31,7 @@ public abstract class DbiPlugin
     {
         if (!Started)
         {
-            Logger.LogInformation("Plugin {DisplayName} ({Name}) is not started yet.", Info.DisplayName, Info.Name);
+            Logger.LogInformation("Plugin {Info} is not started yet.", Info);
             return;
         }
 
@@ -42,4 +42,6 @@ public abstract class DbiPlugin
     public virtual void SetupConfiguration(IPluginConfigurationBuilder configurationBuilder) { }
     protected virtual Task OnStartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     protected virtual Task OnStopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public override string ToString() => $"{Info}";
 }
