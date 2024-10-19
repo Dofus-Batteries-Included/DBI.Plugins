@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP;
 using DBI.Hell.Configuration;
 using DBI.Hell.HeavenInterop;
+using DBI.Hell.Helpers;
 using DBI.Hell.Logging;
 using DBI.Hell.UI;
 using DBI.Hell.UI.Dialogs;
@@ -17,8 +18,9 @@ namespace DBI.Hell;
 [BepInProcess("Dofus.exe")]
 class CorePlugin : BasePlugin
 {
-    public bool Enabled { get; private set; }
-    public Guid? DofusBuildId { get; private set; }
+    public static bool Enabled { get; private set; }
+    public static Guid? DofusBuildId { get; private set; }
+    public static GameClientInformation GameClientInformation { get; private set; } = GameClientInformation.CreateFromOwnProcess();
     public static CoreLogging Logging { get; private set; } = new();
     public static CoreConfiguration Configuration { get; private set; } = new();
 
@@ -28,7 +30,7 @@ class CorePlugin : BasePlugin
 
         Enabled = Configuration.Configure("General", "Enabled", true).WithDescription("Enable or disable all Dofus Batteries Included plugins.").Hide().Bind();
 
-        DofusBuildId = ReadDofusBuildId(logger);
+        DofusBuildId = BuildMetadataHelpers.ReadDofusBuildId(logger);
         if (!DofusBuildId.HasValue)
         {
             logger.LogWarning("Could not determine actual build ID.");
@@ -36,6 +38,39 @@ class CorePlugin : BasePlugin
         else
         {
             logger.LogDebug("Found actual build ID: {Actual}.", DofusBuildId.Value);
+        }
+
+        Guid? expectedBuildId = BuildMetadataHelpers.GetExpectedBuildIdFromAssemblyAttribute<CorePlugin>();
+        if (!expectedBuildId.HasValue)
+        {
+            logger.LogWarning("Expected build ID was not provided, the plugin will run even if it has not been built against to correct game files.");
+        }
+        else
+        {
+            logger.LogDebug("Found expected build ID: {Expected}.", expectedBuildId.Value);
+        }
+
+        string expectedVersion = BuildMetadataHelpers.GetExpectedVersionFromAssemblyAttribute<CorePlugin>();
+        if (!string.IsNullOrWhiteSpace(expectedVersion))
+        {
+            logger.LogDebug("Found expected version: {Expected}.", expectedVersion);
+        }
+
+        if (expectedBuildId.HasValue && DofusBuildId.HasValue && expectedBuildId.Value != DofusBuildId.Value)
+        {
+            logger.LogInformation(
+                "Expected game build ID doesn't match actual build ID: {Expected} != {Actual}. "
+                + "DBI won't start, please download the version of the plugin that matches the version of the game.",
+                expectedBuildId.Value,
+                DofusBuildId.Value
+            );
+            return;
+        }
+
+        if (!Enabled)
+        {
+            logger.LogInformation("Dofus Batteries Included is disabled.");
+            return;
         }
 
         LoadAsync(logger).ConfigureAwait(false);
@@ -60,53 +95,6 @@ class CorePlugin : BasePlugin
 
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
-        menu.AddButton("Dofus Batteries Included", evt => window.Toggle());
-    }
-
-    static Guid? ReadDofusBuildId(ILogger logger)
-    {
-        const string bootConfigFilePathRelativeToDofusExe = "Dofus_Data/boot.config";
-        string dofusExePath = FindDofusExePath();
-        string bootConfigPath = Path.Join(dofusExePath, bootConfigFilePathRelativeToDofusExe);
-        if (!File.Exists(bootConfigPath))
-        {
-            logger.LogWarning("Could not find boot.config, looked at: {Path}", bootConfigPath);
-            return null;
-        }
-
-        logger.LogDebug("Found boot.config at {Path}", bootConfigPath);
-
-        string[] lines = File.ReadAllLines(bootConfigPath);
-        Dictionary<string, string> props = new();
-        foreach (string line in lines)
-        {
-            string[] parts = line.Split('=');
-            if (parts.Length != 2)
-            {
-                continue;
-            }
-
-            props[parts[0]] = parts[1];
-        }
-
-        string guidStr = props.GetValueOrDefault("build-guid");
-        if (!Guid.TryParse(guidStr, out Guid guid))
-        {
-            logger.LogWarning("Could not find build-guid in boot.config file (path: {Path})", bootConfigPath);
-            return null;
-        }
-
-        return guid;
-    }
-
-    static string FindDofusExePath()
-    {
-        string current = Path.GetDirectoryName(Path.GetFullPath(typeof(CorePlugin).Assembly.Location));
-        while (current != null && !File.Exists(Path.Join(current, "Dofus.exe")))
-        {
-            current = Path.GetDirectoryName(current);
-        }
-
-        return current;
+        menu.AddButton("Dofus Batteries Included", _ => window.Toggle());
     }
 }

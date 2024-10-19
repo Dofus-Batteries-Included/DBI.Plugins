@@ -1,6 +1,6 @@
 ﻿using Core.UILogic.UIConsts;
 
-namespace DBI.Hell;
+namespace DBI.Hell.UI;
 
 class DofusUiConstants
 {
