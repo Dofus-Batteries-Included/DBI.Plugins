@@ -20,6 +20,13 @@ public class GameClientInformation
     public string ExecutablePath { get; }
     public string LauncherPath { get; }
 
+    internal static GameClientInformation CreateFromOwnProcess()
+    {
+        Process ownProcess = Process.GetCurrentProcess();
+        string findLauncherPath = FindLauncherPath();
+        return new GameClientInformation(ownProcess, findLauncherPath);
+    }
+
     static string FindLauncherPath()
     {
         Process launcherProcess = Process.GetProcessesByName("Ankama Launcher").FirstOrDefault();
@@ -32,11 +39,5 @@ public class GameClientInformation
         }
         Log.LogInformation("Found launcher path: {Path}.", path);
         return path;
-    }
-
-    internal static GameClientInformation CreateFromOwnProcess()
-    {
-        Process ownProcess = Process.GetCurrentProcess();
-        return new GameClientInformation(ownProcess, FindLauncherPath());
     }
 }

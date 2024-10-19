@@ -20,8 +20,8 @@ class CorePlugin : BasePlugin
 {
     public static bool Enabled { get; private set; }
     public static Guid? DofusBuildId { get; private set; }
-    public static GameClientInformation GameClientInformation { get; private set; } = GameClientInformation.CreateFromOwnProcess();
     public static CoreLogging Logging { get; private set; } = new();
+    public static GameClientInformation GameClientInformation { get; private set; } = GameClientInformation.CreateFromOwnProcess();
     public static CoreConfiguration Configuration { get; private set; } = new();
 
     public override void Load()
