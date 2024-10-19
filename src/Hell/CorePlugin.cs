@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 namespace DBI.Hell;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-class CorePlugin
+public class CorePlugin
 {
-    public static CoreLogging Logging = new();
+    public static readonly CoreLogging Logging = new();
 
     protected void Load()
     {
