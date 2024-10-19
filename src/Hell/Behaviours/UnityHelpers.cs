@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
-namespace DofusBatteriesIncluded.Plugins.Core.Behaviours;
+namespace DBI.Hell.Behaviours;
 
 public static class UnityHelpers
 {

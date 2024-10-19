@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Core.Engine.Options;
+﻿using Core.Engine.Options;
 using Core.UILogic.Components;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
 using Core.UILogic.Config.OptionElement;
-using DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
-using DofusBatteriesIncluded.Plugins.Core.UI.Windows;
+using DBI.Hell.Configuration;
+using DBI.Hell.UI.Dialogs;
+using DBI.Hell.UI.Windows;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Action = System.Action;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using Enum = System.Enum;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Plugins.Core.UI;
+namespace DBI.Hell.UI;
 
 public class CoreWindow : DofusBatteriesIncludedWindow
 {
-    static readonly ILogger Log = DBI.Logging.Create<DofusBatteriesIncludedWindow>();
+    static readonly ILogger Log = CorePlugin.Logging.Create<DofusBatteriesIncludedWindow>();
     protected override string Name => "Dofus Batteries Included";
 
     readonly Dictionary<Category, CategorySummaryItem> _items = [];
@@ -63,20 +59,32 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         window.style.width = new Length(50, Length.Unit.Percent);
         window.style.height = new Length(50, Length.Unit.Percent);
 
-        VisualElement container = new();
-        container.style.display = DisplayStyle.Flex;
-        container.style.flexDirection = FlexDirection.Row;
-        container.style.height = new Length(100, Length.Unit.Percent);
+        VisualElement container = new()
+        {
+            style =
+            {
+                display = DisplayStyle.Flex,
+                flexDirection = FlexDirection.Row,
+                height = new Length(100, Length.Unit.Percent)
+            }
+        };
         window.content.Add(container);
 
-        VisualElement sidePanel = new();
-        sidePanel.style.display = DisplayStyle.Flex;
-        sidePanel.style.flexDirection = FlexDirection.Column;
-        sidePanel.style.width = new Length(30, Length.Unit.Percent);
-        sidePanel.style.height = new Length(100, Length.Unit.Percent);
+        VisualElement sidePanel = new()
+        {
+            style =
+            {
+                display = DisplayStyle.Flex,
+                flexDirection = FlexDirection.Column,
+                width = new Length(30, Length.Unit.Percent),
+                height = new Length(100, Length.Unit.Percent)
+            }
+        };
         sidePanel.classList.Add("backgroundColor_background_medium90");
-        ScrollView leftScrollView = new();
-        leftScrollView.showHorizontal = false;
+        ScrollView leftScrollView = new()
+        {
+            showHorizontal = false
+        };
 
         _generalItem = CreateItem(Category.General, sidePanel);
         _settingsItem = CreateItem(Category.Settings, sidePanel);
@@ -84,9 +92,14 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         sidePanel.Add(leftScrollView);
         container.Add(sidePanel);
 
-        ScrollView rightScrollView = new();
-        rightScrollView.style.flexGrow = 1;
-        rightScrollView.showHorizontal = false;
+        ScrollView rightScrollView = new()
+        {
+            style =
+            {
+                flexGrow = 1
+            },
+            showHorizontal = false
+        };
 
         _generalTab = CreateGeneralTab();
         rightScrollView.Add(_generalTab);
@@ -99,29 +112,42 @@ public class CoreWindow : DofusBatteriesIncludedWindow
 
     VisualElement CreateGeneralTab()
     {
-        VisualElement visualElement = new();
-        visualElement.style.display = DisplayStyle.None;
+        VisualElement visualElement = new()
+        {
+            style =
+            {
+                display = DisplayStyle.None
+            }
+        };
 
         OptionCategory pluginsHeader = new();
         pluginsHeader.Init(new CategoryData { name = "Plugins" }, false);
         visualElement.Add(pluginsHeader);
 
-        SectionHeader label = new();
-        label.style.width = new Length(100, Length.Unit.Percent);
-        label.title = "Enabling or disabling a plugin requires a restart of the game.";
-        label.isActivated = false;
-        label.isOpen = true;
-        label.isSelected = false;
-        label.canBeOpened = false;
-        label.clickable.active = false;
-        label.noBorder = true;
+        SectionHeader label = new()
+        {
+            style =
+            {
+                width = new Length(100, Length.Unit.Percent)
+            },
+            title = "Enabling or disabling a plugin requires a restart of the game.",
+            isActivated = false,
+            isOpen = true,
+            isSelected = false,
+            canBeOpened = false,
+            clickable =
+            {
+                active = false
+            },
+            noBorder = true
+        };
         visualElement.Add(label);
 
-        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        /*foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            DBIConfiguration.Entry<bool> enabledConfigurationEntry = DBI.Configuration.Get<bool>(plugin.Name, "Enabled");
+            CoreConfiguration.Entry<bool> enabledConfigurationEntry = DBI.Configuration.Get<bool>(plugin.Name, "Enabled");
             if (enabledConfigurationEntry != null)
             {
                 BoolOption data = CreateOptionData(enabledConfigurationEntry);
@@ -139,29 +165,34 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             visualElement.Add(category);
 
             AddStatusLineToCategory(plugin, category);
-        }
+        }*/
 
         return visualElement;
     }
 
     VisualElement CreateSettingsTab()
     {
-        DBIConfiguration.Entry[] entries = DBI.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
-        IEnumerable<string> categories = entries.Select(e => e.Category).Distinct();
+        VisualElement visualElement = new()
+        {
+            style =
+            {
+                display = DisplayStyle.None
+            }
+        };
 
-        VisualElement visualElement = new();
-        visualElement.style.display = DisplayStyle.None;
+        CoreConfiguration.Entry[] entries = CorePlugin.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
+        IEnumerable<string> categories = entries.Select(e => e.Category).Distinct();
 
         foreach (string category in categories)
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            IEnumerable<DBIConfiguration.Entry> entriesInCategory = entries.Where(e => e.Category == category);
-            foreach (DBIConfiguration.Entry entry in entriesInCategory)
+            IEnumerable<CoreConfiguration.Entry> entriesInCategory = entries.Where(e => e.Category == category);
+            foreach (CoreConfiguration.Entry entry in entriesInCategory)
             {
                 switch (entry)
                 {
-                    case DBIConfiguration.Entry<bool> boolEntry:
+                    case CoreConfiguration.Entry<bool> boolEntry:
                     {
                         BoolOption option = CreateOptionData(boolEntry);
                         options.Add(new IOptionData(option.Pointer));
@@ -216,23 +247,23 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         SelectCategory(Category.General);
 
         _pluginsEnabledInitial.Clear();
-        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
-        {
-            _pluginsEnabledInitial[plugin.Name] = plugin.Enabled;
-        }
+        // foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        // {
+        //     _pluginsEnabledInitial[plugin.Name] = plugin.Enabled;
+        // }
     }
 
     protected override bool OnBeforeClose()
     {
         bool requireRestart = false;
-        foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
-        {
-            if (_pluginsEnabledInitial[plugin.Name] != plugin.Enabled)
-            {
-                requireRestart = true;
-                break;
-            }
-        }
+        // foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        // {
+        //     if (_pluginsEnabledInitial[plugin.Name] != plugin.Enabled)
+        //     {
+        //         requireRestart = true;
+        //         break;
+        //     }
+        // }
 
         if (!requireRestart)
         {
@@ -249,7 +280,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
                 {
                     if (restart)
                     {
-                        ApplicationHelpers.RestartAllClients();
+                        //ApplicationHelpers.RestartAllClients();
                     }
 
                     Close(true);
@@ -304,7 +335,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
         };
 
-    static BoolOption CreateOptionData(DBIConfiguration.Entry<bool> entry)
+    static BoolOption CreateOptionData(CoreConfiguration.Entry<bool> entry)
     {
         BoolOption option = new(null, new Option<bool>(entry.DefaultValue) { m_value = entry.Value })
         {
@@ -315,10 +346,8 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         return option;
     }
 
-    static MultipleChoiceOption CreateMultipleChoiceOptionData(DBIConfiguration.Entry entry)
+    static MultipleChoiceOption CreateMultipleChoiceOptionData(CoreConfiguration.Entry entry)
     {
-        Thread.Sleep(1000);
-
         IReadOnlyList<ValueDescription> values = entry.AcceptableValuesDescriptions;
         ValueDescription value = entry.CurrentValueDescription;
         int valueIndex = values.Select((v, i) => new { Value = v, Index = i }).FirstOrDefault(v => v.Value.Name == value.Name)?.Index ?? 0;
@@ -359,7 +388,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         container.Add(element);
     }
 
-    static void AddStatusLineToCategory(DBIPlugin plugin, OptionCategory category)
+    /*static void AddStatusLineToCategory(DBIPlugin plugin, OptionCategory category)
     {
         VisualElement container = category.Q("ctr_categoryContent");
         switch (plugin.Status)
@@ -377,7 +406,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
                 AddLine(container, FigmaIcons.questionMark, "Unknown status");
                 break;
         }
-    }
+    }*/
 
     public enum Category
     {

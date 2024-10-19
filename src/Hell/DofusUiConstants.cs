@@ -1,8 +1,8 @@
 ﻿using Core.UILogic.UIConsts;
 
-namespace DofusBatteriesIncluded.Plugins.Core;
+namespace DBI.Hell;
 
-public class DofusUiConstants
+class DofusUiConstants
 {
     public static readonly string TextHighlightPrimary100 = "textColor_highlight_primary100";
     public static readonly string TextWhite65 = "textColor_white_white65";

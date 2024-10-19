@@ -3,7 +3,6 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
         <AssemblyName>DBI.Hell</AssemblyName>
         <RootNamespace>DBI.Hell</RootNamespace>
         <Title>Dofus Batteries Included - Hell</Title>

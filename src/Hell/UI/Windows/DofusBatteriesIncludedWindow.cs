@@ -1,6 +1,5 @@
-﻿using System;
-using Core.UILogic.Components.Figma;
-using DofusBatteriesIncluded.Plugins.Core.Behaviours;
+﻿using Core.UILogic.Components.Figma;
+using DBI.Hell.Behaviours;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,11 +7,11 @@ using UnityEngine.UIElements;
 using Action = Il2CppSystem.Action;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Plugins.Core.UI.Windows;
+namespace DBI.Hell.UI.Windows;
 
 public class DofusBatteriesIncludedWindow : MonoBehaviour
 {
-    static readonly ILogger Log = DBI.Logging.Create<DofusBatteriesIncludedWindow>();
+    static readonly ILogger Log = CorePlugin.Logging.Create<DofusBatteriesIncludedWindow>();
 
     UIDocument _uiDocument;
     VisualElement _container;

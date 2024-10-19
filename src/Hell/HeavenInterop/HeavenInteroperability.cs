@@ -10,14 +10,14 @@ static class HeavenInteroperability
     const string HeavenLauncherExecutableName = "Heaven Launcher.exe";
 
     static readonly ILogger Logger = CorePlugin.Logging.Create("HeavenInteroperability");
-    static GrpcChannel? _channel;
+    static GrpcChannel _channel;
 
     public static async Task<bool> StartHeaven()
     {
         AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
         string thisAssemblyPath = typeof(CorePlugin).Assembly.Location;
-        string? thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
+        string thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
         string heavenLauncherPath = Path.Join(thisAssemblyDirectory, HeavenLauncherExecutableName);
 
         if (!File.Exists(heavenLauncherPath))
@@ -83,7 +83,7 @@ static class HeavenInteroperability
         int? heavenProcessId = null;
         do
         {
-            string? line = await heavenLauncherProcess.StandardOutput.ReadLineAsync();
+            string line = await heavenLauncherProcess.StandardOutput.ReadLineAsync();
             if (line == null)
             {
                 break;

@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Components.Tooltips;
 using Core.UILogic.Components.Tooltips.Builder;
-using DofusBatteriesIncluded.Plugins.Core.Behaviours;
+using DBI.Hell.Behaviours;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
 using CancellationToken = Il2CppSystem.Threading.CancellationToken;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DofusBatteriesIncluded.Plugins.Core.UI.Menus;
+namespace DBI.Hell.UI.Menus;
 
 public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 {
-    static readonly ILogger Log = DBI.Logging.Create<DofusBatteriesIncludedGameMenu>();
+    static readonly ILogger Log = CorePlugin.Logging.Create<DofusBatteriesIncludedGameMenu>();
     readonly MethodInfo _tooltipRootUseBuilderMethod = typeof(TooltipRoot).GetProperty(nameof(TooltipRoot.m_tooltipService), BindingFlags.Instance | BindingFlags.Public)
         ?.PropertyType.GetMethods()
         .FirstOrDefault(

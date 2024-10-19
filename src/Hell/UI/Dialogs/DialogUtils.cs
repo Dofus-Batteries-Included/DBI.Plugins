@@ -1,12 +1,11 @@
-﻿using System;
-using DofusBatteriesIncluded.Plugins.Core.Behaviours;
+﻿using DBI.Hell.Behaviours;
 using Microsoft.Extensions.Logging;
 
-namespace DofusBatteriesIncluded.Plugins.Core.UI.Dialogs;
+namespace DBI.Hell.UI.Dialogs;
 
 public static class DialogUtils
 {
-    static readonly ILogger Log = DBI.Logging.Create(typeof(DialogUtils));
+    static readonly ILogger Log = CorePlugin.Logging.Create(typeof(DialogUtils));
 
     public static void OpenConfirmationDialog(Action<ConfirmationDialogConfiguration> configure = null)
     {
