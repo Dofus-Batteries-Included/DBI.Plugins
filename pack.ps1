@@ -17,13 +17,20 @@ echo "> Output path: $Output"
 echo ""
 echo "- Packing Hell..."
 
-echo ""
+$RunningDofusProcesses = Get-Process -Name "Dofus" -ErrorAction Ignore
+if ($RunningDofusProcesses -ne $null)
+{
+    echo "Stopping Dofus process $RunningDofusProcesses..."
+    Stop-Process -InputObject $RunningDofusProcesses
+    Start-Sleep -Seconds 1
+}
+
 $TargetHellDir = Join-Path $Output "Hell"
 
 if (Test-Path -Path $TargetHellDir)
 {
     echo "Cleaning output folder $TargetHellDir..."
-    rm $TargetHellDir -r -force
+    rm $TargetHellDir -Recurse -Force
 }
 
 echo "Creating output folder $TargetHellDir..."
@@ -59,13 +66,20 @@ echo "Done packing Hell."
 echo ""
 echo "- Packing Heaven..."
 
+$RunningHeavenProcesses = Get-Process -Name "Heaven" -ErrorAction Ignore
+if ($RunningHeavenProcesses -ne $null)
+{
+    echo "Stopping Heaven process $RunningHeavenProcesses..."
+    Stop-Process -InputObject $RunningHeavenProcesses
+    Start-Sleep -Seconds 1
+}
+
 $TargetHeavenDir = Join-Path $Output "Heaven"
 
-if (Test-Path -Path $TargetHeavenDir) 
+if (Test-Path -Path $TargetHeavenDir)
 {
     echo "Cleaning output folder $TargetHeavenDir..."
-    rm "$TargetHeavenDir/*.dll"
-    rm "$TargetHeavenDir/*.exe"
+    rm "$TargetHeavenDir" -Recurse -Force
 }
 
 $SourceHeavenDir = "src/Heaven/bin/$Configuration/net8.0/publish"

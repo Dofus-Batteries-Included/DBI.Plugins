@@ -13,7 +13,6 @@
     <option name="EXECUTE_SCRIPT_FILE" value="false" />
     <envs />
     <method v="2">
-      <option name="Build Solution" enabled="true" />
       <option name="Publish Solution" enabled="true" />
     </method>
   </configuration>
