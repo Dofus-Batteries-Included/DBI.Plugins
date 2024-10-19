@@ -6,6 +6,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreasureSolver", "TreasureS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TreasureSolver", "TreasureSolver", "{62D6C858-7864-42F0-BBEB-1D488F8818C6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hell", "Hell", "{97FE7C6E-A688-40D9-9C53-818F58B47C4C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Heaven", "Heaven", "{4A5E8B74-1BFA-48BF-A7F4-55F7C5BB36AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hell", "Hell\Hell.csproj", "{482D42BB-AFAD-4364-B40A-DC79151AAE57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +26,13 @@ Global
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{482D42BB-AFAD-4364-B40A-DC79151AAE57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{482D42BB-AFAD-4364-B40A-DC79151AAE57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{482D42BB-AFAD-4364-B40A-DC79151AAE57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{482D42BB-AFAD-4364-B40A-DC79151AAE57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7B1E7B2D-2B27-4248-8F01-ECE61D5472EB} = {62D6C858-7864-42F0-BBEB-1D488F8818C6}
+		{482D42BB-AFAD-4364-B40A-DC79151AAE57} = {97FE7C6E-A688-40D9-9C53-818F58B47C4C}
 	EndGlobalSection
 EndGlobal
