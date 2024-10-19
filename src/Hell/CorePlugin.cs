@@ -13,12 +13,14 @@ class CorePlugin : BasePlugin
 {
     public static readonly CoreLogging Logging = new();
 
-    public override void Load()
+    public override void Load() => LoadAsync().ConfigureAwait(false);
+
+    static async Task LoadAsync()
     {
         ILogger logger = Logging.Create<CorePlugin>();
 
         logger.LogInformation("Starting Heaven...");
-        if (HeavenInteroperability.StartHeaven().GetAwaiter().GetResult())
+        if (await HeavenInteroperability.StartHeaven())
         {
             logger.LogInformation("Heaven started successfully.");
         }
