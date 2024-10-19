@@ -6,8 +6,6 @@ const string heavenExecutableName = "Heaven.exe";
 const int waitDelayInMilliseconds = 1000;
 const string uniqueId = "Heaven_Launcher_e4917edf-0756-47c3-bd4c-2c25f0649979";
 
-Thread.Sleep(Random.Shared.Next(100, 500));
-
 Mutex mutex = new(false, uniqueId);
 if (!mutex.WaitOne(waitDelayInMilliseconds))
 {

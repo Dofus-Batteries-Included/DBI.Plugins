@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Net.Sockets;
+using DBI.HellHeavenInterop;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 
@@ -50,7 +51,7 @@ class HeavenHandle
         {
             try
             {
-                await SendPingAsync();
+                await RegisterGameClientAsync();
                 _logger.LogInformation("Successfully initialized connection to Heaven.");
                 return true;
             }
@@ -148,16 +149,15 @@ class HeavenHandle
         );
     }
 
-    async Task SendPingAsync()
+    async Task RegisterGameClientAsync()
     {
         if (Channel == null)
         {
             throw new InvalidOperationException("Heaven not started yet");
         }
 
-        Ping.PingClient client = new(Channel);
-        _logger.LogInformation("Ping request...");
-        PingResponse response = await client.PingAsync(new PingRequest { Name = "my name!!" });
-        _logger.LogInformation("Ping response: {Message}.", response.Message);
+        GameInstance.GameInstanceClient client = new(Channel);
+        _logger.LogInformation("Registering game client {ProcessId}...", Hell.GameClientInformation.ProcessId);
+        await client.RegisterGameClientAsync(new RegisterGameClientRequest { ProcessId = Hell.GameClientInformation.ProcessId });
     }
 }

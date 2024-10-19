@@ -1,9 +1,10 @@
-﻿using DBI.Hell.HeavenInterop;
+﻿using DBI.HellHeavenInterop;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace DBI.Heaven.Application.HellInterop.Services;
 
-public class PingHellService : Ping.PingBase
+public class PingHellService : GameInstance.GameInstanceBase
 {
     readonly ILogger<PingHellService> _logger;
 
@@ -12,9 +13,9 @@ public class PingHellService : Ping.PingBase
         _logger = logger;
     }
 
-    public override Task<PingResponse> Ping(PingRequest request, ServerCallContext context)
+    public override Task<Empty> RegisterGameClient(RegisterGameClientRequest request, ServerCallContext context)
     {
-        _logger.LogInformation("PING {Name}.", request.Name);
-        return Task.FromResult(new PingResponse { Message = $"Ping {request.Name} successful." });
+        _logger.LogInformation("REGISTER CLIENT at process {ProcessId}.", request.ProcessId);
+        return Task.FromResult(new Empty());
     }
 }
