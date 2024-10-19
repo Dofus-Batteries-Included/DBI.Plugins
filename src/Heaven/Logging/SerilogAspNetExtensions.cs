@@ -1,0 +1,28 @@
+﻿using Serilog;
+using Serilog.Events;
+
+namespace DBI.Heaven.Logging;
+
+static class SerilogAspNetExtensions
+{
+#if DEBUG
+    const LogEventLevel DefaultLoggingLevel = LogEventLevel.Debug;
+#else
+    const LogEventLevel DefaultLoggingLevel = LogEventLevel.Information;
+#endif
+
+    const LogEventLevel InfrastructureLoggingLevel = LogEventLevel.Information;
+    const string ConsoleTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} ({SourceContext}){NewLine}{Exception}";
+    const string FileTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext} - {Message:lj}{NewLine}{Exception}";
+
+    public static LoggerConfiguration ConfigureSerilog(this LoggerConfiguration configuration) =>
+        configuration.WriteTo.Console(outputTemplate: ConsoleTemplate)
+            .WriteTo.File("logs/Heaven.log", outputTemplate: FileTemplate)
+            .Enrich.WithProperty("SourceContext", "Bootstrap")
+            .MinimumLevel.Is(DefaultLoggingLevel)
+            .MinimumLevel.Override("System.Net.Http.HttpClient", InfrastructureLoggingLevel)
+            .MinimumLevel.Override("Microsoft.Extensions.Http", InfrastructureLoggingLevel)
+            .MinimumLevel.Override("Microsoft.AspNetCore", InfrastructureLoggingLevel)
+            .MinimumLevel.Override("Microsoft.Identity", InfrastructureLoggingLevel)
+            .MinimumLevel.Override("Microsoft.IdentityModel", InfrastructureLoggingLevel);
+}
