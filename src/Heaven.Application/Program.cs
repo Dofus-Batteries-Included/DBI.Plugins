@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DBI.Heaven.Application.Plugins;
 using DBI.Heaven.HellInterop.Services;
 using DBI.Heaven.Logging;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -29,6 +30,8 @@ try
     builder.WebHost.ConfigureKestrel(serverOptions => { serverOptions.ListenUnixSocket(socketPath, listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; }); });
 
     builder.Services.AddGrpc();
+
+    builder.Services.ConfigurePlugins();
 
     WebApplication app = builder.Build();
 

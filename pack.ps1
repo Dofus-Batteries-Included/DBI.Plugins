@@ -54,8 +54,8 @@ $SourceHeavenDir = "src/Heaven.Application/bin/$Configuration/net8.0/publish"
 echo "Copying $SourceHeavenDir to $Output..."
 copy "$SourceHeavenDir/*" "$Output" -Recurse -Force
 
-echo "Rename executable DBI.Heaven.exe to Heaven.exe..."
-mv "$Output/DBI.Heaven.exe" "$Output/Heaven.exe"
+echo "Rename executable DBI.Heaven.Application.exe to Heaven.exe..."
+mv "$Output/DBI.Heaven.Application.exe" "$Output/Heaven.exe"
 
 echo "Done packing Heaven."
 
