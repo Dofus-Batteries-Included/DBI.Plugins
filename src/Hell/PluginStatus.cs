@@ -1,4 +1,4 @@
-﻿namespace DofusBatteriesIncluded.Plugins.Core;
+﻿namespace DBI.Hell;
 
 public enum PluginStatus
 {
