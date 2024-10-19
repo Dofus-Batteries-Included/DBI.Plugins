@@ -15,9 +15,14 @@ static class SerilogAspNetExtensions
     const string ConsoleTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} ({SourceContext}){NewLine}{Exception}";
     const string FileTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext} - {Message:lj}{NewLine}{Exception}";
 
-    public static LoggerConfiguration ConfigureSerilog(this LoggerConfiguration configuration) =>
-        configuration.WriteTo.Console(outputTemplate: ConsoleTemplate)
-            .WriteTo.File("logs/Heaven.log", outputTemplate: FileTemplate)
+    public static LoggerConfiguration ConfigureSerilog(this LoggerConfiguration configuration)
+    {
+        string thisAssemblyPath = typeof(SerilogAspNetExtensions).Assembly.Location;
+        string? thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
+        string logFile = Path.Join(thisAssemblyDirectory, "log", "Heaven.log");
+
+        return configuration.WriteTo.Console(outputTemplate: ConsoleTemplate)
+            .WriteTo.File(logFile, outputTemplate: FileTemplate)
             .Enrich.WithProperty("SourceContext", "Bootstrap")
             .MinimumLevel.Is(DefaultLoggingLevel)
             .MinimumLevel.Override("System.Net.Http.HttpClient", InfrastructureLoggingLevel)
@@ -25,4 +30,5 @@ static class SerilogAspNetExtensions
             .MinimumLevel.Override("Microsoft.AspNetCore", InfrastructureLoggingLevel)
             .MinimumLevel.Override("Microsoft.Identity", InfrastructureLoggingLevel)
             .MinimumLevel.Override("Microsoft.IdentityModel", InfrastructureLoggingLevel);
+    }
 }

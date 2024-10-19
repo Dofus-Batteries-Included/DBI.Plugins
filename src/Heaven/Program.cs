@@ -1,4 +1,5 @@
-﻿using DBI.Heaven.Logging;
+﻿using System.Diagnostics;
+using DBI.Heaven.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,12 @@ using Serilog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 Log.Logger = new LoggerConfiguration().ConfigureSerilog().CreateBootstrapLogger();
+
+if (AnotherInstanceIsRunning())
+{
+    Log.Logger.Warning("Another instance of Heaven has been detected, this instance will exit.");
+    return;
+}
 
 try
 {
@@ -16,9 +23,11 @@ try
     IHost app = builder.Build();
 
     ILogger logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Hello world!");
 
+
+    logger.LogInformation("Hello!");
     await app.RunAsync();
+    Log.Logger.Information("Bye!");
 }
 catch (Exception ex)
 {
@@ -27,4 +36,14 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
+}
+
+return;
+
+bool AnotherInstanceIsRunning()
+{
+    Process currentProcess = Process.GetCurrentProcess();
+    string currentProcessName = currentProcess.ProcessName;
+    Process[] processes = Process.GetProcessesByName(currentProcessName).Where(p => p.Id != currentProcess.Id).ToArray();
+    return processes.Length > 0;
 }

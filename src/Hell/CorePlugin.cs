@@ -1,7 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using DBI.Hell.HeavenInterop;
 using DBI.Hell.Logging;
 using Microsoft.Extensions.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DBI.Hell;
 
@@ -11,10 +13,15 @@ class CorePlugin : BasePlugin
 {
     public static readonly CoreLogging Logging = new();
 
+    static HeavenHandle? _heavenHandle;
+    public static HeavenHandle Handle => _heavenHandle ?? throw new InvalidOperationException("Heaven not started yet.");
+
     public override void Load()
     {
         ILogger logger = Logging.Create<CorePlugin>();
 
-        logger.LogInformation("Hello there!");
+        logger.LogInformation("Starting heaven...");
+        _heavenHandle = HeavenInteroperability.StartHeaven();
+        logger.LogInformation("Heaven started successfully.");
     }
 }

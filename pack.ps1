@@ -10,58 +10,61 @@ if ($Help)
     exit 0
 }
 
-$Projects = "Hell";
-
-echo "> Packing projects: $Projects"
+echo "> Configuration: $Configuration"
 echo "> Output path: $Output"
 
+echo ""
 if (Test-Path -Path $Output)
 {
-    echo "Cleaning output folder $Output..."
+    echo "- Cleaning output folder $Output..."
     rm $Output -r -force
 }
 
-echo "Creating output folder $Output..."
+echo "- Creating output folder $Output..."
 $null = md $Output
+
+echo ""
+echo "- Packing Hell..."
 
 $InteropFolder = "src/Interop";
 $InteropDlls = Get-ChildItem "$InteropFolder/*.dll" | % { Split-Path $_ -leaf }
 
 echo "Found $( $InteropDlls.Length ) interop DLLs."
 
-foreach ($Project in $Projects)
+$OtherProjects = $Projects | Where-Object { $_ -ne $Project }
+$OtherProjectsDll = $OtherProjects | % { "DofusBatteriesIncluded.Plugins.$_.dll" }
+
+$TargetHellDir = Join-Path $Output "Hell"
+$null = MkDir $TargetHellDir -Force
+foreach ($File in Get-ChildItem "src/Hell/bin/$Configuration/net6.0/publish/*.dll")
 {
-    echo "Packing project $Project..."
-
-    $OtherProjects = $Projects | Where-Object { $_ -ne $Project }
-    $OtherProjectsDll = $OtherProjects | % { "DofusBatteriesIncluded.Plugins.$_.dll" }
-
-    $Dir = Join-Path $Output $Project
-    $null = MkDir $Dir -Force
-    foreach ($File in Get-ChildItem "src/$Project/bin/$Configuration/net6.0/publish/*.dll")
+    $Filename = Split-Path $File -leaf
+    if ( $InteropDlls.Contains($Filename))
     {
-        $Filename = Split-Path $File -leaf
-        if ( $InteropDlls.Contains($Filename))
-        {
-            continue;
-        }
-
-        if ( -not $OtherProjectsDll -eq $Null -and $OtherProjectsDll.Contains($Filename))
-        {
-            continue;
-        }
-
-        echo "Copying $File to $Dir..."
-        copy $File $Dir
+        continue;
     }
 
-    $ResourcesFolder = "src/$Project/bin/$Configuration/net6.0/publish/Resources"
-    if (Test-Path $ResourcesFolder) {
-        copy "$ResourcesFolder" $Dir -Recurse
+    if (-not $OtherProjectsDll -eq $Null -and $OtherProjectsDll.Contains($Filename))
+    {
+        continue;
     }
 
-    $RuntimesFolder = "src/$Project/bin/$Configuration/net6.0/publish/runtimes/win-x64"
-    if (Test-Path $RuntimesFolder) {
-        copy "$RuntimesFolder/**/*.dll" $Dir -Recurse
-    }
+    echo "Copying $File to $TargetHellDir..."
+    copy "$File" "$TargetHellDir"
 }
+
+echo "Done packing Hell."
+
+echo ""
+echo "- Packing Heaven..."
+
+$SourceHeavenDir = "src/Heaven/bin/$Configuration/net8.0/publish"
+$TargetHeavenDir = Join-Path $Output "Heaven"
+
+echo "Copying $SourceHeavenDir to $TargetHeavenDir..."
+copy "$SourceHeavenDir" "$TargetHeavenDir" -Recurse -Exclude "*.pdb"
+
+echo "Ringname executable DBI.Heaven.exe to Heaven.exe..."
+mv "$TargetHeavenDir/DBI.Heaven.exe" "$TargetHeavenDir/Heaven.exe"
+
+echo "Done packing Heaven."
