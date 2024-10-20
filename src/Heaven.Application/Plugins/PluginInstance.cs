@@ -1,7 +1,11 @@
 ﻿using DBI.Heaven.Application.Configuration;
 using DBI.Heaven.Application.Plugins.Notifications;
+using DBI.HellHeavenInterop;
 using Heaven.Abstractions;
 using MediatR;
+using PluginConfiguration = DBI.Heaven.Application.Configuration.PluginConfiguration;
+using PluginConfigurationCategory = DBI.Heaven.Application.Configuration.PluginConfigurationCategory;
+using PluginConfigurationEntry = DBI.Heaven.Application.Configuration.PluginConfigurationEntry;
 
 namespace DBI.Heaven.Application.Plugins;
 
@@ -15,13 +19,13 @@ class PluginInstance(DbiPlugin plugin, PluginConfiguration configuration, IMedia
     {
         try
         {
-            await SetStatus(new PluginStarting());
+            await SetStatusAsync(new PluginStarting());
             await Plugin.StartAsync(cancellationToken);
-            await SetStatus(new PluginRunning());
+            await SetStatusAsync(new PluginRunning());
         }
         catch (Exception exn)
         {
-            await SetStatus(new PluginFailedToStart(exn));
+            await SetStatusAsync(new PluginFailedToStart(exn));
             throw;
         }
     }
@@ -30,20 +34,56 @@ class PluginInstance(DbiPlugin plugin, PluginConfiguration configuration, IMedia
     {
         try
         {
-            await SetStatus(new PluginStopping());
+            await SetStatusAsync(new PluginStopping());
             await Plugin.StopAsync(cancellationToken);
-            await SetStatus(new PluginStopped());
+            await SetStatusAsync(new PluginStopped());
         }
         catch (Exception exn)
         {
-            await SetStatus(new PluginCrashed(exn));
+            await SetStatusAsync(new PluginCrashed(exn));
             throw;
         }
     }
 
+    public async Task UpdateConfigurationAsync(PluginConfigurationValues configuration)
+    {
+        foreach (PluginConfigurationCategoryValues? category in configuration.Categories)
+        {
+            PluginConfigurationCategory? pluginCategory = Configuration.GetCategory(category.Name);
+            if (pluginCategory == null)
+            {
+                throw new InvalidOperationException($"Could not find category {category.Name} in configuration of plugin {Plugin}.");
+            }
+
+            foreach (PluginConfigurationEntryValue? entry in category.Entries)
+            {
+                PluginConfigurationEntry? pluginEntry = pluginCategory.GetEntry(entry.Name);
+                if (pluginEntry == null)
+                {
+                    throw new InvalidOperationException($"Could not find entry {category.Name}: {entry.Name} in configuration of plugin {Plugin}.");
+                }
+
+                switch (entry.PluginConfigurationEntryValueCase)
+                {
+                    case PluginConfigurationEntryValue.PluginConfigurationEntryValueOneofCase.BoolValue:
+                        ((PluginConfigurationEntry<bool>)pluginEntry).SetValue(entry.BoolValue);
+                        break;
+                    case PluginConfigurationEntryValue.PluginConfigurationEntryValueOneofCase.StringValue:
+                        ((PluginConfigurationEntry<string>)pluginEntry).SetValue(entry.StringValue);
+                        break;
+                    case PluginConfigurationEntryValue.PluginConfigurationEntryValueOneofCase.None:
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(entry.PluginConfigurationEntryValueCase), entry.PluginConfigurationEntryValueCase, null);
+                }
+            }
+        }
+
+        await mediator.Publish(new PluginConfigurationChangedNotification(this));
+    }
+
     public override string ToString() => $"{Plugin}";
 
-    async Task SetStatus(PluginStatus status)
+    async Task SetStatusAsync(PluginStatus status)
     {
         PluginStatus oldStatus = Status;
         Status = status;

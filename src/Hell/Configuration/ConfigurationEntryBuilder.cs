@@ -31,7 +31,7 @@ public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
         return this;
     }
 
-    public ConfigurationEntryBuilder<T> RegisterChangeCallback(Action<T> onValueChanged, bool callWithInitialValue = false)
+    public ConfigurationEntryBuilder<T> RegisterChangeCallback(Action<ConfigurationValueChangedArgs<T>> onValueChanged, bool callWithInitialValue = false)
     {
         Callbacks.Add(new Callback(onValueChanged, callWithInitialValue));
         return this;
@@ -47,13 +47,13 @@ public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
 
     public class Callback
     {
-        public Callback(Action<T> onValueChangedCallback, bool callWithInitialValue)
+        public Callback(Action<ConfigurationValueChangedArgs<T>> onValueChangedCallback, bool callWithInitialValue)
         {
             OnValueChangedCallback = onValueChangedCallback;
             CallWithInitialValue = callWithInitialValue;
         }
 
-        public Action<T> OnValueChangedCallback { get; private set; }
+        public Action<ConfigurationValueChangedArgs<T>> OnValueChangedCallback { get; private set; }
         public bool CallWithInitialValue { get; private set; }
     }
 }

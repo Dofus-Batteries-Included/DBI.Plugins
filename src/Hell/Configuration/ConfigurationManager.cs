@@ -18,13 +18,19 @@ public class ConfigurationManager
     public ConfigurationEntryBuilder<T> Configure<T>(string pluginName, string category, string key, T defaultValue) where T: IEquatable<T> =>
         new(pluginName, category, key, defaultValue);
 
-    public Entry<T> Get<T>(string category, string key) => _entries.OfType<Entry<T>>().FirstOrDefault(e => e.Category == category && e.Key == key);
+    public Entry GetEntry(string category, string key) => _entries.FirstOrDefault(e => e.Category == category && e.Key == key);
+    public Entry GetEntry(string pluginName, string category, string key) => _entries.FirstOrDefault(e => e.PluginName == pluginName && e.Category == category && e.Key == key);
+
+    public Entry<T> GetEntry<T>(string category, string key) => _entries.OfType<Entry<T>>().FirstOrDefault(e => e.Category == category && e.Key == key);
+
+    public Entry<T> GetEntry<T>(string pluginName, string category, string key) =>
+        _entries.OfType<Entry<T>>().FirstOrDefault(e => e.PluginName == pluginName && e.Category == category && e.Key == key);
 
     public IEnumerable<Entry> GetAll() => _entries;
 
     internal T Bind<T>(ConfigurationEntryBuilder<T> builder) where T: IEquatable<T>
     {
-        Entry<T> entry = Get<T>(builder.Category, builder.Key);
+        Entry<T> entry = GetEntry<T>(builder.Category, builder.Key);
         if (entry != null)
         {
             return entry.Value;
@@ -46,7 +52,9 @@ public class ConfigurationManager
             entry.ValueChanged += (_, newValue) => callback.OnValueChangedCallback(newValue);
             if (callback.CallWithInitialValue)
             {
-                callback.OnValueChangedCallback(entry.Value);
+                callback.OnValueChangedCallback(
+                    new ConfigurationValueChangedArgs<T> { OldValue = entry.Value, NewValue = entry.Value, Source = ConfigurationChangeSource.Internal }
+                );
             }
         }
 
@@ -57,6 +65,7 @@ public class ConfigurationManager
     {
         internal Entry(string pluginName, string category, string key, Type type)
         {
+            PluginName = pluginName;
             Category = category;
             Key = key;
             Type = type;
@@ -76,7 +85,7 @@ public class ConfigurationManager
         public abstract ConfigDescription Description { get; }
         public bool Hidden { get; set; }
 
-        public abstract void SetValueWithName(string valueName);
+        public abstract void SetValueWithName(string valueName, ConfigurationChangeSource source);
     }
 
     public class Entry<T> : Entry
@@ -106,15 +115,16 @@ public class ConfigurationManager
         public override IReadOnlyList<ValueDescription> AcceptableValuesDescriptions => AcceptableValues?.Select(v => new ValueDescription(v?.ToString(), v?.ToString())).ToArray();
         public ConfigEntry<T> ConfigEntry { get; }
 
-        public event EventHandler<T> ValueChanged;
+        public event EventHandler<ConfigurationValueChangedArgs<T>> ValueChanged;
 
-        public void Set(T value)
+        public void SetValue(T value, ConfigurationChangeSource source)
         {
+            T oldValue = ConfigEntry.Value;
             ConfigEntry.Value = value;
-            ValueChanged?.Invoke(this, value);
+            ValueChanged?.Invoke(this, new ConfigurationValueChangedArgs<T> { OldValue = oldValue, NewValue = value, Source = source });
         }
 
-        public override void SetValueWithName(string valueName)
+        public override void SetValueWithName(string valueName, ConfigurationChangeSource source)
         {
             T value;
             if (AcceptableValues == null)
@@ -127,9 +137,16 @@ public class ConfigurationManager
                 value = index.HasValue ? AcceptableValues[index.Value] : DefaultValue;
             }
 
-            Set(value);
+            SetValue(value, source);
         }
     }
+}
+
+public class ConfigurationValueChangedArgs<T>
+{
+    public T OldValue { get; init; }
+    public T NewValue { get; init; }
+    public ConfigurationChangeSource Source { get; init; }
 }
 
 public class ValueDescription

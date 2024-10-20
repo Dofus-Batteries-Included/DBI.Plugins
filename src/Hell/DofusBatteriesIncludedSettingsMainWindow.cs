@@ -150,7 +150,7 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            ConfigurationManager.Entry<bool> enabledConfigurationEntry = Hell.Configuration.Get<bool>(instance.Plugin.Info.Name, "Enabled");
+            ConfigurationManager.Entry<bool> enabledConfigurationEntry = Hell.Configuration.GetEntry<bool>(instance.Plugin.Info.Name, "Enabled");
             if (enabledConfigurationEntry != null)
             {
                 BoolOption data = CreateOptionData(enabledConfigurationEntry);
@@ -341,13 +341,25 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
 
     static BoolOption CreateOptionData(ConfigurationManager.Entry<bool> entry)
     {
-        BoolOption option = new(null, new Option<bool>(entry.DefaultValue) { m_value = entry.Value })
+        Option<bool> option = new(entry.DefaultValue) { m_value = entry.Value };
+        BoolOption boolOption = new(null, option)
         {
             text = entry.Key,
             description = new DescriptionData { text = entry.Description?.Description },
-            valueChangedCallback = (Action<bool>)entry.Set
+            valueChangedCallback = (Action<bool>)(v => entry.SetValue(v, ConfigurationChangeSource.Ui))
         };
-        return option;
+
+        entry.ValueChanged += (_, args) =>
+        {
+            if (args.Source == ConfigurationChangeSource.Ui)
+            {
+                return;
+            }
+
+            option.SetValueWithoutNotify(args.NewValue);
+        };
+
+        return boolOption;
     }
 
     static MultipleChoiceOption CreateMultipleChoiceOptionData(ConfigurationManager.Entry entry)
@@ -365,7 +377,8 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
             choices.System_Collections_IList_Add(choice);
         }
 
-        Option<int> dataSource = new(defaultValueIndex) { m_value = valueIndex, m_onChanged = (Action<int, int>)((_, newValue) => entry.SetValueWithName(values[newValue].Name)) };
+        Option<int> dataSource = new(defaultValueIndex)
+            { m_value = valueIndex, m_onChanged = (Action<int, int>)((_, newValue) => entry.SetValueWithName(values[newValue].Name, ConfigurationChangeSource.Ui)) };
         MultipleChoiceOption option = new(dataSource, null)
         {
             type = OptionType.MultipleChoice,
@@ -373,6 +386,7 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
             description = new DescriptionData { text = entry.Description?.Description },
             choices = choices
         };
+
         return option;
     }
 

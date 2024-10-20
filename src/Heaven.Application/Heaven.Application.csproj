@@ -48,6 +48,14 @@
           <Generator>MSBuild:Compile</Generator>
           <Link>protos\models\PluginConfigurationValues.proto</Link>
         </Protobuf>
+        <Protobuf Update="..\protos\responses\PluginConfigurationChangedStreamResponse.proto">
+          <Access>Public</Access>
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <OutputDir>obj\Debug\net8.0\</OutputDir>
+          <Generator>MSBuild:Compile</Generator>
+          <Link>protos\responses\PluginConfigurationChangedStreamResponse.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
     <ItemGroup>

@@ -38,12 +38,12 @@ public static class TaskExtensions
                 // No need to resume on the original SynchronizationContext, so use ConfigureAwait(false)
                 await task.ConfigureAwait(false);
 
-                logger?.LogDebug("Task {Name} that has been fired and fogotten is completed.", taskName);
+                logger?.LogDebug("Task {Name} that has been fired and forgotten is completed.", taskName);
             }
             catch (Exception exn)
             {
                 // Nothing to do here
-                logger?.LogError(exn, "Exception in task {Name} that has been fired and fogotten.", taskName);
+                logger?.LogError(exn, "Exception in task {Name} that has been fired and forgotten: {Message}.", taskName, exn.Message);
             }
         }
     }

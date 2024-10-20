@@ -1,11 +1,21 @@
 ﻿using DBI.Heaven.Application.HellHeavenInterop.Services;
 using DBI.Heaven.Application.Plugins.Notifications;
+using DBI.HellHeavenInterop;
 using MediatR;
 
 namespace DBI.Heaven.Application.HellHeavenInterop.StreamWriters;
 
 class WriteStatusChangeOnPluginStatusChanged(PluginsHellService pluginsService) : INotificationHandler<PluginStatusChangedNotification>
 {
-    public async Task Handle(PluginStatusChangedNotification notification, CancellationToken cancellationToken) =>
-        await pluginsService.WriteStatusChange(notification, cancellationToken);
+    public Task Handle(PluginStatusChangedNotification notification, CancellationToken cancellationToken)
+    {
+        PluginStatusChangedStreamResponse message = new()
+        {
+            Name = notification.Instance.Plugin.Info.Name,
+            Status = notification.Instance.ToHellStatus()
+        };
+
+        pluginsService.StatusBroadcast.Broadcast(message);
+        return Task.CompletedTask;
+    }
 }
