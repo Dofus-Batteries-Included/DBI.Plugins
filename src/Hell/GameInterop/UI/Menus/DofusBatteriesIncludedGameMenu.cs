@@ -2,14 +2,13 @@
 using Core.UILogic.Components.Figma;
 using Core.UILogic.Components.Tooltips;
 using Core.UILogic.Components.Tooltips.Builder;
-using DBI.Hell.Behaviours;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using UnityEngine.UIElements;
 using CancellationToken = Il2CppSystem.Threading.CancellationToken;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DBI.Hell.UI.Menus;
+namespace DBI.Hell.GameInterop.UI.Menus;
 
 public class DofusBatteriesIncludedGameMenu : MonoBehaviour
 {

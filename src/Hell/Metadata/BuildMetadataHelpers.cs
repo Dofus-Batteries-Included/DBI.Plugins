@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-using DBI.Hell.Metadata;
 using Microsoft.Extensions.Logging;
 
-namespace DBI.Hell.Helpers;
+namespace DBI.Hell.Metadata;
 
 public class BuildMetadataHelpers
 {

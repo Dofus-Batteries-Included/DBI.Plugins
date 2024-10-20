@@ -2,7 +2,7 @@
 using Il2CppSystem.Collections;
 using Task = System.Threading.Tasks.Task;
 
-namespace DBI.Hell.Coroutines;
+namespace DBI.Hell.Extensions;
 
 public static class CoroutineExtensions
 {

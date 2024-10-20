@@ -9,7 +9,8 @@ message PluginStatus {
 }
 
 enum PluginState {
-  NotStarted = 0;
-  Running = 1;
+  Disabled = 0;
+  NotStarted = 1;
+  Running = 2;
   Error = 3;
 }

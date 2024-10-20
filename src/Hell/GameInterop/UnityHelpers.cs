@@ -3,7 +3,7 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
-namespace DBI.Hell.Behaviours;
+namespace DBI.Hell.GameInterop;
 
 public static class UnityHelpers
 {

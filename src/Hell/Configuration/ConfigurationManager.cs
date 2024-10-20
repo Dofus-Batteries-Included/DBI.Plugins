@@ -3,7 +3,6 @@ using BepInEx.Configuration;
 
 namespace DBI.Hell.Configuration;
 
-// ReSharper disable once InconsistentNaming
 public class ConfigurationManager
 {
     readonly ConfigFile _bepinexConfigFile;

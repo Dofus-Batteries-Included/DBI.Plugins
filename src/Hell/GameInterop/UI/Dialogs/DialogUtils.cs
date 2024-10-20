@@ -1,7 +1,6 @@
-﻿using DBI.Hell.Behaviours;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
-namespace DBI.Hell.UI.Dialogs;
+namespace DBI.Hell.GameInterop.UI.Dialogs;
 
 public static class DialogUtils
 {

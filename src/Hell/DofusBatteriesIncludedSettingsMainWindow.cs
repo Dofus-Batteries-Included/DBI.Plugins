@@ -4,8 +4,9 @@ using Core.UILogic.Components.Figma;
 using Core.UILogic.Config;
 using Core.UILogic.Config.OptionElement;
 using DBI.Hell.Configuration;
-using DBI.Hell.UI.Dialogs;
-using DBI.Hell.UI.Windows;
+using DBI.Hell.GameInterop.UI;
+using DBI.Hell.GameInterop.UI.Dialogs;
+using DBI.Hell.GameInterop.UI.Windows;
 using DBI.HellHeavenInterop;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
@@ -14,7 +15,7 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 using Enum = System.Enum;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace DBI.Hell.UI;
+namespace DBI.Hell;
 
 public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWindow
 {
@@ -394,6 +395,15 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
         VisualElement container = category.Q("ctr_categoryContent");
         switch (plugin.Status.State)
         {
+            case PluginState.Disabled:
+                AddLine(
+                    container,
+                    FigmaIcons.radioOff,
+                    Color.gray,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Disabled" : plugin.Status.Message,
+                    DofusUiConstants.TextWhite65
+                );
+                break;
             case PluginState.NotStarted:
                 AddLine(
                     container,

@@ -2,13 +2,12 @@
 using BepInEx.Unity.IL2CPP;
 using DBI.Hell.Configuration;
 using DBI.Hell.Extensions;
+using DBI.Hell.GameInterop.UI.Dialogs;
+using DBI.Hell.GameInterop.UI.Menus;
+using DBI.Hell.GameInterop.UI.Windows;
 using DBI.Hell.HeavenInterop;
-using DBI.Hell.Helpers;
 using DBI.Hell.Logging;
-using DBI.Hell.UI;
-using DBI.Hell.UI.Dialogs;
-using DBI.Hell.UI.Menus;
-using DBI.Hell.UI.Windows;
+using DBI.Hell.Metadata;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Microsoft.Extensions.Logging;

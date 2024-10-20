@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics;
-using DBI.Hell.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DBI.Hell;
 
-// ReSharper disable once InconsistentNaming
 public class GameClientInformation
 {
-    static readonly ILogger Log = Hell.Logging.Create(typeof(ApplicationHelpers));
+    static readonly ILogger Log = Hell.Logging.Create(typeof(GameClientInformation));
 
     GameClientInformation(Process process, string launcherPath)
     {
