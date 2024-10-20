@@ -6,12 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace DBI.Hell.HeavenInterop;
 
-class HeavenHandle
+public class HeavenHandle
 {
     const string HeavenLauncherExecutableName = "Heaven Launcher.exe";
 
     readonly ILogger _logger = Hell.Logging.Create("HeavenHandle");
     public GrpcChannel Channel { get; private set; }
+
+    internal HeavenHandle() { }
 
     public async Task<bool> ConnectToHeavenAsync()
     {

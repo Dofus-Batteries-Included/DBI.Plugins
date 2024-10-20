@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using DBI.Hell.Configuration;
-using DBI.Hell.Extensions;
 using DBI.Hell.GameInterop.UI.Dialogs;
 using DBI.Hell.GameInterop.UI.Menus;
 using DBI.Hell.GameInterop.UI.Windows;
@@ -23,6 +22,7 @@ class Hell : BasePlugin
     public static bool Enabled { get; private set; }
     public static Guid? DofusBuildId { get; private set; }
     public static LoggerFactory Logging { get; private set; } = new();
+    public static HellBackgroundJobs BackgroundJobs { get; private set; } = new();
     public static GameClientInformation GameClientInformation { get; private set; } = GameClientInformation.CreateFromOwnProcess();
     public static HeavenHandle Heaven { get; private set; } = new();
     public static PluginsManager Plugins { get; private set; } = new();
@@ -53,10 +53,10 @@ class Hell : BasePlugin
             return;
         }
 
-        LoadAsync().Forget(_logger, nameof(LoadAsync));
+        BackgroundJobs.Start(LoadAsync, nameof(LoadAsync));
     }
 
-    async Task<bool> LoadAsync()
+    async Task<bool> LoadAsync(CancellationToken cancellationToken)
     {
         if (!await Heaven.ConnectToHeavenAsync())
         {

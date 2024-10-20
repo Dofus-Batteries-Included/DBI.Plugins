@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using DBI.Hell.Configuration;
-using DBI.Hell.Extensions;
 using DBI.HellHeavenInterop;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -12,6 +11,8 @@ public class PluginsManager
 {
     static readonly ILogger Logger = Hell.Logging.Create<PluginsManager>();
     readonly ConcurrentDictionary<string, PluginInstance> _plugins = [];
+
+    internal PluginsManager() { }
 
     public async Task LoadFromHeavenAsync()
     {
@@ -47,15 +48,15 @@ public class PluginsManager
 
         Logger.LogInformation("Done loading plugins from Heaven.");
 
-        RefreshPluginStatusesAsync(client).Forget(Logger, nameof(RefreshPluginStatusesAsync));
-        RefreshPluginConfigurationAsync(client).Forget(Logger, nameof(RefreshPluginConfigurationAsync));
+        Hell.BackgroundJobs.Start(cancellationToken => RefreshPluginStatusesAsync(client, cancellationToken), nameof(RefreshPluginStatusesAsync));
+        Hell.BackgroundJobs.Start(cancellationToken => RefreshPluginConfigurationAsync(client, cancellationToken), nameof(RefreshPluginConfigurationAsync));
     }
 
     public IEnumerable<PluginInstance> GetPlugins() => _plugins.Values;
 
-    async Task RefreshPluginStatusesAsync(HellHeavenInterop.Plugins.PluginsClient client)
+    async Task RefreshPluginStatusesAsync(HellHeavenInterop.Plugins.PluginsClient client, CancellationToken cancellationToken)
     {
-        AsyncServerStreamingCall<PluginStatusChangedStreamResponse> stream = client.GetPluginStatusChangedStream(new Empty());
+        AsyncServerStreamingCall<PluginStatusChangedStreamResponse> stream = client.GetPluginStatusChangedStream(new Empty(), cancellationToken: cancellationToken);
 
         Logger.LogInformation("Subscribing to plugin status changes from Heaven...");
 
@@ -65,7 +66,7 @@ public class PluginsManager
 
         try
         {
-            await foreach (PluginStatusChangedStreamResponse response in stream.ResponseStream.ReadAllAsync())
+            await foreach (PluginStatusChangedStreamResponse response in stream.ResponseStream.ReadAllAsync(cancellationToken))
             {
                 PluginInstance pluginInstance = _plugins.GetValueOrDefault(response.Name);
                 if (pluginInstance == null)
@@ -86,9 +87,9 @@ public class PluginsManager
         Logger.LogInformation("Plugin status changes from Heaven stopped.");
     }
 
-    async Task RefreshPluginConfigurationAsync(HellHeavenInterop.Plugins.PluginsClient client)
+    async Task RefreshPluginConfigurationAsync(HellHeavenInterop.Plugins.PluginsClient client, CancellationToken cancellationToken)
     {
-        AsyncServerStreamingCall<PluginConfigurationChangedStreamResponse> stream = client.GetPluginConfigurationChangedStream(new Empty());
+        AsyncServerStreamingCall<PluginConfigurationChangedStreamResponse> stream = client.GetPluginConfigurationChangedStream(new Empty(), cancellationToken: cancellationToken);
 
         Logger.LogInformation("Subscribing to plugin configuration changes from Heaven...");
 
@@ -98,7 +99,7 @@ public class PluginsManager
 
         try
         {
-            await foreach (PluginConfigurationChangedStreamResponse response in stream.ResponseStream.ReadAllAsync())
+            await foreach (PluginConfigurationChangedStreamResponse response in stream.ResponseStream.ReadAllAsync(cancellationToken))
             {
                 PluginInstance pluginInstance = _plugins.GetValueOrDefault(response.Name);
                 if (pluginInstance == null)

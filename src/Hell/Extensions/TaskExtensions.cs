@@ -12,6 +12,7 @@ public static class TaskExtensions
     /// </remarks>
     public static void Forget(this Task task, ILogger logger = null, string taskName = null)
     {
+        taskName ??= "<anonymous>";
         logger?.LogDebug("Fire and forget task {Name}.", taskName);
 
         // note: this code is inspired by a tweet from Ben Adams: https://twitter.com/ben_a_adams/status/1045060828700037125
