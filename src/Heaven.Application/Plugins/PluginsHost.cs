@@ -1,5 +1,6 @@
 ﻿using DBI.Heaven.Application.Configuration;
 using Heaven.Abstractions;
+using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace DBI.Heaven.Application.Plugins;
@@ -23,24 +24,17 @@ class PluginsHost(
             plugin.SetupConfiguration(configurationBuilder);
 
             PluginConfiguration configuration = configurationBuilder.Build();
-            PluginInstance instance = new(plugin, configuration);
+            PluginInstance instance = new(plugin, configuration, _scope.ServiceProvider.GetRequiredService<IMediator>());
 
             pluginInstances.RegisterInstance(instance);
 
             try
             {
-                instance.Started = true;
-                instance.FailedToStart = false;
-                instance.FailedToStartReason = null;
-
-                await plugin.StartAsync(cancellationToken);
+                await instance.StartAsync(cancellationToken);
             }
             catch (Exception exn)
             {
-                logger.LogError(exn, "Could not start plugin {Plugin}.", plugin);
-                instance.Started = false;
-                instance.FailedToStart = true;
-                instance.FailedToStartReason = exn.Message;
+                logger.LogError(exn, "Could not start plugin {Plugin}.", instance);
             }
         }
     }
@@ -49,8 +43,14 @@ class PluginsHost(
     {
         foreach (PluginInstance instance in pluginInstances.GetInstances())
         {
-            instance.Started = false;
-            await instance.Plugin.StopAsync(cancellationToken);
+            try
+            {
+                await instance.StopAsync(cancellationToken);
+            }
+            catch (Exception exn)
+            {
+                logger.LogError(exn, "Could not stop plugin {Plugin}.", instance);
+            }
         }
     }
 

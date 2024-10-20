@@ -2,13 +2,13 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
-namespace DBI.Heaven.Application.HellInterop.Services;
+namespace DBI.Heaven.Application.HellHeavenInterop.Services;
 
-public class PingHellService : GameInstance.GameInstanceBase
+public class GameInstanceHellService : GameInstance.GameInstanceBase
 {
-    readonly ILogger<PingHellService> _logger;
+    readonly ILogger<GameInstanceHellService> _logger;
 
-    public PingHellService(ILogger<PingHellService> logger)
+    public GameInstanceHellService(ILogger<GameInstanceHellService> logger)
     {
         _logger = logger;
     }

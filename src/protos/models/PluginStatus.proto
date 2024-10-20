@@ -5,11 +5,11 @@ option csharp_namespace = "DBI.HellHeavenInterop";
 
 message PluginStatus {
   PluginState State = 1;
-  string FailedToStartReason = 2;
+  string Message = 2;
 }
 
 enum PluginState {
   NotStarted = 0;
   Running = 1;
-  FailedToStart = 2;
+  Error = 3;
 }

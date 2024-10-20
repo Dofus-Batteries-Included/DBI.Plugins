@@ -1,0 +1,11 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+import "PluginStatus.proto";
+
+message PluginStatusChangedStreamResponse { 
+  string name = 1;
+  PluginStatus status = 2;
+}

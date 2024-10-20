@@ -1,6 +1,6 @@
 ﻿using System.IO.Pipes;
 
-namespace DBI.Heaven.Application.HellInterop;
+namespace DBI.Heaven.Application.HellHeavenInterop;
 
 public class HellCommunicationBackgroundService : BackgroundService
 {

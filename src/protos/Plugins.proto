@@ -7,8 +7,11 @@ import "google/protobuf/empty.proto";
 import "PluginStatus.proto";
 import "ConfigurePluginRequest.proto";
 import "GetPluginsResponse.proto";
+import "PluginStatusChangedStreamResponse.proto";
 
 service Plugins {
   rpc GetPlugins (google.protobuf.Empty) returns (GetPluginsResponse);
   rpc ConfigurePlugin (ConfigurePluginRequest) returns (google.protobuf.Empty);
+  
+  rpc GetPluginStatusChangedStream (google.protobuf.Empty) returns (stream PluginStatusChangedStreamResponse);
 }

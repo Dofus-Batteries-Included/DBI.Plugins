@@ -1,6 +1,8 @@
-﻿namespace DBI.Heaven.Application.Plugins;
+﻿using MediatR;
 
-class PluginInstancesService
+namespace DBI.Heaven.Application.Plugins;
+
+class PluginInstancesService(IMediator mediator)
 {
     readonly Dictionary<string, PluginInstance> _instances = [];
 

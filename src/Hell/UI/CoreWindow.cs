@@ -394,20 +394,32 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         VisualElement container = category.Q("ctr_categoryContent");
         switch (plugin.Status.State)
         {
-            case PluginState.Running:
-                AddLine(container, FigmaIcons.radioOn, Color.green, "Running", DofusUiConstants.TextWhite100);
+            case PluginState.NotStarted:
+                AddLine(
+                    container,
+                    FigmaIcons.radioOff,
+                    Color.gray,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Not Started" : plugin.Status.Message,
+                    DofusUiConstants.TextWhite65
+                );
                 break;
-            case PluginState.FailedToStart:
+            case PluginState.Running:
+                AddLine(
+                    container,
+                    FigmaIcons.radioOn,
+                    Color.green,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Running" : plugin.Status.Message,
+                    DofusUiConstants.TextWhite100
+                );
+                break;
+            case PluginState.Error:
                 AddLine(
                     container,
                     FigmaIcons.circleCross,
                     Color.red,
-                    string.IsNullOrWhiteSpace(plugin.Status.FailedToStartReason) ? "Failed to start." : $"Failed to start: {plugin.Status.FailedToStartReason}",
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Error" : plugin.Status.Message,
                     DofusUiConstants.TextLightRed100
                 );
-                break;
-            case PluginState.NotStarted:
-                AddLine(container, FigmaIcons.radioOff, Color.gray, "Not started", DofusUiConstants.TextWhite65);
                 break;
             default:
                 AddLine(container, FigmaIcons.questionMark, "Unknown status");

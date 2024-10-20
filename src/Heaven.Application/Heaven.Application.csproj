@@ -23,6 +23,7 @@
 
     <ItemGroup>
         <PackageReference Include="Grpc.AspNetCore" Version="2.66.0"/>
+        <PackageReference Include="MediatR" Version="12.4.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1"/>
         <PackageReference Include="MinVer" Version="6.0.0">
           <PrivateAssets>all</PrivateAssets>
@@ -36,6 +37,9 @@
 
     <ItemGroup>
         <Protobuf Include="../protos/**/*.proto" AdditionalImportDirs="../protos/models;../protos/requests;../protos/responses" GrpcServices="Server"/>
+        <Protobuf Update="..\protos\responses\StreamPluginStatusesResponse.proto">
+          <Link>protos\responses\StreamPluginStatusesResponse.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
     <ItemGroup>

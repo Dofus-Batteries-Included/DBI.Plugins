@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using DBI.Heaven.Application.HellInterop.Services;
+using DBI.Heaven.Application.HellHeavenInterop.Services;
 using DBI.Heaven.Application.Logging;
 using DBI.Heaven.Application.Plugins;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -31,12 +31,15 @@ try
     builder.WebHost.ConfigureKestrel(serverOptions => { serverOptions.ListenUnixSocket(socketPath, listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; }); });
 
     builder.Services.AddGrpc();
+    builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssemblyContaining<Program>());
+
+    builder.Services.AddSingleton<PluginsHellService>();
 
     builder.Services.ConfigurePlugins();
 
     WebApplication app = builder.Build();
 
-    app.MapGrpcService<PingHellService>();
+    app.MapGrpcService<GameInstanceHellService>();
     app.MapGrpcService<PluginsHellService>();
 
     ILogger logger = app.Services.GetRequiredService<ILogger<Program>>();

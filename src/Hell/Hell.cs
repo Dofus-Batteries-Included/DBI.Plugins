@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using DBI.Hell.Configuration;
+using DBI.Hell.Extensions;
 using DBI.Hell.HeavenInterop;
 using DBI.Hell.Helpers;
 using DBI.Hell.Logging;
@@ -53,7 +54,7 @@ class Hell : BasePlugin
             return;
         }
 
-        LoadAsync().ConfigureAwait(false);
+        LoadAsync().Forget(_logger, nameof(LoadAsync));
     }
 
     async Task<bool> LoadAsync()

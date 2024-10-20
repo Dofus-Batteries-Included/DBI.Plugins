@@ -13,31 +13,9 @@ public abstract class DbiPlugin
 
     public DbiPluginInfo Info { get; private set; }
     public ILogger<DbiPlugin> Logger { get; }
-    public bool Started { get; private set; }
 
-    public async Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        if (Started)
-        {
-            Logger.LogInformation("Plugin {Info} is already started.", Info);
-            return;
-        }
-
-        Started = true;
-        await OnStartAsync(cancellationToken);
-    }
-
-    public async Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        if (!Started)
-        {
-            Logger.LogInformation("Plugin {Info} is not started yet.", Info);
-            return;
-        }
-
-        Started = false;
-        await OnStopAsync(cancellationToken);
-    }
+    public async Task StartAsync(CancellationToken cancellationToken = default) => await OnStartAsync(cancellationToken);
+    public async Task StopAsync(CancellationToken cancellationToken = default) => await OnStopAsync(cancellationToken);
 
     public virtual void SetupConfiguration(IPluginConfigurationBuilder configurationBuilder) { }
     protected virtual Task OnStartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
