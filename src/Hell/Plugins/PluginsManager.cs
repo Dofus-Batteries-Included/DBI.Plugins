@@ -14,9 +14,9 @@ public class PluginsManager
 
     internal PluginsManager() { }
 
-    public async Task LoadFromHeavenAsync()
+    public async Task Initialize()
     {
-        Logger.LogInformation("Start loading plugins from Heaven...");
+        Logger.LogInformation("Loading plugins from Heaven...");
 
         HellHeavenInterop.Plugins.PluginsClient client = new(Hell.Heaven.Channel);
         GetPluginsResponse plugins = await client.GetPluginsAsync(new Empty());

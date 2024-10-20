@@ -56,6 +56,12 @@
           <Generator>MSBuild:Compile</Generator>
           <Link>protos\responses\PluginConfigurationChangedStreamResponse.proto</Link>
         </Protobuf>
+        <Protobuf Update="..\protos\Messages.proto">
+          <Link>protos\Messages.proto</Link>
+        </Protobuf>
+        <Protobuf Update="..\protos\requests\MessageRequest.proto">
+          <Link>protos\requests\MessageStreamRequest.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
     <ItemGroup>

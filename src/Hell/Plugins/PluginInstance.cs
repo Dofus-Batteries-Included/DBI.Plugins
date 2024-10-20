@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using DBI.Hell.Configuration;
+﻿using DBI.Hell.Configuration;
 using DBI.HellHeavenInterop;
 
 namespace DBI.Hell.Plugins;
@@ -21,9 +20,6 @@ public class PluginInstance
 
     public void UpdateConfiguration(PluginConfigurationValues configurationValues, ConfigurationChangeSource source)
     {
-        Thread.Sleep(1000);
-        Debugger.Break();
-
         foreach (PluginConfigurationCategoryValues category in configurationValues.Categories)
         foreach (PluginConfigurationEntryValue entry in category.Entries)
         {

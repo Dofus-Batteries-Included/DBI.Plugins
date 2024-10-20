@@ -41,6 +41,7 @@ try
 
     app.MapGrpcService<GameInstanceHellService>();
     app.MapGrpcService<PluginsHellService>();
+    app.MapGrpcService<MessagesHellService>();
 
     ILogger logger = app.Services.GetRequiredService<ILogger<Program>>();
 

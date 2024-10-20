@@ -1,6 +1,6 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Publish - Beta" type="ShConfigurationType">
-    <option name="SCRIPT_TEXT" value="./pack.ps1 -configuration Debug -output &quot;F:\Ankama\Dofus-beta\BepInEx\plugins\DofusBatteriesIncluded&quot;" />
+    <option name="SCRIPT_TEXT" value="./pack.ps1 -Configuration Debug -HellOutput &quot;F:\Ankama\Dofus-beta\BepInEx\plugins\DofusBatteriesIncluded\Hell&quot; -HeavenOutput &quot;F:\Ankama\Dofus-beta\BepInEx\DofusBatteriesIncluded\Heaven&quot;" />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
     <option name="SCRIPT_PATH" value="&quot;pack.ps1&quot;" />
     <option name="SCRIPT_OPTIONS" value="-output &quot;F:\Ankama\Dofus-beta\BepInEx\plugins\DofusBatteriesIncluded&quot;" />

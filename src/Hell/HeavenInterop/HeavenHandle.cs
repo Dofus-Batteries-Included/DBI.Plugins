@@ -8,7 +8,7 @@ namespace DBI.Hell.HeavenInterop;
 
 public class HeavenHandle
 {
-    const string HeavenLauncherExecutableName = "Heaven Launcher.exe";
+    const string HeavenLauncherExecutableName = "../../../DofusBatteriesIncluded/Heaven/Heaven Launcher.exe";
 
     readonly ILogger _logger = Hell.Logging.Create("HeavenHandle");
     public GrpcChannel Channel { get; private set; }
@@ -17,8 +17,6 @@ public class HeavenHandle
 
     public async Task<bool> ConnectToHeavenAsync()
     {
-        _logger.LogInformation("Starting connection to Heaven...");
-
         AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
         string thisAssemblyPath = typeof(Hell).Assembly.Location;
@@ -52,7 +50,7 @@ public class HeavenHandle
             }
             catch (Exception exn)
             {
-                _logger.LogError(exn, "Error when trying to contact Heaven (attempt {Attempt}/{MaxAttempt}).", attempt, maxAttempts);
+                _logger.LogError(exn, "Error when trying to contact Heaven (attempt {Attempt}/{MaxAttempt}): {Message}.", attempt, maxAttempts, exn.Message);
                 await Task.Delay(1000);
             }
         }

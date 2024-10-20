@@ -18,12 +18,8 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     
-    <PropertyGroup>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*"/>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
         <PackageReference Include="Google.Protobuf" Version="3.27.0"/>
         <PackageReference Include="Grpc.Net.Client" Version="2.66.0"/>
@@ -60,20 +56,11 @@
         <Reference Include="Core">
             <HintPath>..\Interop\Core.dll</HintPath>
         </Reference>
-        <Reference Include="Ankama.Dofus.Protocol.Game">
-            <HintPath>..\Interop\Ankama.Dofus.Protocol.Game.dll</HintPath>
-        </Reference>
-        <Reference Include="Ankama.Dofus.Protocol.Connection">
-            <HintPath>..\Interop\Ankama.Dofus.Protocol.Connection.dll</HintPath>
-        </Reference>
         <Reference Include="Ankama.Dofus.Core.DataCenter">
             <HintPath>..\Interop\Ankama.Dofus.Core.DataCenter.dll</HintPath>
         </Reference>
         <Reference Include="Ankama.AudioManagement">
             <HintPath>..\Interop\Ankama.AudioManagement.dll</HintPath>
-        </Reference>
-        <Reference Include="Google.Protobuf">
-            <HintPath>..\Interop\Google.Protobuf.dll</HintPath>
         </Reference>
         <Reference Include="Il2Cppmscorlib">
             <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
@@ -84,16 +71,8 @@
         <Protobuf Include="../protos/**/*.proto" AdditionalImportDirs="../protos/models;../protos/requests;../protos/responses" GrpcServices="Client"/>
     </ItemGroup>
 
-    <Target Name="ILMerge" AfterTargets="Publish">
-        <Exec WorkingDirectory="$(ProjectDir)$(PublishDir)"
-              Command="$(ILRepack) --union --parallel --out:DBI.Hell.merged.dll ^
-                        DBI.Hell.dll ^
-                        Grpc.Core.Api.dll ^
-                        Grpc.Net.Client.dll ^
-                        Grpc.Net.Common.dll ^
-                        Microsoft.Extensions.Logging.Abstractions.dll ^
-                      "
-        />
-    </Target>
+    <ItemGroup>
+      <ProjectReference Include="..\Hell.RedirectMessages\Hell.RedirectMessages.csproj" />
+    </ItemGroup>
 
 </Project>
