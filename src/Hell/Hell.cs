@@ -8,6 +8,7 @@ using DBI.Hell.GameInterop.UI.Windows;
 using DBI.Hell.HeavenInterop;
 using DBI.Hell.Logging;
 using DBI.Hell.Metadata;
+using DBI.Hell.Plugins;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Microsoft.Extensions.Logging;

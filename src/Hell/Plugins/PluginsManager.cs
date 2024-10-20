@@ -5,7 +5,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 
-namespace DBI.Hell;
+namespace DBI.Hell.Plugins;
 
 public class PluginsManager
 {
@@ -16,7 +16,7 @@ public class PluginsManager
     {
         Logger.LogInformation("Start loading plugins from Heaven...");
 
-        Plugins.PluginsClient client = new(Hell.Heaven.Channel);
+        HellHeavenInterop.Plugins.PluginsClient client = new(Hell.Heaven.Channel);
         GetPluginsResponse plugins = await client.GetPluginsAsync(new Empty());
 
         _plugins.Clear();
@@ -34,7 +34,7 @@ public class PluginsManager
 
     public IEnumerable<Plugin> GetPlugins() => _plugins.Values;
 
-    async Task RefreshPluginsAsync(Plugins.PluginsClient client)
+    async Task RefreshPluginsAsync(HellHeavenInterop.Plugins.PluginsClient client)
     {
         AsyncServerStreamingCall<PluginStatusChangedStreamResponse> stream = client.GetPluginStatusChangedStream(new Empty());
 
