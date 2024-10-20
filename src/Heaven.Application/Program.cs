@@ -16,17 +16,18 @@ try
         await Console.Error.WriteLineAsync($"main:{alreadyRunningMainInstance.Id}");
 
         Log.Logger.Warning("Another instance of Heaven has been detected: {Process}.", alreadyRunningMainInstance);
-        Log.Logger.Warning("Exitting...");
+        Log.Logger.Warning("Exiting...");
         return;
     }
 
-    Process currentProcess = Process.GetCurrentProcess();
-    string socketPath = Path.Combine(Path.GetTempPath(), $"dbi_server_socket_{currentProcess.Id}.tmp");
 
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSerilog(opt => { opt.ConfigureSerilog().ReadFrom.Configuration(builder.Configuration); });
 
+    string socketDir = builder.Configuration.GetValue<string>("GRPC_SOCKET_DIR") ?? ".";
+    string socketNamePrefix = builder.Configuration.GetValue<string>("GRPC_SOCKET_NAME_PREFIX") ?? "";
+    string socketPath = Path.Combine(socketDir, $"{socketNamePrefix}{Environment.ProcessId}");
     builder.WebHost.ConfigureKestrel(serverOptions => { serverOptions.ListenUnixSocket(socketPath, listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; }); });
 
     builder.Services.AddGrpc();
@@ -41,7 +42,9 @@ try
     ILogger logger = app.Services.GetRequiredService<ILogger<Program>>();
 
     logger.LogInformation("Hello!");
-    await app.RunAsync();
+    await app.StartAsync();
+    logger.LogInformation("Ready!");
+    await app.WaitForShutdownAsync();
     Log.Logger.Information("Bye!");
 }
 catch (Exception ex)

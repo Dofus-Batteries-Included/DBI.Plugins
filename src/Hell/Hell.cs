@@ -9,6 +9,7 @@ using DBI.Hell.UI;
 using DBI.Hell.UI.Dialogs;
 using DBI.Hell.UI.Menus;
 using DBI.Hell.UI.Windows;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -27,17 +28,17 @@ class Hell : BasePlugin
     public static CorePlugins Plugins { get; private set; } = new();
     public static CoreConfiguration Configuration { get; private set; } = new();
 
+    readonly ILogger _logger = Logging.Create<Hell>();
+
     public override void Load()
     {
-        ILogger logger = Logging.Create<Hell>();
-
         Enabled = Configuration.Configure("General", "Enabled", true).WithDescription("Enable or disable all Dofus Batteries Included plugins.").Hide().Bind();
-        DofusBuildId = ReadDofusBuildId(logger);
-        Guid? expectedBuildId = ReadExpectedBuildId(logger);
+        DofusBuildId = ReadDofusBuildId(_logger);
+        Guid? expectedBuildId = ReadExpectedBuildId(_logger);
 
         if (expectedBuildId.HasValue && DofusBuildId.HasValue && expectedBuildId.Value != DofusBuildId.Value)
         {
-            logger.LogInformation(
+            _logger.LogInformation(
                 "Expected game build ID doesn't match actual build ID: {Expected} != {Actual}. "
                 + "DBI won't start, please download the version of the plugin that matches the version of the game.",
                 expectedBuildId.Value,
@@ -48,22 +49,29 @@ class Hell : BasePlugin
 
         if (!Enabled)
         {
-            logger.LogInformation("Dofus Batteries Included is disabled.");
+            _logger.LogInformation("Dofus Batteries Included is disabled.");
             return;
         }
 
-        InitializeCoreComponents();
-        LoadAsync().GetAwaiter().GetResult();
+        LoadAsync().ConfigureAwait(false);
     }
 
-    async Task LoadAsync()
+    async Task<bool> LoadAsync()
     {
         if (!await Heaven.ConnectToHeavenAsync())
         {
-            return;
+            _logger.LogError("Could not initialize connection to Heaven, Hell will stop.");
+            return false;
         }
 
         await Plugins.LoadFromHeavenAsync();
+
+        IntPtr domain = IL2CPP.il2cpp_domain_get();
+        IL2CPP.il2cpp_thread_attach(domain);
+
+        InitializeCoreComponents();
+
+        return true;
     }
 
     static Guid? ReadExpectedBuildId(ILogger logger)

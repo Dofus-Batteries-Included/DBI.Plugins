@@ -29,22 +29,15 @@ class HeavenHandle
             return false;
         }
 
-        if (!StartHeavenLauncher(heavenLauncherPath, out Process heavenLauncherProcess))
-        {
-            _logger.LogError("Could not start heaven launcher executable at {Path}.", heavenLauncherPath);
-            return false;
-        }
-
-        int? heavenProcessId = await ReadHeavenProcessId(heavenLauncherProcess);
-        if (!heavenProcessId.HasValue)
+        string heavenSocketPath = await StartHeavenLauncherAndGetHeavenSocketPath(heavenLauncherPath);
+        if (heavenSocketPath == null)
         {
             _logger.LogError("Could not find Heaven process.");
             return false;
         }
 
-        string socketPath = Path.Combine(Path.GetTempPath(), $"dbi_server_socket_{heavenProcessId}.tmp");
-        Channel = CreateChannel(socketPath);
-        _logger.LogInformation("Heaven interoperability socket configured: {Socket}.", socketPath);
+        Channel = CreateChannel(heavenSocketPath);
+        _logger.LogInformation("Heaven interoperability socket configured: {Socket}.", heavenSocketPath);
 
         const int maxAttempts = 3;
         for (int attempt = 1; attempt <= maxAttempts; attempt++)
@@ -66,29 +59,26 @@ class HeavenHandle
         return false;
     }
 
-    bool StartHeavenLauncher(string path, out Process process)
+    async Task<string> StartHeavenLauncherAndGetHeavenSocketPath(string heavenLauncherPath)
     {
-        process = new Process();
-        process.StartInfo.FileName = path;
-        process.StartInfo.CreateNoWindow = true;
-        process.StartInfo.ErrorDialog = true;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-        process.ErrorDataReceived += (_, args) => { _logger.LogError("Heaven Launcher: {Error}", args.Data); };
+        Process heavenLauncherProcess = new();
+        heavenLauncherProcess.StartInfo.FileName = heavenLauncherPath;
+        heavenLauncherProcess.StartInfo.CreateNoWindow = true;
+        heavenLauncherProcess.StartInfo.ErrorDialog = true;
+        heavenLauncherProcess.StartInfo.RedirectStandardOutput = true;
+        heavenLauncherProcess.StartInfo.RedirectStandardError = true;
+        heavenLauncherProcess.ErrorDataReceived += (_, args) => { _logger.LogError("Heaven Launcher: {Error}", args.Data); };
 
-        bool started = process.Start();
+        bool started = heavenLauncherProcess.Start();
 
-        if (started)
+        if (!started)
         {
-            process.BeginErrorReadLine();
+            return null;
         }
 
-        return started;
-    }
+        heavenLauncherProcess.BeginErrorReadLine();
 
-    async Task<int?> ReadHeavenProcessId(Process heavenLauncherProcess)
-    {
-        int? heavenProcessId = null;
+        string socketPath = null;
         do
         {
             string line = await heavenLauncherProcess.StandardOutput.ReadLineAsync();
@@ -97,38 +87,18 @@ class HeavenHandle
                 break;
             }
 
-            const string createdSuffix = "created:";
-            if (line.StartsWith(createdSuffix))
+            const string successSuffix = "success:";
+            if (line.StartsWith(successSuffix))
             {
-                string idStr = line[createdSuffix.Length..];
-                if (int.TryParse(idStr, out int id))
-                {
-                    _logger.LogInformation("Found Heaven process id: {Id}", id);
-                    heavenProcessId = id;
-
-                    await Task.Delay(1000);
-
-                    continue;
-                }
-            }
-
-            const string existingSuffix = "existing:";
-            if (line.StartsWith(existingSuffix))
-            {
-                string idStr = line[existingSuffix.Length..];
-                if (int.TryParse(idStr, out int id))
-                {
-                    _logger.LogInformation("Found Heaven process id: {Id}", id);
-                    heavenProcessId = id;
-                    continue;
-                }
+                socketPath = line[successSuffix.Length..];
+                _logger.LogInformation("Found Heaven socket path: {Path}", socketPath);
             }
 
             _logger.LogInformation("Heaven Launcher: {Message}", line);
         } while (!heavenLauncherProcess.HasExited);
 
         _logger.LogInformation("Heaven Launcher has exited with code {ExitCode}.", heavenLauncherProcess.ExitCode);
-        return heavenProcessId;
+        return socketPath;
     }
 
     GrpcChannel CreateChannel(string socketPath)

@@ -5,11 +5,13 @@ using System.Diagnostics;
 const string heavenExecutableName = "Heaven.exe";
 const int waitDelayInMilliseconds = 1000;
 const string uniqueId = "Heaven_Launcher_e4917edf-0756-47c3-bd4c-2c25f0649979";
+const string heavenSocketNamePrefix = "dbi_heaven_";
+string socketDirectory = Path.GetTempPath();
 
 Mutex mutex = new(false, uniqueId);
 if (!mutex.WaitOne(waitDelayInMilliseconds))
 {
-    await Fail("Could not acquire lock.");
+    throw new InvalidOperationException("Could not acquire lock.");
 }
 
 try
@@ -18,24 +20,25 @@ try
     switch (heavenProcesses.Length)
     {
         case 0:
-            Process heavenProcess = StartHeaven();
-            await Console.Out.WriteLineAsync($"created:{heavenProcess.Id}");
+            Process newProcess = await StartHeaven();
+            Success(newProcess);
             break;
         case 1:
-            await Console.Out.WriteLineAsync($"existing:{heavenProcesses.Single().Id}");
+            Process existingProcess = heavenProcesses.Single();
+            Success(existingProcess);
             break;
         case > 1:
-            await Fail("Multiple instances of Heaven are running.");
-            break;
+            throw new InvalidOperationException("Multiple instances of Heaven are running.");
     }
 }
 finally
 {
-    mutex.ReleaseMutex();
+    await Console.Out.FlushAsync();
 }
+
 return;
 
-Process StartHeaven()
+async Task<Process> StartHeaven()
 {
     string thisAssemblyPath = typeof(Program).Assembly.Location;
     string? thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
@@ -50,18 +53,29 @@ Process StartHeaven()
     heavenProcess.StartInfo.FileName = heavenPath;
     heavenProcess.StartInfo.CreateNoWindow = true;
     heavenProcess.StartInfo.ErrorDialog = true;
+    heavenProcess.StartInfo.RedirectStandardOutput = true;
     heavenProcess.StartInfo.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "Development";
+    heavenProcess.StartInfo.EnvironmentVariables["GRPC_SOCKET_DIR"] = socketDirectory;
+    heavenProcess.StartInfo.EnvironmentVariables["GRPC_SOCKET_NAME_PREFIX"] = heavenSocketNamePrefix;
 
     if (!heavenProcess.Start())
     {
         throw new InvalidOperationException($"Could not start heaven executable at {heavenPath}.");
     }
 
-    return heavenProcess;
+    while (!heavenProcess.HasExited && await heavenProcess.StandardOutput.ReadLineAsync() is { } line)
+    {
+        if (line.Contains("Ready!"))
+        {
+            return heavenProcess;
+        }
+    }
+
+    throw new InvalidOperationException("Could not start Heaven.");
 }
 
-async Task Fail(string errorMessage)
+void Success(Process process)
 {
-    await Console.Error.WriteLineAsync(errorMessage);
-    Environment.Exit(1);
+    string socketPath = Path.Combine(socketDirectory, $"{heavenSocketNamePrefix}{process.Id}");
+    Console.WriteLine($"success:{socketPath}");
 }
