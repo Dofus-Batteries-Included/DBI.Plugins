@@ -10,7 +10,7 @@ public class MessagesHellService(ILogger<MessagesHellService> logger) : Messages
 {
     public override Task<Empty> MessageReceived(MessageRequest request, ServerCallContext context)
     {
-        logger.LogInformation("Received message of length {Length}.", request.Content.Length);
+        logger.LogInformation("Received message of length {Length}: {MessageHex}.", request.Content.Length, Convert.ToHexString(request.Content.Span));
 
         ConnectionMessage? connectionMessage = ConnectionMessage.Parser.ParseFrom(request.Content);
         logger.LogInformation("{Message}", connectionMessage);
