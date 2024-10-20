@@ -17,7 +17,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
@@ -28,8 +28,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="ILRepack" Version="2.0.35">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="MinVer" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
@@ -68,11 +68,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="../protos/**/*.proto" AdditionalImportDirs="../protos/models;../protos/requests;../protos/responses" GrpcServices="Client"/>
+        <Protobuf Include="../protos/**/*.proto" GrpcServices="Client"
+                  AdditionalImportDirs="../protos/HellHeavenInterop/models;../protos/HellHeavenInterop/requests;../protos/HellHeavenInterop/responses;../protos/Game/includes;"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Hell.RedirectMessages\Hell.RedirectMessages.csproj" />
+        <ProjectReference Include="..\Hell.RedirectMessages\Hell.RedirectMessages.csproj"/>
     </ItemGroup>
 
 </Project>

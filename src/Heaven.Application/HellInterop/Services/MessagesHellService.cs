@@ -2,7 +2,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
-namespace DBI.Heaven.Application.HellHeavenInterop.Services;
+namespace DBI.Heaven.Application.HellInterop.Services;
 
 public class MessagesHellService(ILogger<MessagesHellService> logger) : Messages.MessagesBase
 {

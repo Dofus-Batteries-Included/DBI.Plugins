@@ -9,9 +9,9 @@ using PluginConfiguration = DBI.HellHeavenInterop.PluginConfiguration;
 using PluginConfigurationCategory = DBI.Heaven.Application.Configuration.PluginConfigurationCategory;
 using PluginConfigurationEntry = DBI.Heaven.Application.Configuration.PluginConfigurationEntry;
 
-namespace DBI.Heaven.Application.HellHeavenInterop.Services;
+namespace DBI.Heaven.Application.HellInterop.Services;
 
-class PluginsHellService(PluginInstancesService plugins, ILoggerFactory loggerFactory) : DBI.HellHeavenInterop.Plugins.PluginsBase
+class PluginsHellService(PluginInstancesService plugins, ILoggerFactory loggerFactory) : HellHeavenInterop.Plugins.PluginsBase
 {
     readonly ILogger<PluginsHellService> _logger = loggerFactory.CreateLogger<PluginsHellService>();
 
@@ -122,9 +122,9 @@ static class PluginsMappingExtensions
         return result;
     }
 
-    public static DBI.HellHeavenInterop.PluginConfigurationCategory ToHellPluginConfigurationCategory(this PluginConfigurationCategory category)
+    public static HellHeavenInterop.PluginConfigurationCategory ToHellPluginConfigurationCategory(this PluginConfigurationCategory category)
     {
-        DBI.HellHeavenInterop.PluginConfigurationCategory result = new() { Name = category.Name };
+        HellHeavenInterop.PluginConfigurationCategory result = new() { Name = category.Name };
 
         foreach (PluginConfigurationEntry entry in category.GetEntries())
         {
@@ -134,20 +134,20 @@ static class PluginsMappingExtensions
         return result;
     }
 
-    public static DBI.HellHeavenInterop.PluginConfigurationEntry ToHellPluginConfigurationEntry(this PluginConfigurationEntry entry) =>
+    public static HellHeavenInterop.PluginConfigurationEntry ToHellPluginConfigurationEntry(this PluginConfigurationEntry entry) =>
         entry switch
         {
-            PluginConfigurationEntry<bool> boolEntry => new DBI.HellHeavenInterop.PluginConfigurationEntry
+            PluginConfigurationEntry<bool> boolEntry => new HellHeavenInterop.PluginConfigurationEntry
             {
                 Name = entry.Name, Description = entry.Description, BoolEntry = new PluginConfigurationBoolEntry { DefaultValue = boolEntry.DefaultValue }
             },
-            PluginConfigurationEntry<string> stringEntry => new DBI.HellHeavenInterop.PluginConfigurationEntry
+            PluginConfigurationEntry<string> stringEntry => new HellHeavenInterop.PluginConfigurationEntry
             {
                 Name = entry.Name,
                 Description = entry.Description,
                 StringEntry = new PluginConfigurationStringEntry { DefaultValue = stringEntry.DefaultValue, PossibleValues = { stringEntry.PossibleValues } }
             },
-            _ => new DBI.HellHeavenInterop.PluginConfigurationEntry { Name = entry.Name, Description = entry.Description }
+            _ => new HellHeavenInterop.PluginConfigurationEntry { Name = entry.Name, Description = entry.Description }
         };
 
     public static PluginConfigurationValues ToHellPluginConfigurationValues(this Configuration.PluginConfiguration configuration)

@@ -1,9 +1,9 @@
-﻿using DBI.Heaven.Application.HellHeavenInterop.Services;
+﻿using DBI.Heaven.Application.HellInterop.Services;
 using DBI.Heaven.Application.Plugins.Notifications;
 using DBI.HellHeavenInterop;
 using MediatR;
 
-namespace DBI.Heaven.Application.HellHeavenInterop.StreamWriters;
+namespace DBI.Heaven.Application.HellInterop.StreamWriters;
 
 class WriteStatusChangeOnPluginStatusChanged(PluginsHellService pluginsService) : INotificationHandler<PluginStatusChangedNotification>
 {

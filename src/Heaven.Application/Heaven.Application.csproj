@@ -36,32 +36,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="../protos/**/*.proto" AdditionalImportDirs="../protos/models;../protos/requests;../protos/responses" GrpcServices="Server"/>
-        <Protobuf Update="..\protos\responses\StreamPluginStatusesResponse.proto">
-          <Link>protos\responses\StreamPluginStatusesResponse.proto</Link>
-        </Protobuf>
-        <Protobuf Update="..\protos\models\PluginConfigurationValues.proto">
-          <Access>Public</Access>
-          <ProtoCompile>True</ProtoCompile>
-          <CompileOutputs>True</CompileOutputs>
-          <OutputDir>obj\Debug\net8.0\</OutputDir>
-          <Generator>MSBuild:Compile</Generator>
-          <Link>protos\models\PluginConfigurationValues.proto</Link>
-        </Protobuf>
-        <Protobuf Update="..\protos\responses\PluginConfigurationChangedStreamResponse.proto">
-          <Access>Public</Access>
-          <ProtoCompile>True</ProtoCompile>
-          <CompileOutputs>True</CompileOutputs>
-          <OutputDir>obj\Debug\net8.0\</OutputDir>
-          <Generator>MSBuild:Compile</Generator>
-          <Link>protos\responses\PluginConfigurationChangedStreamResponse.proto</Link>
-        </Protobuf>
-        <Protobuf Update="..\protos\Messages.proto">
-          <Link>protos\Messages.proto</Link>
-        </Protobuf>
-        <Protobuf Update="..\protos\requests\MessageRequest.proto">
-          <Link>protos\requests\MessageStreamRequest.proto</Link>
-        </Protobuf>
+        <Protobuf Include="../protos/**/*.proto" GrpcServices="Server"
+                  AdditionalImportDirs="../protos/HellHeavenInterop/models;../protos/HellHeavenInterop/requests;../protos/HellHeavenInterop/responses;../protos/Game/includes;"/>
     </ItemGroup>
 
     <ItemGroup>
