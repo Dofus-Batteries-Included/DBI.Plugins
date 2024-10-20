@@ -48,14 +48,15 @@ public class PluginsManager
 
         Logger.LogInformation("Done loading plugins from Heaven.");
 
-        Hell.BackgroundJobs.Start(cancellationToken => RefreshPluginStatusesAsync(client, cancellationToken), nameof(RefreshPluginStatusesAsync));
-        Hell.BackgroundJobs.Start(cancellationToken => RefreshPluginConfigurationAsync(client, cancellationToken), nameof(RefreshPluginConfigurationAsync));
+        Hell.BackgroundJobs.Start(RefreshPluginStatusesAsync, nameof(RefreshPluginStatusesAsync));
+        Hell.BackgroundJobs.Start(RefreshPluginConfigurationAsync, nameof(RefreshPluginConfigurationAsync));
     }
 
     public IEnumerable<PluginInstance> GetPlugins() => _plugins.Values;
 
-    async Task RefreshPluginStatusesAsync(HellHeavenInterop.Plugins.PluginsClient client, CancellationToken cancellationToken)
+    async Task RefreshPluginStatusesAsync(CancellationToken cancellationToken)
     {
+        HellHeavenInterop.Plugins.PluginsClient client = new(Hell.Heaven.Channel);
         AsyncServerStreamingCall<PluginStatusChangedStreamResponse> stream = client.GetPluginStatusChangedStream(new Empty(), cancellationToken: cancellationToken);
 
         Logger.LogInformation("Subscribing to plugin status changes from Heaven...");
@@ -87,8 +88,9 @@ public class PluginsManager
         Logger.LogInformation("Plugin status changes from Heaven stopped.");
     }
 
-    async Task RefreshPluginConfigurationAsync(HellHeavenInterop.Plugins.PluginsClient client, CancellationToken cancellationToken)
+    async Task RefreshPluginConfigurationAsync(CancellationToken cancellationToken)
     {
+        HellHeavenInterop.Plugins.PluginsClient client = new(Hell.Heaven.Channel);
         AsyncServerStreamingCall<PluginConfigurationChangedStreamResponse> stream = client.GetPluginConfigurationChangedStream(new Empty(), cancellationToken: cancellationToken);
 
         Logger.LogInformation("Subscribing to plugin configuration changes from Heaven...");

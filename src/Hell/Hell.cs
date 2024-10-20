@@ -8,7 +8,6 @@ using DBI.Hell.HeavenInterop;
 using DBI.Hell.Logging;
 using DBI.Hell.Metadata;
 using DBI.Hell.Plugins;
-using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -53,6 +52,8 @@ class Hell : BasePlugin
             return;
         }
 
+        InitializeCoreComponents();
+
         BackgroundJobs.Start(LoadAsync, nameof(LoadAsync));
     }
 
@@ -65,11 +66,6 @@ class Hell : BasePlugin
         }
 
         await Plugins.LoadFromHeavenAsync();
-
-        IntPtr domain = IL2CPP.il2cpp_domain_get();
-        IL2CPP.il2cpp_thread_attach(domain);
-
-        InitializeCoreComponents();
 
         return true;
     }
