@@ -68,8 +68,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="../protos/**/*.proto" GrpcServices="Client"
-                  AdditionalImportDirs="../protos/HellHeavenInterop/models;../protos/HellHeavenInterop/requests;../protos/HellHeavenInterop/responses;../protos/Game/includes;"/>
+        <Protobuf Include="../Protos/HellHeavenInterop/**/*.proto" GrpcServices="Client" OutputDir="$(IntermediateOutputPath)HeavenInterop"
+                  AdditionalImportDirs="../Protos/HellHeavenInterop/models;../Protos/HellHeavenInterop/requests;../Protos/HellHeavenInterop/responses"/>
+        <Protobuf Include="../Protos/Game/connection/**/*.proto" GrpcServices="Client" OutputDir="$(IntermediateOutputPath)Game/connection"/>
+        <Protobuf Include="../Protos/Game/game/**/*.proto" GrpcServices="Client" OutputDir="$(IntermediateOutputPath)Game/game" AdditionalImportDirs="../Protos/Game/game/includes"/>
     </ItemGroup>
 
     <ItemGroup>

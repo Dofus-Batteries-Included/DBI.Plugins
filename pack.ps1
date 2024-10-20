@@ -61,6 +61,7 @@ foreach ($File in Get-ChildItem "$SourceHellDir/*.dll")
         continue;
     }
 
+    echo "Copying $File to $HellOutput..."
     copy $File $HellOutput
 }
 

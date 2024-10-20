@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using System.Reflection;
+using Google.Protobuf;
 using HarmonyLib;
 using Microsoft.Extensions.Logging;
 using MemoryStream = Il2CppSystem.IO.MemoryStream;
@@ -18,6 +19,9 @@ public class MessageInterceptor
 
     public MessageInterceptor(ILogger logger)
     {
+        // ensure at least one assembly with IMessage implementations is loaded
+        Assembly.Load("Ankama.Dofus.Protocol.Connection");
+
         _logger = logger;
         _instance = this;
 

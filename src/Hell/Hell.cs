@@ -56,9 +56,6 @@ class Hell : BasePlugin
         AssemblyLoadContext alc = new("DBI.Hell.RedirectMessages");
         alc.LoadFromAssemblyPath(Path.Join(thisAssemblyDirectory, "../../../interop/Google.Protobuf.dll"));
         alc.LoadFromAssemblyPath(Path.Join(thisAssemblyDirectory, "DBI.Hell.RedirectMessages.dll"));
-
-        MessageInterceptor interceptor = new(Logging.Create<MessageInterceptor>());
-        Messages = new MessagesManager(interceptor);
     }
 
     public override void Load()
@@ -84,6 +81,9 @@ class Hell : BasePlugin
             );
             return;
         }
+
+        MessageInterceptor interceptor = new(Logging.Create<MessageInterceptor>());
+        Messages = new MessagesManager(interceptor);
 
         InitializeCoreComponents();
 
