@@ -2,13 +2,15 @@
 
 public class ConfigurationEntryBuilder<T> where T: IEquatable<T>
 {
-    internal ConfigurationEntryBuilder(string category, string key, T defaultValue)
+    internal ConfigurationEntryBuilder(string pluginName, string category, string key, T defaultValue)
     {
+        PluginName = pluginName;
         Category = category;
         Key = key;
         DefaultValue = defaultValue;
     }
 
+    public string PluginName { get; }
     public string Category { get; }
     public string Key { get; }
     public T DefaultValue { get; }

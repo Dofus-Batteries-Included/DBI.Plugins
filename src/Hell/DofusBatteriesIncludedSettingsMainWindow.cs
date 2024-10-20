@@ -7,6 +7,7 @@ using DBI.Hell.Configuration;
 using DBI.Hell.GameInterop.UI;
 using DBI.Hell.GameInterop.UI.Dialogs;
 using DBI.Hell.GameInterop.UI.Windows;
+using DBI.Hell.Plugins;
 using DBI.HellHeavenInterop;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
@@ -145,11 +146,11 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
         };
         visualElement.Add(label);
 
-        foreach (Plugin plugin in Hell.Plugins.GetPlugins())
+        foreach (PluginInstance instance in Hell.Plugins.GetPlugins())
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            ConfigurationManager.Entry<bool> enabledConfigurationEntry = Hell.Configuration.Get<bool>(plugin.Info.Name, "Enabled");
+            ConfigurationManager.Entry<bool> enabledConfigurationEntry = Hell.Configuration.Get<bool>(instance.Plugin.Info.Name, "Enabled");
             if (enabledConfigurationEntry != null)
             {
                 BoolOption data = CreateOptionData(enabledConfigurationEntry);
@@ -160,13 +161,14 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
             category.Init(
                 new CategoryData
                 {
-                    name = $"{plugin.Info.DisplayName} v{plugin.Info.Version}", options = options, canBeOpened = false, notResettable = options.Count == 0, noAccountNeeded = true
+                    name = $"{instance.Plugin.Info.DisplayName} v{instance.Plugin.Info.Version}", options = options, canBeOpened = false, notResettable = options.Count == 0,
+                    noAccountNeeded = true
                 },
                 true
             );
             visualElement.Add(category);
 
-            AddStatusLineToCategory(plugin, category);
+            AddStatusLineToCategory(instance, category);
         }
 
         return visualElement;
@@ -390,7 +392,7 @@ public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWi
         container.Add(element);
     }
 
-    static void AddStatusLineToCategory(Plugin plugin, OptionCategory category)
+    static void AddStatusLineToCategory(PluginInstance plugin, OptionCategory category)
     {
         VisualElement container = category.Q("ctr_categoryContent");
         switch (plugin.Status.State)

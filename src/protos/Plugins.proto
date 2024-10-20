@@ -4,7 +4,6 @@ package HellHeavenInterop;
 option csharp_namespace = "DBI.HellHeavenInterop";
 
 import "google/protobuf/empty.proto";
-import "PluginStatus.proto";
 import "ConfigurePluginRequest.proto";
 import "GetPluginsResponse.proto";
 import "PluginStatusChangedStreamResponse.proto";

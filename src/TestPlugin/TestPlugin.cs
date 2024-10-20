@@ -22,6 +22,7 @@ public class TestPlugin : DbiPlugin
         maCategorie.AddEntry<bool>("Mon entrée").WithDescription("Ma super entrée!").WithDefaultValue(true);
 
         IPluginConfigurationCategoryBuilder monAutreCategorie = configurationBuilder.AddCategory("Mon autre catégorie");
+        monAutreCategorie.AddEntry<string>("Mon autre entrée").WithDescription("Ma super entrée!").WithPossibleValues("test1", "test2", "test123").WithDefaultValue("test123");
     }
 
     protected override Task OnStartAsync(CancellationToken cancellationToken)

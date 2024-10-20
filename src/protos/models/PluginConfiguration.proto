@@ -3,6 +3,8 @@
 package HellHeavenInterop;
 option csharp_namespace = "DBI.HellHeavenInterop";
 
+import "google/protobuf/wrappers.proto";
+
 message PluginConfiguration {
   repeated PluginConfigurationCategory categories = 1;
 }
@@ -16,17 +18,17 @@ message PluginConfigurationEntry {
   string name = 1;
   string description = 2;
 
-  oneof OneOfPluginConfigurationEntry {
+  oneof PluginConfigurationEntry {
     PluginConfigurationBoolEntry boolEntry = 3;
     PluginConfigurationStringEntry stringEntry = 4;
   }
 }
 
 message PluginConfigurationBoolEntry {
-  bool defaultValue = 3;
+  google.protobuf.BoolValue defaultValue = 2;
 }
 
 message PluginConfigurationStringEntry {
-  string defaultValue = 3;
-  repeated string possibleValues = 4;
+  google.protobuf.StringValue defaultValue = 2;
+  repeated string possibleValues = 3;
 }

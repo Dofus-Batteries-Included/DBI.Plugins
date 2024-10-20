@@ -3,6 +3,9 @@
 package HellHeavenInterop;
 option csharp_namespace = "DBI.HellHeavenInterop";
 
-message ConfigurePluginRequest {
+import "PluginConfigurationValues.proto";
 
+message ConfigurePluginRequest {
+  string name = 1;
+  PluginConfigurationValues configuration = 2;
 }

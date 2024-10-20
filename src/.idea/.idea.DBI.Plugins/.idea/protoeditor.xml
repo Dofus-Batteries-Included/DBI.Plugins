@@ -7,6 +7,9 @@
           <option name="location" value="file://$PROJECT_DIR$/protos/models" />
         </ImportPathEntry>
         <ImportPathEntry>
+          <option name="location" value="file://$PROJECT_DIR$/protos/models" />
+        </ImportPathEntry>
+        <ImportPathEntry>
           <option name="location" value="file://$PROJECT_DIR$/protos/requests" />
         </ImportPathEntry>
         <ImportPathEntry>

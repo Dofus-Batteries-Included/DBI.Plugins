@@ -13,7 +13,10 @@ public class ConfigurationManager
         _bepinexConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, fileName), false);
     }
 
-    public ConfigurationEntryBuilder<T> Configure<T>(string category, string key, T defaultValue) where T: IEquatable<T> => new(category, key, defaultValue);
+    public ConfigurationEntryBuilder<T> Configure<T>(string category, string key, T defaultValue) where T: IEquatable<T> => Configure(null, category, key, defaultValue);
+
+    public ConfigurationEntryBuilder<T> Configure<T>(string pluginName, string category, string key, T defaultValue) where T: IEquatable<T> =>
+        new(pluginName, category, key, defaultValue);
 
     public Entry<T> Get<T>(string category, string key) => _entries.OfType<Entry<T>>().FirstOrDefault(e => e.Category == category && e.Key == key);
 
@@ -35,7 +38,7 @@ public class ConfigurationManager
             builder.DefaultValue,
             new ConfigDescription(builder.Description, builder.PossibleValues.Count == 0 ? null : new AcceptableValueList<T>(acceptableValues))
         );
-        entry = new Entry<T>(builder.Category, builder.Key, builder.DefaultValue, acceptableValues, bepinexEntry) { Hidden = builder.Hidden };
+        entry = new Entry<T>(builder.PluginName, builder.Category, builder.Key, builder.DefaultValue, acceptableValues, bepinexEntry) { Hidden = builder.Hidden };
         _entries.Add(entry);
 
         foreach (ConfigurationEntryBuilder<T>.Callback callback in builder.Callbacks)
@@ -52,12 +55,17 @@ public class ConfigurationManager
 
     public abstract class Entry
     {
-        internal Entry(string category, string key, Type type)
+        internal Entry(string pluginName, string category, string key, Type type)
         {
             Category = category;
             Key = key;
             Type = type;
         }
+
+        /// <summary>
+        ///     Optional. The plugin that added this entry.
+        /// </summary>
+        public string PluginName { get; }
 
         public string Category { get; }
         public string Key { get; }
@@ -73,11 +81,16 @@ public class ConfigurationManager
 
     public class Entry<T> : Entry
     {
-        internal Entry(string category, string key, T defaultValue, ConfigEntry<T> configEntry) : this(category, key, defaultValue, [], configEntry)
+        internal Entry(string pluginName, string category, string key, T defaultValue, ConfigEntry<T> configEntry) : this(pluginName, category, key, defaultValue, [], configEntry)
         {
         }
 
-        internal Entry(string category, string key, T defaultValue, T[] acceptableValues, ConfigEntry<T> configEntry) : base(category, key, typeof(T))
+        internal Entry(string pluginName, string category, string key, T defaultValue, T[] acceptableValues, ConfigEntry<T> configEntry) : base(
+            pluginName,
+            category,
+            key,
+            typeof(T)
+        )
         {
             DefaultValue = defaultValue;
             AcceptableValues = acceptableValues;

@@ -11,7 +11,7 @@ using PluginConfigurationEntry = DBI.Heaven.Application.Configuration.PluginConf
 
 namespace DBI.Heaven.Application.HellHeavenInterop.Services;
 
-class PluginsHellService(PluginInstancesService plugins) : DBI.HellHeavenInterop.Plugins.PluginsBase
+class PluginsHellService(PluginInstancesService plugins, ILogger<PluginsHellService> logger) : DBI.HellHeavenInterop.Plugins.PluginsBase
 {
     readonly List<IServerStreamWriter<PluginStatusChangedStreamResponse>> _writers = [];
 
@@ -27,12 +27,69 @@ class PluginsHellService(PluginInstancesService plugins) : DBI.HellHeavenInterop
         return Task.FromResult(result);
     }
 
-    public override Task GetPluginStatusChangedStream(Empty request, IServerStreamWriter<PluginStatusChangedStreamResponse> serverStreamWriter, ServerCallContext context)
+    public override Task<Empty> ConfigurePlugin(ConfigurePluginRequest request, ServerCallContext context)
     {
+        PluginInstance? plugin = plugins.GetInstance(request.Name);
+        if (plugin == null)
+        {
+            throw new InvalidOperationException($"Could not find plugin {request.Name}");
+        }
+
+        foreach (PluginConfigurationCategoryValues? category in request.Configuration.Categories)
+        {
+            PluginConfigurationCategory? pluginCategory = plugin.Configuration.GetCategory(category.Name);
+            if (pluginCategory == null)
+            {
+                throw new InvalidOperationException($"Could not find category {category.Name} in configuration of plugin {request.Name}.");
+            }
+
+            foreach (PluginConfigurationEntryValue? entry in category.Entries)
+            {
+                PluginConfigurationEntry? pluginEntry = pluginCategory.GetEntry(entry.Name);
+                if (pluginEntry == null)
+                {
+                    throw new InvalidOperationException($"Could not find entry {category.Name}: {entry.Name} in configuration of plugin {request.Name}.");
+                }
+
+                switch (entry.PluginConfigurationEntryValueCase)
+                {
+                    case PluginConfigurationEntryValue.PluginConfigurationEntryValueOneofCase.BoolValue:
+                        ((PluginConfigurationEntry<bool>)pluginEntry).SetValue(entry.BoolValue);
+                        break;
+                    case PluginConfigurationEntryValue.PluginConfigurationEntryValueOneofCase.StringValue:
+                        ((PluginConfigurationEntry<string>)pluginEntry).SetValue(entry.StringValue);
+                        break;
+                    case PluginConfigurationEntryValue.PluginConfigurationEntryValueOneofCase.None:
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(entry.PluginConfigurationEntryValueCase), entry.PluginConfigurationEntryValueCase, null);
+                }
+            }
+        }
+
+        logger.LogInformation("Updated the configuration of plugin {Plugin}.", plugin);
+
+        return Task.FromResult(new Empty());
+    }
+
+    public override async Task GetPluginStatusChangedStream(Empty request, IServerStreamWriter<PluginStatusChangedStreamResponse> serverStreamWriter, ServerCallContext context)
+    {
+        // start by writing the statuses of all the plugins now
+        foreach (PluginInstance plugin in plugins.GetInstances())
+        {
+            PluginStatusChangedStreamResponse message = new()
+            {
+                Name = plugin.Plugin.Info.Name,
+                Status = plugin.ToHellStatus()
+            };
+
+            await serverStreamWriter.WriteAsync(message);
+        }
+
+        // then append the writer to the writers os that next status changes are also written to this writer, see WriteStatusChange
         _writers.Add(serverStreamWriter);
 
         // the server should never close this stream
-        return Task.Delay(Timeout.Infinite);
+        await Task.Delay(Timeout.Infinite);
     }
 
     public async Task WriteStatusChange(PluginStatusChangedNotification notification, CancellationToken cancellationToken = default)
@@ -53,7 +110,6 @@ class PluginsHellService(PluginInstancesService plugins) : DBI.HellHeavenInterop
         new()
         {
             Info = ConvertInfo(instance.Plugin.Info),
-            Status = instance.ToHellStatus(),
             Configuration = ConvertConfiguration(instance.Configuration)
         };
 
