@@ -3,7 +3,7 @@
 namespace DBI.Hell.Logging;
 
 // ReSharper disable once InconsistentNaming
-class CoreLogging
+class LoggerFactory
 {
     readonly DofusBatteriesIncludedLoggerProvider _provider = new();
 

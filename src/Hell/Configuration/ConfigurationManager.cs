@@ -4,12 +4,12 @@ using BepInEx.Configuration;
 namespace DBI.Hell.Configuration;
 
 // ReSharper disable once InconsistentNaming
-public class CoreConfiguration
+public class ConfigurationManager
 {
     readonly ConfigFile _bepinexConfigFile;
     readonly List<Entry> _entries = [];
 
-    internal CoreConfiguration(string fileName = "DofusBatteriesIncluded.cfg")
+    internal ConfigurationManager(string fileName = "DofusBatteriesIncluded.cfg")
     {
         _bepinexConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, fileName), false);
     }

@@ -16,7 +16,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DBI.Hell.UI;
 
-public class CoreWindow : DofusBatteriesIncludedWindow
+public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWindow
 {
     static readonly ILogger Log = Hell.Logging.Create<DofusBatteriesIncludedWindow>();
     protected override string Name => "Dofus Batteries Included";
@@ -148,7 +148,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            CoreConfiguration.Entry<bool> enabledConfigurationEntry = Hell.Configuration.Get<bool>(plugin.Info.Name, "Enabled");
+            ConfigurationManager.Entry<bool> enabledConfigurationEntry = Hell.Configuration.Get<bool>(plugin.Info.Name, "Enabled");
             if (enabledConfigurationEntry != null)
             {
                 BoolOption data = CreateOptionData(enabledConfigurationEntry);
@@ -181,19 +181,19 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             }
         };
 
-        CoreConfiguration.Entry[] entries = Hell.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
+        ConfigurationManager.Entry[] entries = Hell.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
         IEnumerable<string> categories = entries.Select(e => e.Category).Distinct();
 
         foreach (string category in categories)
         {
             Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
 
-            IEnumerable<CoreConfiguration.Entry> entriesInCategory = entries.Where(e => e.Category == category);
-            foreach (CoreConfiguration.Entry entry in entriesInCategory)
+            IEnumerable<ConfigurationManager.Entry> entriesInCategory = entries.Where(e => e.Category == category);
+            foreach (ConfigurationManager.Entry entry in entriesInCategory)
             {
                 switch (entry)
                 {
-                    case CoreConfiguration.Entry<bool> boolEntry:
+                    case ConfigurationManager.Entry<bool> boolEntry:
                     {
                         BoolOption option = CreateOptionData(boolEntry);
                         options.Add(new IOptionData(option.Pointer));
@@ -336,7 +336,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
             _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
         };
 
-    static BoolOption CreateOptionData(CoreConfiguration.Entry<bool> entry)
+    static BoolOption CreateOptionData(ConfigurationManager.Entry<bool> entry)
     {
         BoolOption option = new(null, new Option<bool>(entry.DefaultValue) { m_value = entry.Value })
         {
@@ -347,7 +347,7 @@ public class CoreWindow : DofusBatteriesIncludedWindow
         return option;
     }
 
-    static MultipleChoiceOption CreateMultipleChoiceOptionData(CoreConfiguration.Entry entry)
+    static MultipleChoiceOption CreateMultipleChoiceOptionData(ConfigurationManager.Entry entry)
     {
         IReadOnlyList<ValueDescription> values = entry.AcceptableValuesDescriptions;
         ValueDescription value = entry.CurrentValueDescription;

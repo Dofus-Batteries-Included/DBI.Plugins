@@ -5,7 +5,6 @@ using DBI.Hell.Extensions;
 using DBI.Hell.HeavenInterop;
 using DBI.Hell.Helpers;
 using DBI.Hell.Logging;
-using DBI.Hell.Plugins;
 using DBI.Hell.UI;
 using DBI.Hell.UI.Dialogs;
 using DBI.Hell.UI.Menus;
@@ -23,11 +22,11 @@ class Hell : BasePlugin
 {
     public static bool Enabled { get; private set; }
     public static Guid? DofusBuildId { get; private set; }
-    public static CoreLogging Logging { get; private set; } = new();
+    public static LoggerFactory Logging { get; private set; } = new();
     public static GameClientInformation GameClientInformation { get; private set; } = GameClientInformation.CreateFromOwnProcess();
     public static HeavenHandle Heaven { get; private set; } = new();
-    public static CorePlugins Plugins { get; private set; } = new();
-    public static CoreConfiguration Configuration { get; private set; } = new();
+    public static PluginsManager Plugins { get; private set; } = new();
+    public static ConfigurationManager Configuration { get; private set; } = new();
 
     readonly ILogger _logger = Logging.Create<Hell>();
 
@@ -117,7 +116,7 @@ class Hell : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<DofusBatteriesIncludedWindow>();
 
         AddComponent<DofusBatteriesIncludedDialogs>();
-        CoreWindow window = AddComponent<CoreWindow>();
+        DofusBatteriesIncludedSettingsMainWindow window = AddComponent<DofusBatteriesIncludedSettingsMainWindow>();
         DofusBatteriesIncludedGameMenu menu = AddComponent<DofusBatteriesIncludedGameMenu>();
 
         menu.AddButton("Dofus Batteries Included", _ => window.Toggle());
