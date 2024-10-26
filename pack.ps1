@@ -1,6 +1,6 @@
 param (
     [string]$Configuration = "Release",
-    [string]$Output = "dist",
+    [string]$Output = "dist/",
     [switch]$Help
 )
 
@@ -10,58 +10,97 @@ if ($Help)
     exit 0
 }
 
-$Projects = "Core", "TreasureSolver";
-
-echo "> Packing projects: $Projects"
+echo "> Configuration: $Configuration"
 echo "> Output path: $Output"
 
-if (Test-Path -Path $Output)
+$InteropDlls = Get-ChildItem "src/interop/*.dll" | % { Split-Path $_ -leaf }
+$Exceptions = @("Google.Protobuf.dll")
+
+echo ""
+$RunningDofusProcesses = Get-Process -Name "Dofus" -ErrorAction Ignore
+if ($RunningDofusProcesses -ne $null)
 {
-    echo "Cleaning output folder $Output..."
-    rm $Output -r -force
+    echo "Stopping Dofus processes..."
+    Stop-Process -InputObject $RunningDofusProcesses
+    Start-Sleep -Seconds 1
 }
 
-echo "Creating output folder $Output..."
-$null = md $Output
-
-$InteropFolder = "src/Interop";
-$InteropDlls = Get-ChildItem "$InteropFolder/*.dll" | % { Split-Path $_ -leaf }
-
-echo "Found $( $InteropDlls.Length ) interop DLLs."
-
-foreach ($Project in $Projects)
+$RunningHeavenProcesses = Get-Process -Name "Heaven" -ErrorAction Ignore
+if ($RunningHeavenProcesses -ne $null)
 {
-    echo "Packing project $Project..."
+    echo "Stopping Heaven processes..."
+    Stop-Process -InputObject $RunningHeavenProcesses
+    Start-Sleep -Seconds 1
+}
 
-    $OtherProjects = $Projects | Where-Object { $_ -ne $Project }
-    $OtherProjectsDll = $OtherProjects | % { "DofusBatteriesIncluded.Plugins.$_.dll" }
+echo ""
+if (Test-Path -Path $Output)
+{
+    echo "Cleaning Hell output folder..."
+    rm -Recurse -Force "$Output"
+}
+echo "Creating output folder $Output..."
+$null = md $Output -Force
 
-    $Dir = Join-Path $Output $Project
-    $null = MkDir $Dir -Force
-    foreach ($File in Get-ChildItem "src/$Project/bin/$Configuration/net6.0/publish/*.dll")
+echo ""
+echo "- Packing Hell..."
+
+mkdir $Output -Force
+
+$SourceHellDir = "src/Hell/bin/$Configuration/net6.0/publish"
+
+echo "Copying $SourceHellDir to $Output..."
+
+foreach ($File in Get-ChildItem "$SourceHellDir/*.dll")
+{
+    $Filename = Split-Path $File -leaf
+    if ( -not $Exceptions.Contains($Filename) -and $InteropDlls.Contains($Filename))
     {
-        $Filename = Split-Path $File -leaf
-        if ( $InteropDlls.Contains($Filename))
-        {
-            continue;
-        }
-
-        if ( $OtherProjectsDll.Contains($Filename))
-        {
-            continue;
-        }
-
-        echo "Copying $File to $Dir..."
-        copy $File $Dir
+        continue;
     }
 
-    $ResourcesFolder = "src/$Project/bin/$Configuration/net6.0/publish/Resources"
-    if (Test-Path $ResourcesFolder) {
-        copy "$ResourcesFolder" $Dir -Recurse
-    }
+    echo "Copying $File to $Output..."
+    copy $File $Output
+}
 
-    $RuntimesFolder = "src/$Project/bin/$Configuration/net6.0/publish/runtimes/win-x64"
-    if (Test-Path $RuntimesFolder) {
-        copy "$RuntimesFolder/**/*.dll" $Dir -Recurse
-    }
+$SourceHellLauncherDir = "src/Hell.RedirectMessages/bin/$Configuration/net6.0/publish"
+
+echo "Copying $SourceHellLauncherDir/DBI.Hell.RedirectMessages.dll to $Output/DBI.Hell.RedirectMessages.dll..."
+copy "$SourceHellLauncherDir/DBI.Hell.RedirectMessages.dll" "$Output/DBI.Hell.RedirectMessages.dll" -Force
+
+echo "Done packing Hell."
+
+echo ""
+echo "- Packing Heaven..."
+
+mkdir $Output -Force
+
+$SourceHeavenDir = "src/Heaven.Application/bin/$Configuration/net8.0/win-x64/publish"
+
+echo "Copying $SourceHeavenDir to $Output..."
+copy "$SourceHeavenDir/*" "$Output" -Recurse -Force
+
+echo "Rename executable DBI.Heaven.Application.exe to Heaven.exe..."
+mv "$Output/DBI.Heaven.Application.exe" "$Output/Heaven.exe" -Force
+
+echo "Done packing Heaven."
+
+echo ""
+echo "- Packing Heaven Launcher..."
+
+$SourceHeavenDir = "src/Heaven.Launcher/bin/$Configuration/net8.0/win-x64/publish"
+echo "Copying $SourceHeavenDir to $Output..."
+copy "$SourceHeavenDir/*" "$Output" -Recurse -Force
+
+echo "Rename executable DBI.Heaven.Launcher.exe to Heaven Launcher.exe..."
+mv "$Output/DBI.Heaven.Launcher.exe" "$Output/Heaven Launcher.exe" -Force
+
+echo "Done packing Heaven."
+
+if ($Configuration -ne "Debug")
+{
+    echo ""
+    echo "Deleting .pdb files because Configuration is $Configuration (not Debug)..."
+    rm "$Output/*.pdb" -Force
+    rm "$Output/*.pdb" -Force
 }

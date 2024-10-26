@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+import "google/protobuf/empty.proto";
+import "RegisterGameClientRequest.proto";
+
+service GameInstance {
+  rpc RegisterGameClient (RegisterGameClientRequest) returns (google.protobuf.Empty);
+}

@@ -23,4 +23,8 @@
             <_Parameter1>$(DOFUSVERSION)</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
+
+    <PropertyGroup>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+    </PropertyGroup>
 </Project>

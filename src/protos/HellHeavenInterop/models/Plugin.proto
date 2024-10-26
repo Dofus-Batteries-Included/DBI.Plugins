@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+import "PluginInfo.proto";
+import "PluginConfiguration.proto";
+
+message Plugin {
+  PluginInfo info = 1;
+  PluginConfiguration configuration = 2;
+}

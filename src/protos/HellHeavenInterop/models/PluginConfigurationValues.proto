@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+message PluginConfigurationValues {
+  repeated PluginConfigurationCategoryValues categories = 1;
+}
+
+message PluginConfigurationCategoryValues {
+  string name = 1;
+  repeated PluginConfigurationEntryValue entries = 2;
+}
+
+message PluginConfigurationEntryValue {
+  string name = 1;
+  string description = 2;
+
+  oneof PluginConfigurationEntryValue {
+    bool boolValue = 3;
+    string stringValue = 4;
+  }
+}

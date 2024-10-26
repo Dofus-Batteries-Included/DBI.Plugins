@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AssemblyName>DBI.Hell.RedirectMessages</AssemblyName>
+        <RootNamespace>DBI.Hell.RedirectMessages</RootNamespace>
+        <Title>Dofus Batteries Included - Hell - Redirect Messages</Title>
+        <Product>DBI.Hell.RedirectMessages</Product>
+        <Authors>Ismail Bennani</Authors>
+        <Description>Intercept messages received by the game.</Description>
+        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</RepositoryUrl>
+        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI.Plugins/main/LICENSE</PackageLicense>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+        <PackageReference Include="MinVer" Version="6.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Google.Protobuf">
+            <HintPath>..\Interop\Google.Protobuf.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2Cppmscorlib">
+            <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    
+</Project>

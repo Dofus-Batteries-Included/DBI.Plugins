@@ -1,0 +1,461 @@
+﻿using Core.Engine.Options;
+using Core.UILogic.Components;
+using Core.UILogic.Components.Figma;
+using Core.UILogic.Config;
+using Core.UILogic.Config.OptionElement;
+using DBI.Hell.Configuration;
+using DBI.Hell.GameInterop.UI;
+using DBI.Hell.GameInterop.UI.Dialogs;
+using DBI.Hell.GameInterop.UI.Windows;
+using DBI.Hell.Plugins;
+using DBI.HellHeavenInterop;
+using Microsoft.Extensions.Logging;
+using UnityEngine;
+using UnityEngine.UIElements;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+using Enum = System.Enum;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+
+namespace DBI.Hell;
+
+public class DofusBatteriesIncludedSettingsMainWindow : DofusBatteriesIncludedWindow
+{
+    static readonly ILogger Log = Hell.Logging.Create<DofusBatteriesIncludedWindow>();
+    protected override string Name => "Dofus Batteries Included";
+
+    readonly Dictionary<Category, CategorySummaryItem> _items = [];
+    Category? _currentCategory;
+
+    CategorySummaryItem _generalItem;
+    CategorySummaryItem _settingsItem;
+
+    VisualElement _generalTab;
+    VisualElement _settingsTab;
+
+    readonly Dictionary<string, bool> _pluginsEnabledInitial = [];
+
+    public void SelectCategory(Category category)
+    {
+        if (_currentCategory.HasValue)
+        {
+            CategorySummaryItem item = GetItem(_currentCategory.Value);
+            item.isSelected = false;
+            VisualElement tab = GetTab(_currentCategory.Value);
+            tab.style.display = DisplayStyle.None;
+        }
+
+        _currentCategory = category;
+
+        if (_currentCategory.HasValue)
+        {
+            CategorySummaryItem item = GetItem(_currentCategory.Value);
+            item.isSelected = true;
+            VisualElement tab = GetTab(_currentCategory.Value);
+            tab.style.display = DisplayStyle.Flex;
+        }
+    }
+
+    protected override void Build(WindowFigma window)
+    {
+        base.Build(window);
+
+        window.style.width = new Length(50, Length.Unit.Percent);
+        window.style.height = new Length(50, Length.Unit.Percent);
+
+        VisualElement container = new()
+        {
+            style =
+            {
+                display = DisplayStyle.Flex,
+                flexDirection = FlexDirection.Row,
+                height = new Length(100, Length.Unit.Percent)
+            }
+        };
+        window.content.Add(container);
+
+        VisualElement sidePanel = new()
+        {
+            style =
+            {
+                display = DisplayStyle.Flex,
+                flexDirection = FlexDirection.Column,
+                width = new Length(30, Length.Unit.Percent),
+                height = new Length(100, Length.Unit.Percent)
+            }
+        };
+        sidePanel.classList.Add("backgroundColor_background_medium90");
+        ScrollView leftScrollView = new()
+        {
+            showHorizontal = false
+        };
+
+        _generalItem = CreateItem(Category.General, sidePanel);
+        _settingsItem = CreateItem(Category.Settings, sidePanel);
+
+        sidePanel.Add(leftScrollView);
+        container.Add(sidePanel);
+
+        ScrollView rightScrollView = new()
+        {
+            style =
+            {
+                flexGrow = 1
+            },
+            showHorizontal = false
+        };
+
+        _generalTab = CreateGeneralTab();
+        rightScrollView.Add(_generalTab);
+
+        _settingsTab = CreateSettingsTab();
+        rightScrollView.Add(_settingsTab);
+
+        container.Add(rightScrollView);
+    }
+
+    VisualElement CreateGeneralTab()
+    {
+        VisualElement visualElement = new()
+        {
+            style =
+            {
+                display = DisplayStyle.None
+            }
+        };
+
+        OptionCategory pluginsHeader = new();
+        pluginsHeader.Init(new CategoryData { name = "Plugins" }, false);
+        visualElement.Add(pluginsHeader);
+
+        SectionHeader label = new()
+        {
+            style =
+            {
+                width = new Length(100, Length.Unit.Percent)
+            },
+            title = "Enabling or disabling a plugin requires a restart of the game.",
+            isActivated = false,
+            isOpen = true,
+            isSelected = false,
+            canBeOpened = false,
+            clickable =
+            {
+                active = false
+            },
+            noBorder = true
+        };
+        visualElement.Add(label);
+
+        foreach (PluginInstance instance in Hell.Plugins.GetPlugins())
+        {
+            Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
+
+            ConfigurationManager.Entry<bool> enabledConfigurationEntry = Hell.Configuration.GetEntry<bool>(instance.Plugin.Info.Name, "Enabled");
+            if (enabledConfigurationEntry != null)
+            {
+                BoolOption data = CreateOptionData(enabledConfigurationEntry);
+                options.Add(new IOptionData(data.Pointer));
+            }
+
+            OptionCategory category = new();
+            category.Init(
+                new CategoryData
+                {
+                    name = $"{instance.Plugin.Info.DisplayName} v{instance.Plugin.Info.Version}", options = options, canBeOpened = false, notResettable = options.Count == 0,
+                    noAccountNeeded = true
+                },
+                true
+            );
+            visualElement.Add(category);
+
+            AddStatusLineToCategory(instance, category);
+        }
+
+        return visualElement;
+    }
+
+    VisualElement CreateSettingsTab()
+    {
+        VisualElement visualElement = new()
+        {
+            style =
+            {
+                display = DisplayStyle.None
+            }
+        };
+
+        ConfigurationManager.Entry[] entries = Hell.Configuration.GetAll().Where(e => !e.Hidden).ToArray();
+        IEnumerable<string> categories = entries.Select(e => e.Category).Distinct();
+
+        foreach (string category in categories)
+        {
+            Il2CppSystem.Collections.Generic.List<IOptionData> options = new();
+
+            IEnumerable<ConfigurationManager.Entry> entriesInCategory = entries.Where(e => e.Category == category);
+            foreach (ConfigurationManager.Entry entry in entriesInCategory)
+            {
+                switch (entry)
+                {
+                    case ConfigurationManager.Entry<bool> boolEntry:
+                    {
+                        BoolOption option = CreateOptionData(boolEntry);
+                        options.Add(new IOptionData(option.Pointer));
+                        break;
+                    }
+                    default:
+                    {
+                        if (entry.AcceptableValuesDescriptions is { Count: > 0 })
+                        {
+                            MultipleChoiceOption option = CreateMultipleChoiceOptionData(entry);
+                            options.Add(new IOptionData(option.Pointer));
+                        }
+                        else
+                        {
+                            Log.LogWarning("Configuration type not implemented, will display option as is.");
+
+                            TextButtonOption option = new((Action)(() => { }))
+                            {
+                                text = $"{entry.Key}: {entry.CurrentValueDescription}",
+                                description = new DescriptionData { text = entry.Description?.Description }
+                            };
+                            options.Add(new IOptionData(option.Pointer));
+                        }
+                        break;
+                    }
+                }
+            }
+
+            OptionCategory c = new();
+            c.Init(new CategoryData { name = category, options = options }, true);
+
+            visualElement.Add(c);
+        }
+
+        return visualElement;
+    }
+
+    CategorySummaryItem CreateItem(Category category, VisualElement sidePanel)
+    {
+        string categoryName = GetName(category);
+        string displayName = GetDisplayName(category);
+
+        CategorySummaryItem item = new();
+        item.Init(categoryName, displayName, false, false, SectionHeader.SectionHeaderDepth.one, (Action<string>)SelectCategory, (Action<string>)(_ => { }));
+        sidePanel.Add(item);
+
+        return item;
+    }
+
+    protected override void OnOpen()
+    {
+        SelectCategory(Category.General);
+
+        _pluginsEnabledInitial.Clear();
+        // foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        // {
+        //     _pluginsEnabledInitial[plugin.Name] = plugin.Enabled;
+        // }
+    }
+
+    protected override bool OnBeforeClose()
+    {
+        bool requireRestart = false;
+        // foreach (DBIPlugin plugin in DBI.Plugins.GetAll())
+        // {
+        //     if (_pluginsEnabledInitial[plugin.Name] != plugin.Enabled)
+        //     {
+        //         requireRestart = true;
+        //         break;
+        //     }
+        // }
+
+        if (!requireRestart)
+        {
+            return true;
+        }
+
+        DialogUtils.OpenConfirmationDialog(
+            opt =>
+            {
+                opt.Message = "Enabling or disabling a plugin requires a restart of the game. "
+                              + "Not restarting the game might lead to unexpected behaviour, or even crashes.\n"
+                              + "Do you want to restart the game ?";
+                opt.ClosedCallback = restart =>
+                {
+                    if (restart)
+                    {
+                        //ApplicationHelpers.RestartAllClients();
+                    }
+
+                    Close(true);
+                };
+            }
+        );
+
+        return false;
+    }
+
+    void SelectCategory(string category)
+    {
+        foreach (Category c in Enum.GetValues<Category>())
+        {
+            if (GetName(c) == category)
+            {
+                SelectCategory(c);
+                return;
+            }
+        }
+    }
+
+    string GetName(Category category) =>
+        category switch
+        {
+            Category.General => "general",
+            Category.Settings => "settings",
+            _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
+        };
+
+    string GetDisplayName(Category category) =>
+        category switch
+        {
+            Category.General => "General",
+            Category.Settings => "Settings",
+            _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
+        };
+
+    CategorySummaryItem GetItem(Category category) =>
+        category switch
+        {
+            Category.General => _generalItem,
+            Category.Settings => _settingsItem,
+            _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
+        };
+
+    VisualElement GetTab(Category category) =>
+        category switch
+        {
+            Category.General => _generalTab,
+            Category.Settings => _settingsTab,
+            _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
+        };
+
+    static BoolOption CreateOptionData(ConfigurationManager.Entry<bool> entry)
+    {
+        Option<bool> option = new(entry.DefaultValue) { m_value = entry.Value };
+        BoolOption boolOption = new(null, option)
+        {
+            text = entry.Key,
+            description = new DescriptionData { text = entry.Description?.Description },
+            valueChangedCallback = (Action<bool>)(v => entry.SetValue(v, ConfigurationChangeSource.Ui))
+        };
+
+        entry.ValueChanged += (_, args) =>
+        {
+            if (args.Source == ConfigurationChangeSource.Ui)
+            {
+                return;
+            }
+
+            option.SetValueWithoutNotify(args.NewValue);
+        };
+
+        return boolOption;
+    }
+
+    static MultipleChoiceOption CreateMultipleChoiceOptionData(ConfigurationManager.Entry entry)
+    {
+        IReadOnlyList<ValueDescription> values = entry.AcceptableValuesDescriptions;
+        ValueDescription value = entry.CurrentValueDescription;
+        int valueIndex = values.Select((v, i) => new { Value = v, Index = i }).FirstOrDefault(v => v.Value.Name == value.Name)?.Index ?? 0;
+        ValueDescription defaultValue = entry.DefaultValueDescription;
+        int defaultValueIndex = values.Select((v, i) => new { Value = v, Index = i }).FirstOrDefault(v => v.Value.Name == defaultValue.Name)?.Index ?? 0;
+
+        Il2CppSystem.Collections.Generic.List<Il2CppSystem.ValueTuple<int, string>> choices = new();
+        for (int i = 0; i < values.Count; i++)
+        {
+            Il2CppSystem.ValueTuple<int, string> choice = new(i, values[i].DisplayName);
+            choices.System_Collections_IList_Add(choice);
+        }
+
+        Option<int> dataSource = new(defaultValueIndex)
+            { m_value = valueIndex, m_onChanged = (Action<int, int>)((_, newValue) => entry.SetValueWithName(values[newValue].Name, ConfigurationChangeSource.Ui)) };
+        MultipleChoiceOption option = new(dataSource, null)
+        {
+            type = OptionType.MultipleChoice,
+            text = entry.Key,
+            description = new DescriptionData { text = entry.Description?.Description },
+            choices = choices
+        };
+
+        return option;
+    }
+
+    static void AddLine(VisualElement container, FigmaIcons icon, string text) => AddLine(container, icon, Color.white, text, DofusUiConstants.TextWhite100);
+
+    static void AddLine(VisualElement container, FigmaIcons icon, Color iconColor, string text, string statusColor)
+    {
+        DofusVisualElement element = new() { gapValue = 4, style = { display = DisplayStyle.Flex, flexDirection = FlexDirection.Row, paddingLeft = 4 } };
+
+        element.Add(new DofusIcon { icon = icon, style = { width = 20, height = 20 }, color = iconColor });
+
+        DofusLabel dofusLabel = new() { text = text };
+        dofusLabel.AddToClassList(DofusUiConstants.TextShortLargeRegular);
+        dofusLabel.AddToClassList(statusColor);
+        element.Add(dofusLabel);
+
+        container.Add(element);
+    }
+
+    static void AddStatusLineToCategory(PluginInstance plugin, OptionCategory category)
+    {
+        VisualElement container = category.Q("ctr_categoryContent");
+        switch (plugin.Status.State)
+        {
+            case PluginState.Disabled:
+                AddLine(
+                    container,
+                    FigmaIcons.radioOff,
+                    Color.gray,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Disabled" : plugin.Status.Message,
+                    DofusUiConstants.TextWhite65
+                );
+                break;
+            case PluginState.NotStarted:
+                AddLine(
+                    container,
+                    FigmaIcons.radioOff,
+                    Color.gray,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Not Started" : plugin.Status.Message,
+                    DofusUiConstants.TextWhite65
+                );
+                break;
+            case PluginState.Running:
+                AddLine(
+                    container,
+                    FigmaIcons.radioOn,
+                    Color.green,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Running" : plugin.Status.Message,
+                    DofusUiConstants.TextWhite100
+                );
+                break;
+            case PluginState.Error:
+                AddLine(
+                    container,
+                    FigmaIcons.circleCross,
+                    Color.red,
+                    string.IsNullOrWhiteSpace(plugin.Status.Message) ? "Error" : plugin.Status.Message,
+                    DofusUiConstants.TextLightRed100
+                );
+                break;
+            default:
+                AddLine(container, FigmaIcons.questionMark, "Unknown status");
+                break;
+        }
+    }
+
+    public enum Category
+    {
+        General,
+        Settings
+    }
+}

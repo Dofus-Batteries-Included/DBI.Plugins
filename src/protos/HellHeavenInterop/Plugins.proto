@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+import "google/protobuf/empty.proto";
+import "ConfigurePluginRequest.proto";
+import "GetPluginsResponse.proto";
+import "PluginStatusChangedStreamResponse.proto";
+import "PluginConfigurationChangedStreamResponse.proto";
+
+service Plugins {
+  rpc GetPlugins (google.protobuf.Empty) returns (GetPluginsResponse);
+  rpc ConfigurePlugin (ConfigurePluginRequest) returns (google.protobuf.Empty);
+  
+  rpc GetPluginStatusChangedStream (google.protobuf.Empty) returns (stream PluginStatusChangedStreamResponse);
+  rpc GetPluginConfigurationChangedStream (google.protobuf.Empty) returns (stream PluginConfigurationChangedStreamResponse);
+}

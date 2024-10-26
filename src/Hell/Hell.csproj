@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AssemblyName>DBI.Hell</AssemblyName>
+        <RootNamespace>DBI.Hell</RootNamespace>
+        <Title>Dofus Batteries Included - Hell</Title>
+        <Product>DBI.Hell</Product>
+        <Authors>Ismail Bennani</Authors>
+        <Description>Base plugin necessary for all Dofus Batteries Included plugins.</Description>
+        <PackageProjectUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Dofus-Batteries-Included/DBI.Plugins</RepositoryUrl>
+        <PackageLicense>https://raw.githubusercontent.com/Dofus-Batteries-Included/DBI.Plugins/main/LICENSE</PackageLicense>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+        <PackageReference Include="Google.Protobuf" Version="3.27.0"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.66.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.66.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="ILRepack" Version="2.0.35">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MinVer" Version="6.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="UnityEngine">
+            <HintPath>..\Interop\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>..\Interop\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UIElementsModule">
+            <HintPath>..\Interop\UnityEngine.UIElementsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule">
+            <HintPath>..\Interop\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="Ankama.AddressableUtility.Runtime">
+            <HintPath>..\Interop\Ankama.AddressableUtility.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="Core">
+            <HintPath>..\Interop\Core.dll</HintPath>
+        </Reference>
+        <Reference Include="Ankama.Dofus.Core.DataCenter">
+            <HintPath>..\Interop\Ankama.Dofus.Core.DataCenter.dll</HintPath>
+        </Reference>
+        <Reference Include="Ankama.AudioManagement">
+            <HintPath>..\Interop\Ankama.AudioManagement.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2Cppmscorlib">
+            <HintPath>..\Interop\Il2Cppmscorlib.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="../Protos/HellHeavenInterop/**/*.proto" GrpcServices="Client" OutputDir="$(IntermediateOutputPath)HeavenInterop"
+                  AdditionalImportDirs="../Protos/HellHeavenInterop/models;../Protos/HellHeavenInterop/requests;../Protos/HellHeavenInterop/responses"/>
+        <Protobuf Include="../Protos/Game/connection/**/*.proto" GrpcServices="Client" OutputDir="$(IntermediateOutputPath)Game/connection"/>
+        <Protobuf Include="../Protos/Game/game/**/*.proto" GrpcServices="Client" OutputDir="$(IntermediateOutputPath)Game/game" AdditionalImportDirs="../Protos/Game/game/includes"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Hell.RedirectMessages\Hell.RedirectMessages.csproj"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+﻿syntax = "proto3";
+
+package HellHeavenInterop;
+option csharp_namespace = "DBI.HellHeavenInterop";
+
+message PluginStatus {
+  PluginState State = 1;
+  string Message = 2;
+}
+
+enum PluginState {
+  Disabled = 0;
+  NotStarted = 1;
+  Running = 2;
+  Error = 3;
+}
