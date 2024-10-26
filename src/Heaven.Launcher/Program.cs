@@ -40,7 +40,7 @@ return;
 
 async Task<Process> StartHeaven()
 {
-    string thisAssemblyPath = typeof(Program).Assembly.Location;
+    string thisAssemblyPath = AppContext.BaseDirectory;
     string? thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
     string heavenPath = Path.Join(thisAssemblyDirectory, heavenExecutableName);
 

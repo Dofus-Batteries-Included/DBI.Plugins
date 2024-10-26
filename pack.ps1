@@ -1,7 +1,6 @@
 param (
     [string]$Configuration = "Release",
-    [string]$HellOutput = "dist/Hell",
-    [string]$HeavenOutput = "dist/Heaven",
+    [string]$Output = "dist/",
     [switch]$Help
 )
 
@@ -12,8 +11,7 @@ if ($Help)
 }
 
 echo "> Configuration: $Configuration"
-echo "> Hell output path: $HellOutput"
-echo "> Heaven output path: $HeavenOutput"
+echo "> Output path: $Output"
 
 $InteropDlls = Get-ChildItem "src/interop/*.dll" | % { Split-Path $_ -leaf }
 $Exceptions = @("Google.Protobuf.dll")
@@ -36,22 +34,22 @@ if ($RunningHeavenProcesses -ne $null)
 }
 
 echo ""
-if (Test-Path -Path $HellOutput)
+if (Test-Path -Path $Output)
 {
     echo "Cleaning Hell output folder..."
-    rm -Recurse -Force "$HellOutput"
+    rm -Recurse -Force "$Output"
 }
-echo "Creating output folder $HellOutput..."
-$null = md $HellOutput -Force
+echo "Creating output folder $Output..."
+$null = md $Output -Force
 
 echo ""
 echo "- Packing Hell..."
 
-mkdir $HellOutput -Force
+mkdir $Output -Force
 
 $SourceHellDir = "src/Hell/bin/$Configuration/net6.0/publish"
 
-echo "Copying $SourceHellDir to $HellOutput..."
+echo "Copying $SourceHellDir to $Output..."
 
 foreach ($File in Get-ChildItem "$SourceHellDir/*.dll")
 {
@@ -61,41 +59,41 @@ foreach ($File in Get-ChildItem "$SourceHellDir/*.dll")
         continue;
     }
 
-    echo "Copying $File to $HellOutput..."
-    copy $File $HellOutput
+    echo "Copying $File to $Output..."
+    copy $File $Output
 }
 
 $SourceHellLauncherDir = "src/Hell.RedirectMessages/bin/$Configuration/net6.0/publish"
 
-echo "Copying $SourceHellLauncherDir/DBI.Hell.RedirectMessages.dll to $HellOutput/DBI.Hell.RedirectMessages.dll..."
-copy "$SourceHellLauncherDir/DBI.Hell.RedirectMessages.dll" "$HellOutput/DBI.Hell.RedirectMessages.dll" -Force
+echo "Copying $SourceHellLauncherDir/DBI.Hell.RedirectMessages.dll to $Output/DBI.Hell.RedirectMessages.dll..."
+copy "$SourceHellLauncherDir/DBI.Hell.RedirectMessages.dll" "$Output/DBI.Hell.RedirectMessages.dll" -Force
 
 echo "Done packing Hell."
 
 echo ""
 echo "- Packing Heaven..."
 
-mkdir $HeavenOutput -Force
+mkdir $Output -Force
 
-$SourceHeavenDir = "src/Heaven.Application/bin/$Configuration/net8.0/publish"
+$SourceHeavenDir = "src/Heaven.Application/bin/$Configuration/net8.0/win-x64/publish"
 
-echo "Copying $SourceHeavenDir to $HeavenOutput..."
-copy "$SourceHeavenDir/*" "$HeavenOutput" -Recurse -Force
+echo "Copying $SourceHeavenDir to $Output..."
+copy "$SourceHeavenDir/*" "$Output" -Recurse -Force
 
 echo "Rename executable DBI.Heaven.Application.exe to Heaven.exe..."
-mv "$HeavenOutput/DBI.Heaven.Application.exe" "$HeavenOutput/Heaven.exe" -Force
+mv "$Output/DBI.Heaven.Application.exe" "$Output/Heaven.exe" -Force
 
 echo "Done packing Heaven."
 
 echo ""
 echo "- Packing Heaven Launcher..."
 
-$SourceHeavenDir = "src/Heaven.Launcher/bin/$Configuration/net8.0/publish"
-echo "Copying $SourceHeavenDir to $HeavenOutput..."
-copy "$SourceHeavenDir/*" "$HeavenOutput" -Recurse -Force
+$SourceHeavenDir = "src/Heaven.Launcher/bin/$Configuration/net8.0/win-x64/publish"
+echo "Copying $SourceHeavenDir to $Output..."
+copy "$SourceHeavenDir/*" "$Output" -Recurse -Force
 
 echo "Rename executable DBI.Heaven.Launcher.exe to Heaven Launcher.exe..."
-mv "$HeavenOutput/DBI.Heaven.Launcher.exe" "$HeavenOutput/Heaven Launcher.exe" -Force
+mv "$Output/DBI.Heaven.Launcher.exe" "$Output/Heaven Launcher.exe" -Force
 
 echo "Done packing Heaven."
 
@@ -103,6 +101,6 @@ if ($Configuration -ne "Debug")
 {
     echo ""
     echo "Deleting .pdb files because Configuration is $Configuration (not Debug)..."
-    rm "$HellOutput/*.pdb" -Force
-    rm "$HeavenOutput/*.pdb" -Force
+    rm "$Output/*.pdb" -Force
+    rm "$Output/*.pdb" -Force
 }

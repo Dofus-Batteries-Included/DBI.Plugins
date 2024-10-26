@@ -48,7 +48,7 @@ class Hell : BasePlugin
         // Load the real Google.Protobuf assembly in the default load context
         // and the proxy one in a new load context alongside the RedirectMessages assembly
 
-        string thisAssemblyPath = typeof(Hell).Assembly.Location;
+        string thisAssemblyPath = System.AppContext.BaseDirectory;
         string thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
 
         AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Join(thisAssemblyDirectory, "Google.Protobuf.dll"));

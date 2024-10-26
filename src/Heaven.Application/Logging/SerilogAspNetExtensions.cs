@@ -17,7 +17,7 @@ static class SerilogAspNetExtensions
 
     public static LoggerConfiguration ConfigureSerilog(this LoggerConfiguration configuration)
     {
-        string thisAssemblyPath = typeof(SerilogAspNetExtensions).Assembly.Location;
+        string thisAssemblyPath = System.AppContext.BaseDirectory;
         string? thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
         string logFile = Path.Join(thisAssemblyDirectory, "log", "Heaven.log");
 

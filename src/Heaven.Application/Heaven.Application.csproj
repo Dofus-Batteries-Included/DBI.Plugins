@@ -19,6 +19,8 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IsPackable>false</IsPackable>
+        <PublishSingleFile>true</PublishSingleFile>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
 
     <ItemGroup>
@@ -44,7 +46,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Heaven.Abstractions\Heaven.Abstractions.csproj"/>
-        <ProjectReference Include="..\TestPlugin\TestPlugin.csproj"/>
     </ItemGroup>
 
 </Project>
