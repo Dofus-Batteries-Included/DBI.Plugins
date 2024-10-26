@@ -19,7 +19,7 @@ public class HeavenHandle
     {
         AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
-        string thisAssemblyPath = System.AppContext.BaseDirectory;
+        string thisAssemblyPath = typeof(HeavenHandle).Assembly.Location;
         string thisAssemblyDirectory = Path.GetDirectoryName(thisAssemblyPath);
         string heavenLauncherPath = Path.Join(thisAssemblyDirectory, HeavenLauncherExecutableName);
 
